@@ -1,0 +1,18 @@
+Git Practice Exercises
+====================
+
+Day 1: Basic Commands
+- git add
+- git commit
+- git push
+- git pull
+
+Day 2: Branching
+- git branch
+- git checkout
+- git merge
+
+Day 3: Advanced
+- git rebase
+- git stash
+- git cherry-pick
