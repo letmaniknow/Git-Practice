@@ -1,0 +1,12 @@
+Hello Git World!
+=================
+
+This is my first practice file for learning Git.
+
+Today I learned:
+- How to create files
+- How to stage changes with git add
+- How to commit changes with git commit
+- How to push to remote repositories
+
+Date: October 30, 2025
