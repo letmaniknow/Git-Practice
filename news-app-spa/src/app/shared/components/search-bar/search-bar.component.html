@@ -1,0 +1,74 @@
+<form class="search-bar-form" (ngSubmit)="onSearch()">
+  <div class="search-bar-fields">
+    <ng-container *ngFor="let field of config.fields">
+      <ng-container [ngSwitch]="field.type">
+        <!-- Text Field -->
+        <input
+          *ngSwitchCase="'text'"
+          [placeholder]="field.label"
+          [(ngModel)]="model[field.key]"
+          [name]="field.key"
+        />
+
+        <!-- Select Field -->
+        <select
+          *ngSwitchCase="'select'"
+          [(ngModel)]="model[field.key]"
+          [name]="field.key"
+        >
+          <option *ngFor="let opt of field.options" [value]="opt.value">
+            {{ opt.label }}
+          </option>
+        </select>
+
+        <!-- Date Field -->
+        <input
+          *ngSwitchCase="'date'"
+          type="date"
+          [placeholder]="field.label"
+          [(ngModel)]="model[field.key]"
+          [name]="field.key"
+        />
+
+        <!-- Autocomplete Field (with async suggestions) -->
+        <div *ngSwitchCase="'autocomplete'" class="autocomplete-wrapper">
+          <input
+            [placeholder]="field.label"
+            [(ngModel)]="model[field.key]"
+            [name]="field.key"
+            (input)="onAutocompleteInput(field, model[field.key])"
+            (focus)="onAutocompleteFocus(field, model[field.key])"
+            (blur)="onAutocompleteBlur(field)"
+            [attr.autocomplete]="'off'"
+          />
+          <ul
+            *ngIf="
+              getAutocompleteState(field).showDropdown &&
+              getAutocompleteState(field).suggestions.length
+            "
+            class="autocomplete-dropdown"
+          >
+            <li
+              *ngFor="let option of getAutocompleteState(field).suggestions"
+              (mousedown)="selectAutocompleteOption(field, option)"
+            >
+              {{ option.label }}
+            </li>
+          </ul>
+        </div>
+      </ng-container>
+    </ng-container>
+  </div>
+  <div class="search-bar-actions">
+    <button *ngIf="config.showSearchButton !== false" type="submit">
+      Search
+    </button>
+    <button
+      *ngIf="config.showResetButton !== false"
+      type="button"
+      (click)="onReset()"
+    >
+      Reset
+    </button>
+  </div>
+</form>

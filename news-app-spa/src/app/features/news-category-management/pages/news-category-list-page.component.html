@@ -1,0 +1,66 @@
+<!-- News Category List Page Template -->
+
+<div class="page-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1 class="page-title">
+        <mat-icon class="title-icon">category</mat-icon>
+        News Category Management
+      </h1>
+      <p class="page-description">
+        Manage news categories for your application
+      </p>
+    </div>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+      <!-- View Toggle Button -->
+      <button
+        mat-stroked-button
+        (click)="toggleDeletedView()"
+        [class.active]="showDeletedCategories"
+        matTooltip="Toggle to view deleted/archived categories"
+        class="view-toggle-button"
+      >
+        <mat-icon>{{
+          showDeletedCategories ? "archive" : "category"
+        }}</mat-icon>
+        {{ showDeletedCategories ? "Deleted" : "Active" }} Categories
+      </button>
+
+      <!-- Create Button -->
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="openCreateCategoryDialog()"
+        class="create-button"
+        [disabled]="showDeletedCategories"
+      >
+        <mat-icon>add</mat-icon>
+        Create New Category
+      </button>
+    </div>
+  </div>
+
+  <!-- Content Card -->
+  <mat-card class="content-card">
+    <!-- List Component -->
+    <app-news-category-list
+      [categories]="(categories$ | async) || []"
+      [isLoading]="(loading$ | async) || false"
+      [totalCount]="(totalCount$ | async) || 0"
+      [pageSize]="10"
+      [currentPage]="(currentPage$ | async) || 0"
+      [currentSort]="currentSortState"
+      (editCategory)="onEditCategory($event)"
+      (deleteCategory)="onDeleteCategory($event)"
+      (activateCategory)="onActivateCategory($event)"
+      (deactivateCategory)="onDeactivateCategory($event)"
+      (restoreCategory)="onRestoreCategory($event)"
+      (viewAuditLogs)="onViewAuditLogs($event)"
+      (pageChanged)="onPageChanged($event)"
+      (sortChanged)="onSortChanged($event)"
+    ></app-news-category-list>
+  </mat-card>
+</div>

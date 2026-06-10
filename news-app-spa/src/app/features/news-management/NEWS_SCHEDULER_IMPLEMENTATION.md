@@ -1,0 +1,404 @@
+/\*\*
+
+- NEWS SCHEDULER - IMPLEMENTATION COMPLETE
+-
+- This document provides complete information about the news scheduler
+- feature implementation for the news-app-spa Angular frontend.
+-
+- ===================================================================
+- FEATURE OVERVIEW
+- ===================================================================
+-
+- The News Scheduler is a comprehensive system for managing automated
+- publishing jobs with features including:
+-
+- - Job triggering and management
+- - Real-time job monitoring and status tracking
+- - Retry logic with configurable backoff strategies
+- - Failed article recovery
+- - Performance metrics and analytics
+- - Error tracking and debugging
+-
+- ===================================================================
+- FILE STRUCTURE (15 TOTAL FILES)
+- ===================================================================
+-
+- src/app/features/news-management/
+- │
+- ├── models/
+- │ └── news-scheduler.model.ts (400+ lines)
+- │ - NewsSchedulerJob interface (35 fields)
+- │ - NewsSchedulerAttempt interface (26 fields)
+- │ - NewsSchedulerMetrics interface (22 fields)
+- │ - Enums: JobStatus, Priority, ErrorCode, BackoffStrategy
+- │ - Request/Response DTOs
+- │ - Helper types (JobStatusBadge, JobSummary)
+- │
+- ├── constants/
+- │ └── news-scheduler-api.constant.ts (150+ lines)
+- │ - Centralized API endpoint configuration
+- │ - Organized by resource: trigger, jobs, failedArticles, metrics
+- │ - Each endpoint with method, params, response type documentation
+- │ - Constants for easy IDE navigation
+- │
+- ├── services/
+- │ └── news-scheduler.service.ts (450+ lines)
+- │ - triggerJob(): POST create new job
+- │ - getJobsList(): GET paginated jobs
+- │ - getJobDetails(): GET single job with attempts
+- │ - cancelJob(): POST cancel running job
+- │ - deleteJob(): DELETE completed job
+- │ - getFailedArticles(): GET paginated failed articles
+- │ - retryFailedArticles(): POST retry bulk
+- │ - getMetrics(): GET aggregated metrics
+- │ - handleError(): Centralized error categorization
+- │
+- ├── store/
+- │ ├── news-scheduler.state.ts (200+ lines)
+- │ │ - NewsSchedulerState interface (25 properties)
+- │ │ - initialNewsSchedulerState
+- │ │
+- │ ├── news-scheduler.actions.ts (200+ lines)
+- │ │ - 30+ action creators organized by feature
+- │ │ - Actions: load, select, trigger, cancel, delete, etc.
+- │ │ - UI state actions: toggle forms, pagination, filters
+- │ │ - Auto-refresh actions
+- │ │
+- │ ├── news-scheduler.reducer.ts (180+ lines)
+- │ │ - Pure functions for state mutations
+- │ │ - Immutable updates using spread operator
+- │ │ - Handlers for all 30+ actions
+- │ │
+- │ ├── news-scheduler.selectors.ts (300+ lines)
+- │ │ - 30+ memoized selectors
+- │ │ - Feature selector: selectNewsSchedulerFeature
+- │ │ - Data selectors: jobs, pagination, filters, errors
+- │ │ - Computed selectors: success rates, summaries
+- │ │
+- │ └── news-scheduler.effects.ts (300+ lines)
+- │ - 10+ effects for async operations
+- │ - loadSchedulerJobs effect
+- │ - triggerSchedulerJob effect (with auto-reload)
+- │ - cancelJob, deleteJob effects
+- │ - failedArticles operations
+- │ - Auto-refresh integration
+- │ - Pagination/filter/sort change effects
+- │
+- ├── components/
+- │ ├── news-scheduler-job-trigger-panel/
+- │ │ └── news-scheduler-job-trigger-panel.component.ts (200+ lines)
+- │ │ - Form for creating new jobs
+- │ │ - Fields: source, priority, maxRetries, scheduledTime
+- │ │ - Reactive forms with validation
+- │ │ - Material Design components
+- │ │ - Error state display
+- │ │
+- │ ├── news-scheduler-jobs-list/
+- │ │ └── news-scheduler-jobs-list.component.ts (300+ lines)
+- │ │ - Paginated table of all jobs
+- │ │ - Columns: jobId, status, progress, articles, startedAt, duration
+- │ │ - Sortable columns
+- │ │ - Status badges with colors
+- │ │ - Progress bars showing success rates
+- │ │ - Action buttons: view, cancel, retry, delete
+- │ │ - Quick menu for more actions
+- │ │
+- │ ├── news-scheduler-job-details/
+- │ │ └── news-scheduler-job-details.component.ts (400+ lines)
+- │ │ - Detailed job view with tabbed interface
+- │ │ - Tabs: metadata, execution logs, retry attempts, errors
+- │ │ - Success rate progress bar
+- │ │ - Execution logs with expandable entries
+- │ │ - Retry attempt history
+- │ │ - Error details with error codes
+- │ │ - Action buttons: cancel, retry, delete
+- │ │
+- │ └── news-scheduler-metrics-dashboard/
+- │ └── news-scheduler-metrics-dashboard.component.ts (400+ lines)
+- │ - Performance metrics dashboard
+- │ - Cards: total jobs, successful, failed, success rate
+- │ - Article processing statistics
+- │ - Success/failure rate progress bars
+- │ - Error distribution by error code
+- │ - Time period selector (24h, 7d, 30d)
+- │ - Summary statistics
+- │
+- └── pages/
+-     └── news-scheduler-management-page/
+-         └── news-scheduler-management-page.component.ts (400+ lines)
+-             - Main container page
+-             - Page header with action buttons
+-             - Tabbed interface: Jobs, Metrics, Help
+-             - Collapsible trigger form
+-             - Side-by-side details panel
+-             - Error notification (snackbar)
+-             - Responsive design (mobile/tablet/desktop)
+-
+- ===================================================================
+- INTEGRATION POINTS
+- ===================================================================
+-
+- 1.  ROUTING (news-routing.module.ts)
+- - Route: /news/scheduler
+- - Component: NewsSchedulerManagementPageComponent
+- - Lazy-loaded with news feature
+-
+- 2.  MODULE (news.module.ts)
+- - Imports NewsRoutingModule
+- - StoreModule.forFeature('newsScheduler', newsSchedulerReducer)
+- - EffectsModule.forFeature([NewsSchedulerEffects])
+-
+- 3.  APP STATE
+- - Feature state: state.newsScheduler
+- - Actions dispatched: NewsSchedulerActions.\*
+- - Selectors: selectNewsSchedulerFeature
+-
+- ===================================================================
+- USAGE EXAMPLES
+- ===================================================================
+-
+- 1.  NAVIGATE TO SCHEDULER
+- router.navigate(['/news/scheduler']);
+-
+- 2.  TRIGGER NEW JOB (from component)
+- const request: SchedulerJobTriggerRequest = {
+-      source: 'MANUAL',
+-      priority: NewsSchedulerPriority.HIGH,
+-      maxRetries: 3,
+-      scheduledTime: null
+- };
+- this.store.dispatch(
+-      NewsSchedulerActions.triggerSchedulerJob({ request })
+- );
+-
+- 3.  SUBSCRIBE TO JOBS (from component)
+- this.jobs$ = this.store.select(selectSchedulerJobs);
+- this.jobs$.subscribe(jobs => console.log(jobs));
+-
+- 4.  GET METRICS
+- this.store.dispatch(
+-      NewsSchedulerActions.loadSchedulerMetrics({ timePeriod: '24h' })
+- );
+- this.metrics$ = this.store.select(selectMetrics);
+-
+- 5.  RETRY FAILED ARTICLES
+- this.store.dispatch(
+-      NewsSchedulerActions.retryFailedArticles({
+-        request: { jobId: 'abc-123', attemptNumber: 1 }
+-      })
+- );
+-
+- ===================================================================
+- STATE MANAGEMENT ARCHITECTURE
+- ===================================================================
+-
+- State Shape:
+- {
+- // Job Management
+- jobs: NewsSchedulerJob[],
+- selectedJobId: string | null,
+- selectedJobDetails: NewsSchedulerJob | null,
+-
+- // Loading States
+- loading: boolean,
+- triggering: boolean,
+- cancelling: boolean,
+- retrying: boolean,
+-
+- // UI State
+- showJobDetails: boolean,
+- showFailedArticles: boolean,
+- showMetrics: boolean,
+- showTriggerForm: boolean,
+-
+- // Error Handling
+- error: string | null,
+- errorCode: string | undefined,
+-
+- // Pagination
+- currentPage: number,
+- pageSize: number,
+- totalJobs: number,
+- totalPages: number,
+-
+- // Filtering
+- filterStatus: NewsSchedulerJobStatus | undefined,
+- filterPriority: string | undefined,
+- filterDateFrom: Date | undefined,
+- filterDateTo: Date | undefined,
+-
+- // Sorting
+- sortBy: string,
+- sortDirection: 'asc' | 'desc',
+-
+- // Failed Articles
+- failedArticles: NewsSchedulerAttempt[],
+- failedArticlesPage: number,
+- failedArticlesPageSize: number,
+- totalFailedArticles: number,
+-
+- // Metrics
+- metrics: NewsSchedulerMetrics | null,
+- metricsTimePeriod: '24h' | '7d' | '30d',
+-
+- // Auto-Refresh
+- lastRefreshed: Date | null,
+- autoRefreshInterval: number,
+- autoRefreshActive: boolean
+- }
+-
+- ===================================================================
+- API ENDPOINTS
+- ===================================================================
+-
+- POST /api/v1/admin/scheduler/publish/trigger
+- Request: SchedulerJobTriggerRequest
+- Response: ApiResponse<NewsSchedulingJobResponseDto>
+-
+- GET /api/v1/admin/scheduler/publish/jobs
+- Query Params: page, size, sort, status, priority, dateFrom, dateTo
+- Response: ApiResponse<Page<NewsSchedulingJobResponseDto>>
+-
+- GET /api/v1/admin/scheduler/publish/jobs/{jobId}
+- Response: ApiResponse<NewsSchedulingJobResponseDto>
+-
+- POST /api/v1/admin/scheduler/publish/jobs/{jobId}/cancel
+- Response: ApiResponse<NewsSchedulingJobResponseDto>
+-
+- DELETE /api/v1/admin/scheduler/publish/jobs/{jobId}
+- Response: ApiResponse<void>
+-
+- GET /api/v1/admin/scheduler/publish/failed-articles
+- Query Params: jobId, page, size, shouldRetry, errorCode
+- Response: ApiResponse<Page<NewsSchedulingAttemptDto>>
+-
+- POST /api/v1/admin/scheduler/publish/failed-articles/retry-all
+- Request: SchedulerBulkRetryRequest
+- Response: ApiResponse<SchedulerRetryResponse>
+-
+- GET /api/v1/admin/scheduler/publish/metrics
+- Query Params: timePeriod, status
+- Response: ApiResponse<NewsSchedulerMetrics>
+-
+- ===================================================================
+- FEATURE FLOW
+- ===================================================================
+-
+- 1.  Component Init
+- - Page component dispatches loadSchedulerJobs()
+- - loadSchedulerJobs effect calls service.getJobsList()
+- - Reducer updates state with jobs
+- - Selectors compute derived data (success rates, etc.)
+- - Components subscribe to selectors, render UI
+-
+- 2.  Job Trigger
+- - User fills form, clicks "Trigger Job"
+- - Component dispatches triggerSchedulerJob(request)
+- - Effect calls service.triggerJob()
+- - On success: dispatch loadSchedulerJobs() to refresh
+- - Reducer updates jobs array with new job at top
+-
+- 3.  Job Monitoring
+- - Components subscribe to job details selector
+- - User can view execution logs, retry history
+- - Can cancel running job or retry failed articles
+- - All actions update state and refresh view
+-
+- 4.  Metrics Display
+- - Metrics dashboard component dispatches loadSchedulerMetrics()
+- - Effect calls service.getMetrics(timePeriod)
+- - Reducer stores metrics in state
+- - Dashboard calculates and displays aggregated stats
+-
+- ===================================================================
+- DEBUGGING & TESTING
+- ===================================================================
+-
+- Enable Redux DevTools:
+- - Install Redux DevTools browser extension
+- - Import StoreDevtoolsModule in app.module.ts
+- - View all actions and state changes in real-time
+-
+- Common Issues:
+- 1.  Effects not firing: Check EffectsModule.forFeature() in news.module
+- 2.  State not updating: Verify reducer has all action handlers
+- 3.  Components not updating: Ensure selectors are properly defined
+- 4.  API errors: Check Constants file has correct endpoints
+-
+- Unit Testing:
+- - Test reducers: check state shape after action
+- - Test selectors: verify computed values
+- - Test effects: mock service, verify action dispatch
+- - Test components: use StoreStub for testing
+-
+- ===================================================================
+- PRODUCTION CONSIDERATIONS
+- ===================================================================
+-
+- 1.  Performance
+- - Use OnPush change detection in components
+- - Memoize selectors to prevent unnecessary recalculations
+- - Paginate large job lists (implemented)
+- - Debounce filter/sort changes (implemented in effects)
+-
+- 2.  Error Handling
+- - All effects include error handling
+- - Errors dispatched to state and shown to user
+- - Error state automatically cleared after snackbar
+-
+- 3.  Accessibility
+- - All Material components use proper ARIA labels
+- - Keyboard navigation supported
+- - Color not only indicator (success icons included)
+- - Status badges use proper semantic colors
+-
+- 4.  Responsive Design
+- - Mobile: Single column, bottom drawer for details
+- - Tablet: Side-by-side with smaller sidebar
+- - Desktop: Full layout with all features visible
+-
+- ===================================================================
+- VERSIONING & COMPATIBILITY
+- ===================================================================
+-
+- Angular: 19.2.18
+- NgRx: 18+
+- Material Design: 3
+- TypeScript: 5.6+
+-
+- Backwards Compatibility:
+- - No breaking changes to existing news feature
+- - Separate state slice: newsScheduler (independent)
+- - New route: /news/scheduler (no path conflicts)
+-
+- ===================================================================
+- FUTURE ENHANCEMENTS
+- ===================================================================
+-
+- Phase 2 Features:
+- - Job scheduling with cron expressions
+- - Webhook notifications for job completion
+- - Bulk job operations (trigger multiple, cancel all)
+- - Export metrics to CSV/PDF
+- - Advanced filtering with saved presets
+- - WebSocket real-time job status updates
+- - Job cloning from template
+- - Audit trail for job modifications
+-
+- ===================================================================
+- SUPPORT & DOCUMENTATION
+- ===================================================================
+-
+- See also:
+- - /docs/angular-app-principle.md (Project architecture)
+- - /docs/NEWS_SCHEDULER_ARCHITECTURAL_DECISION_RECORD.md
+- - BACKEND_HARDENING_FOR_PRODUCTION.md (API security)
+- - PROJECT_DOCUMENTATION.md (Full project guide)
+-
+- Created: 2025
+- Last Updated: Production Implementation Complete
+- Status: READY FOR PRODUCTION ✅
+  \*/
+
+// This file is for documentation purposes only.
+// No code exports - reference the component files above.

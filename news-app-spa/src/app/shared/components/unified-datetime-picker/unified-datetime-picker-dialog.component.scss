@@ -1,0 +1,325 @@
+.unified-datetime-picker-dialog-container {
+  display: flex;
+  flex-direction: column;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: rgba(0, 0, 0, 0.87);
+  width: 100%;
+  height: auto;
+}
+
+/* Dialog Header */
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+
+  .dialog-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    color: #1976d2;
+  }
+
+  .close-button {
+    margin: -8px -8px -8px 16px;
+  }
+}
+
+/* Main Content */
+.dialog-content {
+  display: flex;
+  gap: 24px;
+  padding: 24px;
+  flex: 1;
+  min-height: auto;
+  background: #ffffff;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+  }
+}
+
+.calendar-section,
+.time-section {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+
+  .section-title {
+    margin: 0 0 12px 0;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #1976d2;
+  }
+
+  .helper-text {
+    font-size: 11px;
+    color: rgba(0, 0, 0, 0.54);
+    margin: 0;
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+}
+
+.calendar-section {
+  flex: 0 1 auto;
+
+  .date-picker-field {
+    width: 100%;
+    margin-bottom: 6px;
+
+    input {
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+    }
+  }
+}
+
+/* Time Section */
+.time-section {
+  flex: 0 1 auto;
+}
+
+.time-inputs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  background: linear-gradient(135deg, rgba(25, 118, 210, 0.05) 0%, rgba(25, 118, 210, 0.02) 100%);
+  padding: 12px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(25, 118, 210, 0.15);
+}
+
+.time-input-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+
+  &.hour-input,
+  &.minute-input {
+    flex: 0.8;
+    min-width: 55px;
+  }
+
+  &.period-input {
+    flex: 0.7;
+  }
+
+  .time-field {
+    width: 100% !important;
+    margin: 0 !important;
+
+    .mat-mdc-text-field-wrapper {
+      padding-bottom: 0 !important;
+    }
+
+    input {
+      text-align: center;
+      font-size: 18px !important;
+      font-weight: 700 !important;
+      letter-spacing: 1px;
+      padding: 2px 2px !important;
+    }
+  }
+
+  .increment-button,
+  .decrement-button {
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    color: #1976d2;
+    font-size: 16px;
+    transition: all 0.15s ease-in-out;
+    border-radius: 50%;
+
+    &:hover {
+      background-color: rgba(25, 118, 210, 0.1);
+      transform: scale(1.05);
+    }
+
+    &:active {
+      background-color: rgba(25, 118, 210, 0.2);
+      transform: scale(0.95);
+    }
+  }
+}
+
+.time-separator {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1976d2;
+  padding: 0;
+  user-select: none;
+  align-self: center;
+  margin-top: 2px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+}
+
+.period-toggle {
+  height: 38px;
+  min-width: 58px;
+  font-size: 13px;
+  font-weight: 700;
+  border: 2px solid #1976d2;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  color: #1976d2;
+  background-color: white;
+  padding: 0 6px;
+
+  &:hover {
+    background-color: rgba(25, 118, 210, 0.08);
+    box-shadow: 0 2px 6px rgba(25, 118, 210, 0.2);
+  }
+
+  &.active {
+    color: white;
+    background-color: #1976d2;
+    border-color: #1976d2;
+    box-shadow: 0 3px 10px rgba(25, 118, 210, 0.3);
+
+    &:hover {
+      background-color: #1565c0;
+      box-shadow: 0 4px 12px rgba(25, 118, 210, 0.4);
+    }
+  }
+}
+
+.set-now-button {
+  width: 100%;
+  border-color: #1976d2;
+  color: #1976d2;
+  font-weight: 600;
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  transition: all 0.2s ease-in-out;
+  height: auto;
+
+  mat-icon {
+    margin-right: 4px;
+    font-size: 16px;
+    height: 16px;
+    width: 16px;
+  }
+
+  &:hover {
+    background-color: rgba(25, 118, 210, 0.08);
+  }
+}
+
+/* Preview Section */
+.preview-section {
+  background: linear-gradient(135deg, rgba(25, 118, 210, 0.06) 0%, rgba(25, 118, 210, 0.02) 100%);
+  padding: 16px 24px;
+  border-top: 2px solid rgba(25, 118, 210, 0.15);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+.preview-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 150px;
+
+  .preview-label {
+    font-weight: 700;
+    color: rgba(0, 0, 0, 0.54);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  .preview-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1976d2;
+  }
+}
+
+/* Dialog Footer */
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+
+  .cancel-button {
+    color: rgba(0, 0, 0, 0.87);
+    font-weight: 600;
+    min-width: 80px;
+    font-size: 13px;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+  }
+
+  .confirm-button {
+    min-width: 100px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    font-size: 13px;
+    box-shadow: 0 2px 6px rgba(25, 118, 210, 0.25);
+
+    &:hover {
+      box-shadow: 0 3px 10px rgba(25, 118, 210, 0.35);
+    }
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 480px) {
+  .dialog-header {
+    padding: 16px 20px;
+
+    .dialog-title {
+      font-size: 16px;
+    }
+  }
+
+  .dialog-content {
+    padding: 16px 20px;
+    gap: 16px;
+  }
+
+  .preview-section {
+    padding: 12px 20px;
+  }
+
+  .dialog-footer {
+    padding: 12px 20px;
+    flex-direction: column-reverse;
+
+    button {
+      width: 100%;
+    }
+  }
+}

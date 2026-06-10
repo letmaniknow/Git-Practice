@@ -1,0 +1,176 @@
+<div class="unified-datetime-picker-dialog-container">
+  <!-- Header -->
+  <div class="dialog-header">
+    <h2 class="dialog-title">Select Date &amp; Time</h2>
+    <button
+      mat-icon-button
+      (click)="cancelSelection()"
+      class="close-button"
+      aria-label="Close dialog"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Main Content -->
+  <div class="dialog-content">
+    <!-- Left Column: Calendar -->
+    <div class="calendar-section">
+      <h3 class="section-title">Date</h3>
+      <mat-form-field class="date-picker-field">
+        <mat-label>Select Date</mat-label>
+        <input
+          matInput
+          [matDatepicker]="picker"
+          [formControl]="dateControl"
+          [min]="minDate"
+          readonly
+          placeholder="Choose date"
+        />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </mat-form-field>
+      <small class="helper-text">Select today or a future date</small>
+    </div>
+
+    <!-- Right Column: Time Picker -->
+    <div class="time-section">
+      <h3 class="section-title">Time</h3>
+      <small class="helper-text">Select a time in the future</small>
+
+      <!-- Time Input Fields -->
+      <div class="time-inputs">
+        <!-- Hour -->
+        <div class="time-input-group hour-input">
+          <button
+            mat-icon-button
+            type="button"
+            class="increment-button"
+            (click)="incrementHour()"
+            aria-label="Increment hour"
+          >
+            <mat-icon>expand_less</mat-icon>
+          </button>
+
+          <mat-form-field class="time-field">
+            <input
+              matInput
+              type="number"
+              min="1"
+              max="12"
+              [formControl]="hourControl"
+              class="time-input"
+              placeholder="HH"
+            />
+          </mat-form-field>
+
+          <button
+            mat-icon-button
+            type="button"
+            class="decrement-button"
+            (click)="decrementHour()"
+            aria-label="Decrement hour"
+          >
+            <mat-icon>expand_more</mat-icon>
+          </button>
+        </div>
+
+        <!-- Separator -->
+        <div class="time-separator">:</div>
+
+        <!-- Minute -->
+        <div class="time-input-group minute-input">
+          <button
+            mat-icon-button
+            type="button"
+            class="increment-button"
+            (click)="incrementMinute()"
+            aria-label="Increment minute"
+          >
+            <mat-icon>expand_less</mat-icon>
+          </button>
+
+          <mat-form-field class="time-field">
+            <input
+              matInput
+              type="number"
+              min="0"
+              max="59"
+              [formControl]="minuteControl"
+              class="time-input"
+              placeholder="MM"
+            />
+          </mat-form-field>
+
+          <button
+            mat-icon-button
+            type="button"
+            class="decrement-button"
+            (click)="decrementMinute()"
+            aria-label="Decrement minute"
+          >
+            <mat-icon>expand_more</mat-icon>
+          </button>
+        </div>
+
+        <!-- AM/PM -->
+        <div class="time-input-group period-input">
+          <button
+            mat-button
+            type="button"
+            [class.active]="periodControl.value === 'PM'"
+            (click)="togglePeriod()"
+            class="period-toggle"
+            [attr.aria-pressed]="periodControl.value === 'PM'"
+          >
+            {{ periodControl.value }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Action Button -->
+      <button
+        mat-stroked-button
+        type="button"
+        (click)="setToNow()"
+        class="set-now-button"
+      >
+        <mat-icon>schedule</mat-icon>
+        Set to Now
+      </button>
+    </div>
+  </div>
+
+  <!-- Preview Section -->
+  <div class="preview-section">
+    <div class="preview-item">
+      <span class="preview-label">Date:</span>
+      <span class="preview-value">{{ previewDateTime }}</span>
+    </div>
+    <div class="preview-item">
+      <span class="preview-label">Time:</span>
+      <span class="preview-value">{{ previewTime }}</span>
+    </div>
+  </div>
+
+  <!-- Footer with Action Buttons -->
+  <div class="dialog-footer">
+    <button
+      mat-button
+      type="button"
+      (click)="cancelSelection()"
+      class="cancel-button"
+    >
+      Cancel
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      type="button"
+      (click)="confirmDatetime()"
+      class="confirm-button"
+    >
+      Confirm
+    </button>
+  </div>
+</div>

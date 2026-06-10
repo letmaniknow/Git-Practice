@@ -1,0 +1,137 @@
+<div class="admin-table-container">
+  <!-- Bulk Actions Toolbar -->
+  <div
+    class="bulk-actions-toolbar"
+    *ngIf="selectedNewsCount > 0"
+    role="toolbar"
+  >
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onBulkPublish()"
+      [disabled]="selectedNewsCount === 0"
+    >
+      <mat-icon>publish</mat-icon>
+      {{ bulkActionsPublishLabel }}
+    </button>
+    <button
+      mat-raised-button
+      color="warn"
+      (click)="onBulkSoftDeleteNews()"
+      [disabled]="selectedNewsCount === 0"
+    >
+      <mat-icon>delete</mat-icon>
+      {{ bulkActionsDeleteLabel }}
+    </button>
+    <button
+      mat-stroked-button
+      (click)="clearSelection()"
+      [disabled]="selectedNewsCount === 0"
+    >
+      <mat-icon>clear</mat-icon>
+      {{ bulkActionsClearLabel }}
+    </button>
+    <span class="selected-count-label">{{ selectedNewsCount }} selected</span>
+  </div>
+
+  <!-- Master Data Load Errors -->
+  <div
+    class="filter-errors-section"
+    *ngIf="categoriesLoadError || adminUsersLoadError"
+  >
+    <div class="error-alerts-container">
+      <app-error-alert
+        *ngIf="categoriesLoadError"
+        title="Failed to Load Categories"
+        [error]="categoriesLoadError"
+        [isRetryLoading]="isLoadingCategories"
+        [showRetry]="true"
+        [showDismiss]="true"
+        (onRetry)="loadCategories()"
+        (onDismiss)="onDismissCategoriesError()"
+      ></app-error-alert>
+
+      <app-error-alert
+        *ngIf="adminUsersLoadError"
+        title="Failed to Load User Names"
+        [error]="adminUsersLoadError"
+        [isRetryLoading]="isLoadingAdminUsers"
+        [showRetry]="true"
+        [showDismiss]="true"
+        (onRetry)="loadAdminUsers()"
+        (onDismiss)="onDismissAdminUsersError()"
+      ></app-error-alert>
+    </div>
+  </div>
+
+  <!-- News Load Error -->
+  <div class="filter-errors-section" *ngIf="newsLoadError && !isLoadingNews">
+    <div class="error-alerts-container">
+      <app-error-alert
+        title="Failed to Load News"
+        [error]="newsLoadError"
+        [isRetryLoading]="isLoadingNews"
+        [showRetry]="true"
+        [showDismiss]="true"
+        retryLabel="Reload News"
+        retryLoadingLabel="Reloading..."
+        (onRetry)="onRetryLoadNews()"
+        (onDismiss)="onDismissNewsError()"
+      ></app-error-alert>
+    </div>
+  </div>
+
+  <!-- Loading Overlay for News Table -->
+  <div *ngIf="isLoadingNews && lookupsLoaded" class="loading-overlay">
+    <app-loading
+      [message]="'Loading news'"
+      [size]="'large'"
+      [type]="'spinner'"
+      [overlay]="true"
+    ></app-loading>
+  </div>
+
+  <ng-container *ngIf="lookupsLoaded">
+    <ng-container *ngIf="news$ | async as news">
+      <app-news-list-table-grid
+        *ngIf="news.length > 0"
+        [news]="news"
+        [columnDefinitions]="columnDefinitions"
+        [visibleColumnIds]="visibleColumnIds"
+        [getThumbnailUrl]="getThumbnailUrlBound"
+        [getCategoryNameById]="getCategoryNameByIdBound"
+        [getAdminUserNameById]="getAdminUserNameByIdBound"
+        [trackByNewsId]="trackByNewsIdBound"
+        [getTitle]="getTitleBound"
+        [getStatusConfig]="getStatusConfigBound"
+        [onThumbnailError]="onThumbnailErrorBound"
+        [isAllSelected]="isAllSelected"
+        [isRowSelected]="isRowSelectedBound"
+        [sortColumn]="sortColumn"
+        [sortDirection]="sortDirection"
+        (toggleRowSelection)="toggleRowSelection($event)"
+        (selectAllRows)="toggleSelectAll()"
+        (clearSelection)="clearSelection()"
+        (sortChange)="onSortChange($event)"
+        (refreshRequested)="onRefreshRequested()"
+        (cloneNews)="onCloneNews($event)"
+        (publishNews)="onPublishNews($event)"
+        (unpublishNews)="onUnpublishNews($event)"
+        (scheduleNews)="onScheduleNews($event)"
+      ></app-news-list-table-grid>
+      <!-- Professional Pagination UI -->
+      <mat-paginator
+        [length]="totalItems"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions"
+        [showFirstLastButtons]="true"
+        (page)="onPageEvent($event)"
+        aria-label="Pagination Navigation"
+      >
+      </mat-paginator>
+      <div *ngIf="news.length === 0" class="empty-table-message">
+        {{ emptyStateHeading }}
+      </div>
+    </ng-container>
+  </ng-container>
+</div>

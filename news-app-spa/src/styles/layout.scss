@@ -1,0 +1,119 @@
+// Shared Layout Styles
+// Use CSS variables for flexibility and reference global-variables.scss
+
+// ...existing code...
+.header {
+  display: flex;
+  align-items: center;
+  height: var(--header-height);
+  width: 100%;
+  background: var(--header-bg);
+  color: var(--header-color);
+  padding: var(--header-padding, 0 24px);
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  z-index: var(--header-z-index, 101);
+  box-shadow: var(--header-shadow);
+  font-family: var(--header-font-family, 'Roboto, Arial, sans-serif');
+  border-radius: var(--header-border-radius, 0);
+  transition: var(--header-transition, background 0.3s, color 0.3s);
+  box-sizing: border-box;
+}
+
+
+.header-logo {
+  display: flex;
+  align-items: center;
+  margin-right: var(--header-spacing, 16px);
+  color: var(--header-color);
+  font-size: var(--header-logo-size);
+  font-family: var(--header-font-family, 'Roboto, Arial, sans-serif');
+}
+
+.header-title {
+  font-size: var(--header-title-size);
+  font-weight: var(--header-title-weight);
+  margin-left: var(--header-spacing, 16px);
+  letter-spacing: var(--header-title-spacing, 0.5px);
+  font-family: var(--header-font-family, 'Roboto, Arial, sans-serif');
+}
+
+.header-spacer {
+  flex: 1 1 auto;
+  min-width: 0;
+  margin-right: 0;
+}
+
+mat-icon {
+  font-size: var(--header-logo-size) !important;
+  vertical-align: middle;
+  color: var(--header-icon-color, #ec0a0a);
+  transition: var(--header-icon-transition, color 0.3s);
+}
+
+.header-icon-group {
+  display: flex;
+  align-items: center;
+  background: none;
+}
+
+.header-icon-group button.mat-icon-button {
+  background: var(--header-icon-bg, transparent);
+  color: #212121;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.header-icon-group button.mat-icon-button:last-child {
+  margin-right: 0;
+}
+
+// Sidebar Styles
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: var(--header-height);
+  width: var(--sidebar-width, 240px);
+  height: calc(100vh - var(--header-height));
+  background: var(--sidebar-bg, #263238);
+  color: var(--sidebar-color, #fff);
+  box-shadow: var(--sidebar-shadow, 2px 0 8px rgba(0,0,0,0.08));
+  z-index: var(--sidebar-z-index, 100);
+  padding: var(--sidebar-padding, 16px 0);
+  font-family: var(--sidebar-font-family, 'Roboto, Arial, sans-serif');
+  transition: var(--sidebar-transition, background 0.3s, color 0.3s);
+  border-radius: var(--sidebar-border-radius, 0);
+}
+
+// Footer Styles
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100vw;
+  height: var(--footer-height, 48px);
+  background: var(--footer-bg, #f5f5f5);
+  color: var(--footer-color, #212121);
+  box-shadow: var(--footer-shadow, 0 -2px 8px rgba(0,0,0,0.08));
+  z-index: var(--footer-z-index, 99);
+  padding: var(--footer-padding, 0 24px);
+  font-family: var(--footer-font-family, 'Roboto, Arial, sans-serif');
+  transition: var(--footer-transition, background 0.3s, color 0.3s);
+  border-radius: var(--footer-border-radius, 0);
+}
+
+// Main Content Styles
+.main-content {
+  margin-top: var(--header-height);
+  margin-left: var(--sidebar-width, 240px);
+  margin-bottom: var(--footer-height, 48px);
+  padding: var(--main-content-padding, 32px);
+  min-height: calc(100vh - var(--header-height) - var(--footer-height, 48px));
+  background: var(--main-content-bg, #fff);
+  color: var(--main-content-color, #212121);
+  font-family: var(--main-content-font-family, 'Roboto, Arial, sans-serif');
+  border-radius: var(--main-content-border-radius, 8px);
+  transition: var(--main-content-transition, background 0.3s, color 0.3s);
+}

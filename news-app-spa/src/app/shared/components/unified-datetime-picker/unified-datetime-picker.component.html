@@ -1,0 +1,39 @@
+<mat-form-field class="unified-datetime-picker-field" [appearance]="'outline'">
+  <mat-label *ngIf="label">{{ label }}</mat-label>
+
+  <input
+    matInput
+    [formControl]="displayControl"
+    [placeholder]="placeholder"
+    [readonly]="true"
+    (click)="openDatetimePickerDialog()"
+    class="datetime-input"
+  />
+
+  <button
+    *ngIf="hasValue"
+    matSuffix
+    mat-icon-button
+    type="button"
+    (click)="clearDateTime(); $event.stopPropagation()"
+    class="clear-button"
+    aria-label="Clear date and time"
+  >
+    <mat-icon>close</mat-icon>
+  </button>
+
+  <button
+    *ngIf="!hasValue"
+    matSuffix
+    mat-icon-button
+    type="button"
+    (click)="openDatetimePickerDialog(); $event.stopPropagation()"
+    class="open-picker-button"
+    aria-label="Open date and time picker"
+  >
+    <mat-icon>schedule</mat-icon>
+  </button>
+
+  <mat-hint *ngIf="hint">{{ hint }}</mat-hint>
+  <mat-error *ngIf="errorMessage">{{ errorMessage }}</mat-error>
+</mat-form-field>

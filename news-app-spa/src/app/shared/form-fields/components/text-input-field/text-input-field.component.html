@@ -1,0 +1,77 @@
+<!-- TextInputFieldComponent Template -->
+<!-- Material Design 3 Outline Form Field with Icon + Clear Button -->
+
+<mat-form-field
+  appearance="outline"
+  [class]="fieldContainerClass"
+  [class.has-value]="value"
+  [class.has-icon]="icon"
+>
+  <!-- Field Label -->
+  <mat-label [id]="fieldId + '-label'">
+    {{ label }}
+    <!-- Required Indicator -->
+    <span *ngIf="required" class="required-indicator" aria-label="required">
+      *
+    </span>
+  </mat-label>
+
+  <!-- Input Element -->
+  <input
+    #inputElement
+    matInput
+    [type]="type"
+    [value]="value"
+    [disabled]="disabled"
+    [required]="required"
+    [attr.minlength]="minLength"
+    [attr.maxlength]="maxLength"
+    [pattern]="pattern"
+    [attr.aria-label]="effectiveAriaLabel"
+    [attr.aria-describedby]="hasErrorMessage ? ariaDescribedBy : null"
+    [attr.aria-invalid]="!!hasErrorMessage"
+    (input)="onInputChange($any($event).target.value)"
+    (focus)="onFocus()"
+    (blur)="onBlur()"
+    (keydown)="onKeydown($event)"
+  />
+
+  <!-- Hint Text (shows below input when focused) -->
+  <mat-hint *ngIf="hint" align="start">
+    {{ hint }}
+  </mat-hint>
+
+  <!-- Prefix Icon (shown when input is empty) -->
+  <mat-icon
+    *ngIf="shouldShowIcon"
+    matPrefix
+    class="prefix-icon"
+    [attr.aria-hidden]="'true'"
+  >
+    {{ icon }}
+  </mat-icon>
+
+  <!-- Suffix: Clear Button or Icon -->
+  <button
+    *ngIf="shouldShowClearButton"
+    mat-icon-button
+    matSuffix
+    type="button"
+    (click)="onClear()"
+    [attr.aria-label]="'Clear ' + label"
+    class="clear-button"
+    tabindex="0"
+  >
+    <mat-icon>close</mat-icon>
+  </button>
+
+  <!-- Error Message (shown only when has error) -->
+  <mat-error *ngIf="hasErrorMessage" [id]="ariaDescribedBy">
+    {{ hasErrorMessage }}
+  </mat-error>
+
+  <!-- Hint: Character Counter (optional) -->
+  <mat-hint *ngIf="maxLength < 255" align="end">
+    {{ charCount.current }} / {{ charCount.max }}
+  </mat-hint>
+</mat-form-field>

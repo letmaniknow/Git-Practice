@@ -1,0 +1,254 @@
+/* News Category Delete Dialog Styles */
+
+.delete-dialog-container {
+  display: flex;
+  flex-direction: column;
+  min-width: 450px;
+  max-width: 100%;
+
+  @media (max-width: 600px) {
+    min-width: 90vw;
+  }
+}
+
+/* Dialog Header */
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--outline-variant, #e0e0e0);
+  margin: 0 !important;
+
+  &.delete-header {
+    background-color: rgba(211, 47, 47, 0.05);
+    border-bottom-color: rgba(211, 47, 47, 0.2);
+  }
+
+  .warning-icon {
+    color: var(--error, #d32f2f);
+    margin-right: 0.75rem;
+    font-size: 1.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .dialog-title {
+    margin: 0;
+    flex: 1;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--error, #d32f2f);
+  }
+
+  .close-button {
+    &:hover {
+      background-color: var(--surface-container, #f5f5f5);
+    }
+  }
+}
+
+/* Dialog Content */
+.dialog-content {
+  padding: 1.5rem;
+  max-height: 60vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  @media (max-width: 600px) {
+    max-height: 70vh;
+  }
+}
+
+/* Confirmation Message */
+.confirmation-message {
+  background-color: rgba(211, 47, 47, 0.08);
+  border-left: 4px solid var(--error, #d32f2f);
+  padding: 0.875rem 1rem;
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+
+  p {
+    margin: 0;
+    color: var(--error, #d32f2f);
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+}
+
+/* Category Details Card */
+.category-details-card {
+  background-color: var(--surface-container, #f5f5f5);
+  border: 1px solid var(--outline-variant, #e0e0e0);
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Detail Row */
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .detail-label {
+    font-weight: 600;
+    color: var(--text-primary, #333);
+    min-width: 120px;
+    white-space: nowrap;
+  }
+
+  .detail-value {
+    color: var(--text-secondary, #666);
+    font-size: 0.9rem;
+    text-align: right;
+    flex: 1;
+    word-break: break-word;
+
+    &.slug-value {
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      background-color: rgba(0, 0, 0, 0.05);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    &.description-value {
+      max-height: 100px;
+      overflow-y: auto;
+      line-height: 1.4;
+    }
+  }
+}
+
+/* Warning Notice */
+.warning-notice {
+  display: flex;
+  gap: 0.75rem;
+  background-color: rgba(255, 193, 7, 0.08);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 0.5rem;
+
+  .notice-icon {
+    color: var(--warning, #ffc107);
+    flex-shrink: 0;
+    font-size: 1.25rem;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.125rem;
+  }
+
+  .notice-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1;
+
+    .notice-title {
+      margin: 0;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #f57f17;
+    }
+
+    .notice-description {
+      margin: 0;
+      font-size: 0.8rem;
+      color: #f57f17;
+      opacity: 0.8;
+    }
+  }
+}
+
+/* Dialog Actions */
+.dialog-actions {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--outline-variant, #e0e0e0);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin: 0 !important;
+
+  button {
+    min-width: 100px;
+
+    &.cancel-button {
+      &:hover:not([disabled]) {
+        background-color: var(--surface-container, #f5f5f5);
+      }
+    }
+
+    &.delete-button {
+      background-color: var(--error, #d32f2f);
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+}
+
+/* Spinner Icon */
+.spinner-icon {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 0.5rem;
+
+  mat-spinner {
+    display: inline !important;
+  }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .delete-dialog-container {
+    min-width: unset;
+  }
+
+  .dialog-header {
+    padding: 1rem;
+
+    .dialog-title {
+      font-size: 1.1rem;
+    }
+  }
+
+  .dialog-content {
+    padding: 1rem;
+  }
+
+  .dialog-actions {
+    padding: 0.75rem 1rem;
+
+    button {
+      flex: 1;
+    }
+  }
+
+  .detail-row {
+    flex-direction: column;
+    gap: 0.25rem;
+
+    .detail-label {
+      min-width: auto;
+      white-space: normal;
+    }
+
+    .detail-value {
+      text-align: left;
+    }
+  }
+}

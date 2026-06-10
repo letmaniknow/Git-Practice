@@ -1,0 +1,190 @@
+<!-- NEWS SEARCH FILTERS COMPONENT TEMPLATE -->
+<!-- MD3 Filter Bar: form fields for data entry, toggle group for mode,
+     mat-select for multi-select status, chips for active-filter display -->
+
+<div class="news-search-filters">
+  <!-- ROW 1: All filter controls in a single horizontal bar -->
+  <div class="filters-row">
+    <!-- Search Text (using TextInputFieldComponent) -->
+    <app-text-input-field
+      [value]="searchTextInput"
+      (valueChanged)="onSearchTextChanged($event)"
+      label="Search news"
+      placeholder="Search by"
+      hint="Enter keyword to search"
+      [icon]="searchTextInput ? '' : 'search'"
+      [showClearButton]="!!searchTextInput"
+      (cleared)="onClearSearchClicked()"
+      class="search-input-field"
+      aria-label="Search news"
+    ></app-text-input-field>
+
+    <!-- Search Mode (exclusive toggle → mat-button-toggle-group, the MD3 standard) -->
+    <mat-button-toggle-group
+      [value]="searchModeSelected"
+      (change)="onSearchModeSelected($event.value)"
+      aria-label="Search scope"
+      class="search-mode-toggle"
+    >
+      <mat-button-toggle value="all">All Fields</mat-button-toggle>
+      <mat-button-toggle value="title">Title</mat-button-toggle>
+      <mat-button-toggle value="content">Content</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <!-- Workflow Status (multi-select → mat-select multiple, the MD3 standard) -->
+    <!-- Workflow Status (using MultiSelectFieldComponent) -->
+    <app-multi-select-field
+      [selectedValues]="workflowStatusesSelected"
+      (selectionChanged)="onWorkflowStatusesChanged($event)"
+      label="Status"
+      placeholder="Select statuses..."
+      [options]="workflowStatusOptions"
+      hint="Filter by workflow status"
+      class="status-select-field"
+      aria-label="Filter by workflow status"
+    ></app-multi-select-field>
+
+    <!-- Category (using SelectFieldComponent) -->
+    <app-select-field
+      [selectedValue]="categoryIdSelected"
+      (selectionChanged)="onCategorySelected($event)"
+      label="Category"
+      placeholder="Choose category"
+      [options]="categoryOptions"
+      [allowNullOption]="true"
+      nullOptionLabel="All"
+      hint="Filter by category"
+      class="category-select-field"
+      aria-label="Filter by news category"
+    ></app-select-field>
+
+    <!-- Date Range — native mat-date-range-input with [ngModel] binding (works with OnPush) -->
+    <div class="date-range-field">
+      <mat-form-field appearance="outline">
+        <mat-label>Date Filter</mat-label>
+        <mat-date-range-input [rangePicker]="rangePicker">
+          <input
+            matStartDate
+            placeholder="From"
+            [ngModel]="createdDateFrom"
+            (dateChange)="onCreatedDateFromChanged($event.value)"
+          />
+          <input
+            matEndDate
+            placeholder="To"
+            [ngModel]="createdDateTo"
+            (dateChange)="onCreatedDateToChanged($event.value)"
+          />
+        </mat-date-range-input>
+        <mat-datepicker-toggle
+          matSuffix
+          [for]="rangePicker"
+        ></mat-datepicker-toggle>
+        <button
+          *ngIf="createdDateFrom || createdDateTo"
+          matIconSuffix
+          mat-icon-button
+          (click)="onClearDateRangeClicked()"
+          aria-label="Clear date range"
+          type="button"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+        <mat-date-range-picker #rangePicker></mat-date-range-picker>
+      </mat-form-field>
+    </div>
+
+    <!-- Created By Admin (using AutocompleteFieldComponent) -->
+    <app-autocomplete-field
+      [inputValue]="adminUserSearchText"
+      (inputChanged)="onAdminUserSearchChanged($event)"
+      [selectedItem]="selectedAdminUser"
+      (itemSelected)="onAdminUserSelected($event)"
+      label="Created By"
+      [filteredItems]="adminUsersFiltered"
+      [displayProperty]="'label'"
+      [isLoading]="isAdminUsersLoading"
+      placeholder="Name or email..."
+      hint="Filter by creator"
+      (cleared)="onClearAdminUserFilterClicked()"
+      class="admin-user-field"
+      aria-label="Find admin user who created news"
+    ></app-autocomplete-field>
+  </div>
+
+  <!-- ROW 2: Active filter chips (MD3 pattern — only shown when filters are applied) -->
+  <div class="active-filters-row" *ngIf="hasAnyFiltersApplied">
+    <span class="active-label">Active:</span>
+
+    <mat-chip-set>
+      <!-- Search text chip -->
+      <mat-chip
+        *ngIf="searchTextInput.trim()"
+        (removed)="onClearSearchClicked()"
+      >
+        "{{ searchTextInput }}"
+        <button matChipRemove aria-label="Remove search filter">
+          <mat-icon>cancel</mat-icon>
+        </button>
+      </mat-chip>
+
+      <!-- One chip per selected status -->
+      <mat-chip
+        *ngFor="let status of workflowStatusesSelected"
+        (removed)="onRemoveStatusChip(status)"
+      >
+        {{ getStatusDisplayName(status) }}
+        <button matChipRemove aria-label="Remove status filter">
+          <mat-icon>cancel</mat-icon>
+        </button>
+      </mat-chip>
+
+      <!-- Category chip -->
+      <mat-chip *ngIf="categoryIdSelected" (removed)="onCategorySelected(null)">
+        {{ getCategoryNameById(categoryIdSelected) }}
+        <button matChipRemove aria-label="Remove category filter">
+          <mat-icon>cancel</mat-icon>
+        </button>
+      </mat-chip>
+
+      <!-- Date range chip — single chip covers both From and To -->
+      <mat-chip
+        *ngIf="createdDateFrom || createdDateTo"
+        (removed)="onClearDateRangeClicked()"
+      >
+        <mat-icon matChipAvatar>date_range</mat-icon>
+        {{ createdDateFrom | date: "dd-MMM-yyyy" }}
+        <ng-container *ngIf="createdDateFrom && createdDateTo">
+          –
+        </ng-container>
+        {{ createdDateTo | date: "dd-MMM-yyyy" }}
+        <button matChipRemove aria-label="Remove date range filter">
+          <mat-icon>cancel</mat-icon>
+        </button>
+      </mat-chip>
+
+      <!-- Admin user chip -->
+      <mat-chip
+        *ngIf="createdByAdminUserIdSelected"
+        (removed)="onClearAdminUserFilterClicked()"
+      >
+        {{ createdByAdminUserNameDisplay }}
+        <button matChipRemove aria-label="Remove admin filter">
+          <mat-icon>cancel</mat-icon>
+        </button>
+      </mat-chip>
+    </mat-chip-set>
+
+    <!-- Clear all -->
+    <button
+      mat-button
+      color="warn"
+      (click)="onClearAllFiltersClicked()"
+      class="clear-all-button"
+      aria-label="Clear all filters"
+    >
+      <mat-icon>clear_all</mat-icon>
+      Clear all
+    </button>
+  </div>
+</div>

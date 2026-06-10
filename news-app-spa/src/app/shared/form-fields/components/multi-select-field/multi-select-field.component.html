@@ -1,0 +1,128 @@
+<!-- MultiSelectFieldComponent Template -->
+<!-- Smart Material form field with multi-select and chips display -->
+
+<!-- Form Field with Material outline style -->
+<mat-form-field
+  [class]="fieldContainerClass"
+  class="multi-select-field"
+  appearance="outline"
+  [attr.id]="fieldId"
+>
+  <!-- Label (dynamic with required indicator) -->
+  <mat-label *ngIf="label">
+    {{ label }}
+    <span *ngIf="required" class="required-indicator" aria-label="required">
+      *
+    </span>
+  </mat-label>
+
+  <!-- Multi-select trigger -->
+  <mat-select
+    [value]="selectedValues"
+    (selectionChange)="onSelectionChange($event.value)"
+    (focus)="onFocus()"
+    (blur)="onBlur()"
+    [disabled]="disabled"
+    [compareWith]="compareWith"
+    multiple
+    [attr.aria-label]="effectiveAriaLabel"
+    [attr.aria-describedby]="ariaDescribedBy"
+    [attr.aria-invalid]="!!hasErrorMessage"
+    [attr.aria-required]="required"
+  >
+    <!-- Selection count placeholder -->
+    <mat-select-trigger class="selection-count">
+      {{ selectionCountText }}
+    </mat-select-trigger>
+
+    <!-- Options with checkboxes -->
+    <ng-container
+      *ngFor="let option of displayOptions; trackBy: trackByOptionValue"
+    >
+      <mat-option
+        [value]="option.value"
+        [disabled]="
+          option.disabled ||
+          (isAtMaxSelections() && !isValueSelected(option.value))
+        "
+        [attr.aria-label]="option.label"
+      >
+        <!-- Option icon (if provided) -->
+        <mat-icon *ngIf="option.icon" class="option-icon">
+          {{ option.icon }}
+        </mat-icon>
+
+        <!-- Option label -->
+        <span class="option-label">{{ option.label }}</span>
+
+        <!-- Option description (if provided) -->
+        <span *ngIf="option.description" class="option-description">
+          {{ option.description }}
+        </span>
+      </mat-option>
+    </ng-container>
+
+    <!-- Empty state -->
+    <mat-optgroup *ngIf="displayOptions.length === 0" class="no-options">
+      <span class="no-options-text">No options available</span>
+    </mat-optgroup>
+  </mat-select>
+
+  <!-- Error message (if any) -->
+  <mat-error
+    *ngIf="hasErrorMessage"
+    [id]="ariaDescribedBy"
+    class="error-message"
+  >
+    {{ hasErrorMessage }}
+  </mat-error>
+
+  <!-- Hint Text (general hint, shows below select when focused) -->
+  <mat-hint *ngIf="hint" align="start">
+    {{ hint }}
+  </mat-hint>
+
+  <!-- Hint text (min/max selections) -->
+  <mat-hint *ngIf="selectionHintText" class="selection-hint">
+    {{ selectionHintText }}
+  </mat-hint>
+</mat-form-field>
+
+<!-- Selected items as removable chips -->
+<div
+  *ngIf="showSelectedChips"
+  class="selected-chips-container"
+  role="region"
+  aria-label="Selected items"
+>
+  <!-- Clear All button -->
+  <button
+    *ngIf="showClearAllButton"
+    mat-button
+    (click)="onClearAll()"
+    class="clear-all-button"
+    type="button"
+    aria-label="Clear all selections"
+  >
+    <mat-icon>clear_all</mat-icon>
+    Clear All
+  </button>
+
+  <!-- Individual chips for selected items -->
+  <mat-chip-set>
+    <mat-chip
+      *ngFor="let value of selectedValues; trackBy: trackByValue"
+      [color]="chipColor"
+      class="selected-chip"
+      [removable]="true"
+      (removed)="onChipRemove(value)"
+      [attr.aria-label]="getLabel(value)"
+    >
+      <!-- Chip label -->
+      {{ getLabel(value) }}
+
+      <!-- Remove button (X icon) -->
+      <mat-icon matChipRemove class="chip-remove-icon">close</mat-icon>
+    </mat-chip>
+  </mat-chip-set>
+</div>

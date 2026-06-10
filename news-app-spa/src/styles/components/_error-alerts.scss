@@ -1,0 +1,173 @@
+/**
+ * Error Alert Styles
+ * Centralized styling for all error alerts across the application
+ * Single source of truth for error alert appearance
+ *
+ * USAGE: Import in component CSS or global styles
+ * @import '@app/styles/components/error-alerts';
+ *
+ * VARIABLES USED:
+ * - --color-error: Primary error color (default: #ef4444)
+ * - --color-text-primary: Primary text color (default: #1f2937)
+ * - --spacing-unit: Base spacing unit (default: 4px, so 16px = 4 units)
+ */
+
+.loading-error-alerts {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.error-alert {
+  border-left: 4px solid var(--color-error, #ef4444);
+  background-color: rgba(239, 68, 68, 0.05);
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    .retry-button:not(:disabled) {
+      background-color: rgba(239, 68, 68, 0.1);
+    }
+  }
+
+  &.error-alert--loading {
+    opacity: 0.8;
+  }
+
+  mat-card-content {
+    padding: 16px;
+  }
+}
+
+.error-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+.error-icon {
+  color: var(--color-error, #ef4444);
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  min-height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.error-message {
+  flex: 1;
+  min-width: 0;
+  color: var(--color-text-primary, #1f2937);
+  font-size: 14px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.retry-button {
+  border: 1px solid var(--color-error, #ef4444);
+  color: var(--color-error, #ef4444);
+  white-space: nowrap;
+  min-width: 100px;
+  flex-shrink: 0;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 4px;
+  background-color: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  &:not(:disabled):hover {
+    background-color: rgba(239, 68, 68, 0.08);
+    border-color: var(--color-error, #ef4444);
+  }
+
+  &:not(:disabled):active {
+    background-color: rgba(239, 68, 68, 0.15);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+
+    mat-icon {
+      animation: spin-icon 2s linear infinite;
+    }
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+    min-width: unset;
+  }
+}
+
+@keyframes spin-icon {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/**
+ * ACCESSIBILITY
+ */
+.error-alert[role='alert'] {
+  /* Ensure alert region is announced by screen readers */
+  position: relative;
+}
+
+.error-alert[aria-busy='true'] {
+  /* Indicate loading state to assistive tech */
+  opacity: 0.8;
+}
+
+/**
+ * DARK MODE SUPPORT (Optional)
+ * When dark mode is enabled, adjust colors
+ */
+@media (prefers-color-scheme: dark) {
+  .error-alert {
+    background-color: rgba(239, 68, 68, 0.15);
+    border-left-color: #ff6b6b;
+  }
+
+  .error-icon {
+    color: #ff6b6b;
+  }
+
+  .error-message {
+    color: #f3f4f6;
+  }
+
+  .retry-button {
+    border-color: #ff6b6b;
+    color: #ff6b6b;
+
+    &:not(:disabled):hover {
+      background-color: rgba(255, 107, 107, 0.15);
+    }
+  }
+}

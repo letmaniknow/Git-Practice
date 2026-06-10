@@ -1,0 +1,64 @@
+<div class="create-page-container">
+  <!-- Header -->
+  <header class="page-header">
+    <div class="header-content">
+      <nav class="breadcrumb">
+        <a routerLink="/news" class="breadcrumb-link">News</a>
+        <span class="breadcrumb-separator">›</span>
+        <span class="breadcrumb-current">Create</span>
+      </nav>
+      <h1 class="page-title">Create News</h1>
+      <p class="page-subtitle">Fill in the details below to create new news.</p>
+    </div>
+  </header>
+
+  <!-- Error Display -->
+  <div class="error-banner" *ngIf="error">
+    <div class="error-content">
+      <span class="error-icon">⚠️</span>
+      <span class="error-message">{{ error }}</span>
+      <button
+        class="error-close"
+        (click)="error = null"
+        aria-label="Close error"
+      >
+        ✕
+      </button>
+    </div>
+  </div>
+
+  <!-- Form Section -->
+  <main class="form-section">
+    <app-news-form
+      [isEditing]="false"
+      [isLoading]="isLoading"
+      (formSubmit)="onCreateNews($event)"
+      (formCancel)="onCancel()"
+    >
+    </app-news-form>
+  </main>
+
+  <!-- Help Section -->
+  <aside class="help-section" *ngIf="!isLoading">
+    <div class="help-card">
+      <h3 class="help-title">📝 Writing Tips</h3>
+      <ul class="help-list">
+        <li>Keep your title concise and descriptive (5-200 characters)</li>
+        <li>Write engaging content with at least 50 characters</li>
+        <li>Add relevant tags to help categorize your news</li>
+        <li>Include a compelling summary to attract readers</li>
+        <li>Choose the most appropriate category for your news</li>
+      </ul>
+    </div>
+
+    <div class="help-card">
+      <h3 class="help-title">🖼️ Image Guidelines</h3>
+      <ul class="help-list">
+        <li>Use high-quality images (recommended: 800x400px)</li>
+        <li>Ensure you have rights to use the image</li>
+        <li>Images should be relevant to your news content</li>
+        <li>Supported formats: JPG, PNG, WebP</li>
+      </ul>
+    </div>
+  </aside>
+</div>

@@ -1,0 +1,258 @@
+<div class="page-container">
+  <!-- Floating Language Toggle -->
+  <div class="floating-language-toggle" *ngIf="showFloatingToggle">
+    <mat-slide-toggle
+      [(ngModel)]="currentLanguageToggle"
+      (change)="toggleLanguage()"
+      color="primary"
+      [attr.aria-label]="'Switch language display'"
+      class="language-toggle"
+    >
+      {{ currentLanguage === "en" ? "English" : "Español" }}
+    </mat-slide-toggle>
+  </div>
+
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1>Browse News</h1>
+      <p class="page-subtitle">Discover and read the latest articles</p>
+    </div>
+    <div class="header-actions">
+      <mat-slide-toggle
+        [(ngModel)]="currentLanguageToggle"
+        (change)="toggleLanguage()"
+        color="primary"
+        [attr.aria-label]="'Switch language display'"
+        class="header-language-toggle"
+      >
+        <span class="toggle-label">{{
+          currentLanguage === "en" ? "EN" : "ES"
+        }}</span>
+      </mat-slide-toggle>
+      <button
+        mat-icon-button
+        (click)="openColumnCustomization()"
+        class="column-customize-button"
+        matTooltip="Customize columns"
+        aria-label="Customize columns"
+      >
+        <mat-icon>view_week</mat-icon>
+      </button>
+      <button
+        mat-raised-button
+        color="primary"
+        [routerLink]="['/news/create']"
+        class="create-button"
+        aria-label="Create new news"
+      >
+        <mat-icon>add</mat-icon>
+        Create New Article
+      </button>
+    </div>
+  </div>
+
+  <!-- Search Section (Always Visible) -->
+  <div class="search-section">
+    <!-- NEWS SEARCH FILTERS COMPONENT - Handles all search & filter UI -->
+    <div class="search-filters-wrapper">
+      <app-news-search-filters
+        [currentFiltersState]="currentFiltersState"
+        [availableCategories]="categories"
+        [availableWorkflowStatuses]="workflowStatusOptions"
+        (filtersChanged)="onFiltersChanged($event)"
+      ></app-news-search-filters>
+    </div>
+
+    <!-- Right: Results count & Page size (inline with filter row) -->
+    <div class="toolbar-right" *ngIf="totalElements > 0">
+      <!-- Results summary -->
+      <span class="results-count">
+        {{ (currentPage - 1) * pageSize + 1 }}–{{
+          Math.min(currentPage * pageSize, totalElements)
+        }}
+        of {{ totalElements }}
+      </span>
+
+      <!-- Page size selector -->
+      <mat-form-field appearance="outline" class="page-size-select">
+        <mat-select
+          [value]="pageSize"
+          (selectionChange)="onPageSizeChange($event)"
+          aria-label="Select items per page"
+        >
+          <mat-option *ngFor="let size of pageSizeOptions" [value]="size">
+            {{ size }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       Filter Errors Section - Industry Standard: Errors below search bar
+       This is where users see what went wrong with filter/category loading
+       ========================================================================= -->
+  <div
+    class="filter-errors-section"
+    *ngIf="categoriesError || workflowStatusesError"
+  >
+    <div class="error-alerts-container">
+      <!-- Categories Error Alert -->
+      <app-error-alert
+        title="Failed to Load Categories"
+        [error]="categoriesError"
+        [isRetryLoading]="isLoadingCategories"
+        [showRetry]="true"
+        [showDismiss]="true"
+        (onRetry)="loadCategories()"
+        (onDismiss)="onDismissCategoriesError()"
+      ></app-error-alert>
+
+      <!-- Workflow Statuses Error Alert -->
+      <app-error-alert
+        title="Failed to Load Statuses"
+        [error]="workflowStatusesError"
+        [isRetryLoading]="isLoadingWorkflowStatuses"
+        [showRetry]="true"
+        [showDismiss]="true"
+        (onRetry)="loadWorkflowStatuses()"
+        (onDismiss)="onDismissWorkflowStatusesError()"
+      ></app-error-alert>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <!-- Content Container - Always Rendered (never hidden) -->
+  <div class="content-container">
+    <!-- News Loading Error - Industry Standard: Error above content area -->
+    <div class="article-error-section" *ngIf="error && !isLoading">
+      <app-error-alert
+        title="Failed to Load News"
+        [error]="error"
+        [isRetryLoading]="isLoading"
+        [showRetry]="true"
+        [showDismiss]="true"
+        retryLabel="Reload News"
+        retryLoadingLabel="Reloading..."
+        (onRetry)="loadNews()"
+        (onDismiss)="onDismissNewsError()"
+      ></app-error-alert>
+    </div>
+    <!-- Loading Overlay - Shows over results without hiding anything -->
+    <div *ngIf="isLoading" class="loading-overlay">
+      <app-loading
+        [message]="'Loading news'"
+        [size]="'large'"
+        [type]="'spinner'"
+        [overlay]="true"
+      ></app-loading>
+    </div>
+
+    <!-- News List - Always present, just empty when no results -->
+    <div class="news-list" *ngIf="filteredNewsList.length > 0 && !error">
+      <app-news-card
+        *ngFor="let news of filteredNewsList; trackBy: trackByNewsId"
+        [news]="news"
+        [showActions]="true"
+        (view)="onCardView($event)"
+        (edit)="onCardEdit($event)"
+        (delete)="onCardDelete($event)"
+        (togglePublish)="onCardTogglePublish($event)"
+      ></app-news-card>
+    </div>
+
+    <!-- Empty State - No news created yet -->
+    <div
+      class="empty-state"
+      *ngIf="newsList.length === 0 && !isLoading && !error"
+    >
+      <div class="empty-icon">
+        <mat-icon>newspaper</mat-icon>
+      </div>
+      <h3>No news found</h3>
+      <p>Get started by creating your first news.</p>
+      <button class="btn-primary" (click)="createNews()">
+        Create First Article
+      </button>
+    </div>
+
+    <!-- No Search Results - News exist but filtered out -->
+    <div
+      class="empty-state"
+      *ngIf="
+        newsList.length > 0 &&
+        filteredNewsList.length === 0 &&
+        !isLoading &&
+        !error
+      "
+    >
+      <div class="empty-icon">
+        <mat-icon>search_off</mat-icon>
+      </div>
+      <h3>No news match your search</h3>
+      <p>Try adjusting your search criteria or clearing the filters.</p>
+      <button class="btn-secondary" (click)="resetAllFilters()">
+        Clear Filters
+      </button>
+    </div>
+
+    <!-- Pagination Controls (Bottom) -->
+    <div
+      class="pagination-section"
+      *ngIf="!isLoading && !error && totalPages > 1"
+    >
+      <div class="pagination-controls">
+        <button
+          class="pagination-btn"
+          [disabled]="currentPage === 1"
+          (click)="goToFirstPage()"
+          title="First Page"
+          aria-label="Go to first page"
+        >
+          <mat-icon>skip_previous</mat-icon>
+        </button>
+        <button
+          class="pagination-btn"
+          [disabled]="currentPage === 1"
+          (click)="goToPreviousPage()"
+          title="Previous Page"
+          aria-label="Go to previous page"
+        >
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <button
+          *ngFor="let page of getPageNumbers()"
+          class="pagination-btn page-number"
+          [class.active]="page === currentPage"
+          (click)="onPageChange(page)"
+          [attr.aria-label]="'Go to page ' + page"
+          [attr.aria-current]="page === currentPage ? 'page' : null"
+        >
+          {{ page }}
+        </button>
+        <button
+          class="pagination-btn"
+          [disabled]="currentPage === totalPages"
+          (click)="goToNextPage()"
+          title="Next Page"
+          aria-label="Go to next page"
+        >
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+        <button
+          class="pagination-btn"
+          [disabled]="currentPage === totalPages"
+          (click)="goToLastPage()"
+          title="Last Page"
+          aria-label="Go to last page"
+        >
+          <mat-icon>skip_next</mat-icon>
+        </button>
+      </div>
+      <div class="pagination-summary">
+        Page {{ currentPage }} of {{ totalPages }}
+      </div>
+    </div>
+  </div>
+</div>

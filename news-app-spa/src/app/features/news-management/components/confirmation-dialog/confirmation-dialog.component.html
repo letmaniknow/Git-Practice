@@ -1,0 +1,60 @@
+<div
+  class="dialog-overlay"
+  *ngIf="isOpen"
+  (click)="onBackdropClick($event)"
+  (keydown)="onKeyDown($event)"
+  role="dialog"
+  aria-modal="true"
+  [attr.aria-labelledby]="'dialog-title'"
+  [attr.aria-describedby]="'dialog-message'"
+  [tabindex]="isOpen ? 0 : -1"
+  class="dialog-overlay"
+  [class]="getStatusClass()"
+>
+  <div class="dialog-container">
+    <!-- Dialog Header -->
+    <div class="dialog-header">
+      <mat-icon class="dialog-icon" [attr.aria-hidden]="true">
+        {{ getIconForType() }}
+      </mat-icon>
+      <h2 id="dialog-title" class="dialog-title">{{ title }}</h2>
+    </div>
+
+    <!-- Dialog Body -->
+    <div class="dialog-body">
+      <p id="dialog-message" class="dialog-message">{{ message }}</p>
+    </div>
+
+    <!-- Dialog Footer (Actions) -->
+    <div class="dialog-footer">
+      <button
+        mat-stroked-button
+        type="button"
+        (click)="onCancel()"
+        [disabled]="isLoading"
+        [attr.aria-label]="cancelText"
+        class="cancel-button"
+      >
+        {{ cancelText }}
+      </button>
+
+      <button
+        mat-raised-button
+        [color]="type === 'danger' ? 'warn' : 'primary'"
+        type="button"
+        (click)="onConfirm()"
+        [disabled]="isLoading"
+        [attr.aria-label]="confirmText"
+        class="confirm-button"
+      >
+        <mat-icon *ngIf="isLoading" class="spinner">
+          <mat-spinner diameter="20" color="accent"></mat-spinner>
+        </mat-icon>
+        <mat-icon *ngIf="!isLoading && type === 'danger'" class="confirm-icon">
+          delete
+        </mat-icon>
+        <span> {{ confirmText }} </span>
+      </button>
+    </div>
+  </div>
+</div>

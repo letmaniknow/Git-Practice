@@ -1,0 +1,115 @@
+<!-- NEWS BULK ACTIONS TOOLBAR COMPONENT TEMPLATE -->
+<!-- Only visible when items are selected -->
+
+<div class="news-bulk-actions-toolbar" *ngIf="shouldShowToolbar">
+  <!-- LEFT SECTION: Selection Controls -->
+  <div class="toolbar-section selection-section">
+    <!-- Select All Checkbox -->
+    <mat-checkbox
+      [checked]="isSelectAllChecked"
+      [indeterminate]="isSelectAllIndeterminate"
+      (change)="onSelectAllToggled($event.checked)"
+      [disabled]="isActionInProgress"
+      class="select-all-checkbox"
+      aria-label="Select all news items"
+    >
+      <span class="checkbox-label">Select All</span>
+    </mat-checkbox>
+
+    <!-- Selection Info Display -->
+    <div class="selection-info">
+      <span class="selection-count">{{ selectionPercentage }}%</span>
+      <span class="selection-description">{{ getSelectionDescription() }}</span>
+    </div>
+
+    <!-- Clear Selection Button -->
+    <button
+      mat-icon-button
+      (click)="onClearSelectionButtonClicked()"
+      [disabled]="isActionInProgress"
+      matTooltip="Deselect all items"
+      aria-label="Clear selection"
+      class="clear-selection-button"
+    >
+      <mat-icon>clear</mat-icon>
+    </button>
+  </div>
+
+  <!-- DIVIDER -->
+  <div class="toolbar-divider"></div>
+
+  <!-- RIGHT SECTION: Bulk Action Buttons -->
+  <div class="toolbar-section actions-section">
+    <!-- Soft Delete Selected Button (Recoverable) -->
+    <button
+      mat-raised-button
+      color="warn"
+      (click)="onBulkSoftDeleteNewsButtonClicked()"
+      [disabled]="selectedNewsIdsCount === 0 || isActionInProgress"
+      [matTooltip]="getDeleteButtonTooltip()"
+      class="bulk-action-button delete-button"
+      aria-label="Soft delete selected news items (recoverable)"
+    >
+      <mat-icon>delete</mat-icon>
+      <span class="action-label">Soft Delete</span>
+      <span class="action-count">{{ selectedNewsIdsCount }}</span>
+    </button>
+
+    <!-- Publish Selected Button -->
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onBulkPublishButtonClicked()"
+      [disabled]="selectedNewsIdsCount === 0 || isActionInProgress"
+      [matTooltip]="getPublishButtonTooltip()"
+      class="bulk-action-button publish-button"
+      aria-label="Publish selected news"
+    >
+      <mat-icon>publish</mat-icon>
+      <span class="action-label">Publish</span>
+      <span class="action-count">{{ selectedNewsIdsCount }}</span>
+    </button>
+
+    <!-- Unpublish Selected Button -->
+    <button
+      mat-raised-button
+      (click)="onBulkUnpublishButtonClicked()"
+      [disabled]="selectedNewsIdsCount === 0 || isActionInProgress"
+      [matTooltip]="getUnpublishButtonTooltip()"
+      class="bulk-action-button unpublish-button"
+      aria-label="Unpublish selected news"
+    >
+      <mat-icon>unpublished</mat-icon>
+      <span class="action-label">Unpublish</span>
+      <span class="action-count">{{ selectedNewsIdsCount }}</span>
+    </button>
+
+    <!-- More Actions Menu (for future Phase 4.2+ features) -->
+    <button
+      mat-icon-button
+      [matMenuTriggerFor]="moreActionsMenu"
+      [disabled]="selectedNewsIdsCount === 0 || isActionInProgress"
+      matTooltip="More bulk actions"
+      aria-label="More bulk actions menu"
+      class="more-actions-button"
+    >
+      <mat-icon>more_vert</mat-icon>
+    </button>
+
+    <mat-menu #moreActionsMenu="matMenu" class="bulk-actions-menu">
+      <button mat-menu-item (click)="onBulkChangeStatusRequested()">
+        <mat-icon>assignment</mat-icon>
+        <span>Change Status</span>
+      </button>
+      <!-- Additional Phase 4.2+ actions can be added here -->
+      <!-- <button mat-menu-item>Schedule Publish</button> -->
+      <!-- <button mat-menu-item>Export Selected</button> -->
+    </mat-menu>
+  </div>
+
+  <!-- LOADING INDICATOR (when action in progress) -->
+  <div *ngIf="isActionInProgress" class="action-in-progress-indicator">
+    <mat-icon class="spinner">hourglass_empty</mat-icon>
+    <span class="progress-text">Processing...</span>
+  </div>
+</div>

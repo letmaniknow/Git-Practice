@@ -1,0 +1,229 @@
+<div class="detail-page-container">
+  <!-- Loading State -->
+  <div class="loading-container" *ngIf="isLoading">
+    <div class="spinner"></div>
+    <p>Loading news...</p>
+  </div>
+
+  <!-- Error State -->
+  <div class="error-container" *ngIf="error && !isLoading">
+    <div class="error-content">
+      <span class="error-icon">⚠️</span>
+      <h2 class="error-title">Error Loading News</h2>
+      <p class="error-message">{{ error }}</p>
+      <button class="btn btn-primary" (click)="onBack()">Back to News</button>
+    </div>
+  </div>
+
+  <!-- Article Content -->
+  <article class="news-container" *ngIf="news && !isLoading">
+    <!-- Header Navigation -->
+    <header class="news-header">
+      <nav class="breadcrumb">
+        <button
+          class="back-btn"
+          (click)="onBack()"
+          aria-label="Back to news list"
+        >
+          ← Back to News
+        </button>
+      </nav>
+
+      <!-- Action Bar -->
+      <div class="action-bar">
+        <div class="action-group">
+          <button
+            class="action-btn edit-btn"
+            (click)="onEdit()"
+            title="Edit news"
+          >
+            ✏️ Edit
+          </button>
+
+          <button
+            class="action-btn delete-btn"
+            (click)="onDelete()"
+            title="Delete news"
+          >
+            > 🗑️ Delete
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- News Meta -->
+    <div class="news-meta">
+      <div class="meta-primary">
+        <span class="category-badge">{{ news.newsNewsCategoryId }}</span>
+        <span class="featured-badge" *ngIf="news.newsIsFeatured"
+          >⭐ Featured</span
+        >
+      </div>
+
+      <div class="meta-secondary">
+        <span class="author">👤 By {{ news.newsCreatedBy }}</span>
+        <span class="divider">•</span>
+        <span class="date" *ngIf="news.newsCreatedAt"
+          >📅 {{ formatDate(news.newsCreatedAt) }}</span
+        >
+      </div>
+    </div>
+
+    <!-- Engagement Stats -->
+    <div class="engagement-stats">
+      <div class="stat-item">
+        <span class="stat-icon eye-icon"></span>
+        <span class="stat-value">{{ news.newsViewCount | number }}</span>
+        <span class="stat-label">Views</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-icon heart-icon"></span>
+        <span class="stat-value">{{ news.newsLikeCount | number }}</span>
+        <span class="stat-label">Likes</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-icon share-icon"></span>
+        <span class="stat-value">{{ news.newsShareCount | number }}</span>
+        <span class="stat-label">Shares</span>
+      </div>
+
+      <div class="stat-divider"></div>
+
+      <button
+        class="stat-action-btn share-action"
+        (click)="shareNews()"
+        title="Share this news"
+      >
+        <span class="action-icon upload-icon"></span>
+        <span class="action-label">Share</span>
+      </button>
+
+      <a
+        *ngIf="news.newsSourceUrl"
+        [href]="news.newsSourceUrl"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="stat-action-btn source-action"
+        title="View original source"
+      >
+        <span class="action-icon source-icon"></span>
+        <span class="action-label">Source</span>
+      </a>
+    </div>
+
+    <!-- News Media (Image/Video) -->
+    <div class="news-hero" *ngIf="news.newsMediaFileName">
+      <!-- Image Display -->
+      <img
+        *ngIf="isImage(getMediaFileName())"
+        class="hero-image"
+        [src]="getMediaUrl(getMediaFileName())"
+        [alt]="news.newsTitleEn"
+        loading="lazy"
+        (error)="onImageError($event)"
+      />
+
+      <!-- Supported Video Display (MP4, WebM, OGG) -->
+      <div
+        *ngIf="isSupportedVideoFormat(getMediaFileName())"
+        class="video-container"
+      >
+        <video
+          class="hero-video"
+          controls
+          preload="metadata"
+          playsinline
+          (play)="onVideoPlay($event)"
+          (error)="onVideoError($event)"
+          (loadstart)="onVideoLoadStart($event)"
+          (canplay)="onVideoCanPlay($event)"
+        >
+          <source
+            [src]="getDirectVideoUrl(getMediaFileName())"
+            [type]="getVideoMimeType(getMediaFileName())"
+          />
+          Your browser does not support the video tag.
+        </video>
+
+        <p class="video-fallback">
+          <a [href]="getDirectVideoUrl(getMediaFileName())" target="_blank">
+            📹 Open video in new tab
+          </a>
+        </p>
+      </div>
+
+      <!-- Unsupported Video Format (AVI, MOV, WMV, etc.) -->
+      <div
+        *ngIf="isUnsupportedVideoFormat(getMediaFileName())"
+        class="unsupported-video-container"
+      >
+        <div class="unsupported-video-message">
+          <h4>🎬 Video File Available</h4>
+          <p>
+            This is a
+            <strong>{{
+              getFileExtension(getMediaFileName()).toUpperCase()
+            }}</strong>
+            video file. AVI and similar formats cannot be played directly in
+            browsers.
+          </p>
+          <div class="video-download-options">
+            <a
+              [href]="getDirectVideoUrl(getMediaFileName())"
+              class="download-button primary"
+              download
+            >
+              📥 Download Video
+            </a>
+            <a
+              [href]="getDirectVideoUrl(getMediaFileName())"
+              class="download-button secondary"
+              target="_blank"
+            >
+              🔗 Open in New Tab
+            </a>
+          </div>
+          <p class="format-note">
+            <small>
+              💡 To play this video, download it and use a media player like
+              VLC, Windows Media Player, or convert it to MP4 format.
+            </small>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- News Title -->
+    <h1 class="news-title">{{ news.newsTitleEn }}</h1>
+
+    <!-- News Content -->
+    <article class="news-content">
+      <div class="content-text" [innerHTML]="news.newsContentEn"></div>
+    </article>
+
+    <!-- News Tags (Remove this section since tags don't exist in new interface) -->
+    <!-- News Footer -->
+    <footer class="news-footer">
+      <div class="footer-actions">
+        <button class="btn btn-primary" (click)="onEdit()">✏️ Edit News</button>
+        <button class="btn btn-outline" (click)="onBack()">
+          ← Back to List
+        </button>
+      </div>
+    </footer>
+  </article>
+
+  <!-- Delete Confirmation Dialog -->
+  <app-confirmation-dialog
+    [isOpen]="showDeleteDialog"
+    [title]="'Delete News Article'"
+    [message]="getDeleteMessage()"
+    [confirmText]="'Delete'"
+    [cancelText]="'Cancel'"
+    [type]="'danger'"
+    [isLoading]="isLoading"
+    (confirm)="confirmDelete()"
+    (cancel)="cancelDelete()"
+  >
+  </app-confirmation-dialog>
+</div>

@@ -1,0 +1,12 @@
+<div class="global-error-container">
+  <app-error-alert
+    *ngIf="error"
+    [error]="error.message || ''"
+    [title]="errorTitle"
+    [icon]="errorIcon"
+    [showRetry]="false"
+    [showDismiss]="true"
+    (onDismiss)="onDismissError()"
+  ></app-error-alert>
+</div>
+<router-outlet></router-outlet>

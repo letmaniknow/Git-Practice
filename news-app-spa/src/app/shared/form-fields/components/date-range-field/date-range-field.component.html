@@ -1,0 +1,85 @@
+<!-- DateRangeFieldComponent Template -->
+<!-- Material's unified mat-date-range-input (industry standard) -->
+
+<mat-form-field
+  appearance="outline"
+  [class]="fieldContainerClass"
+  class="date-range-form-field"
+>
+  <!-- Field Label -->
+  <mat-label>
+    {{ label }}
+    <!-- Required Indicator -->
+    <span *ngIf="required" class="required-indicator" aria-label="required">
+      *
+    </span>
+  </mat-label>
+
+  <!-- Unified date range input with FROM and TO fields -->
+  <mat-date-range-input [formGroup]="dateRangeForm" [rangePicker]="picker">
+    <!-- FROM Date -->
+    <input
+      matStartDate
+      formControlName="start"
+      (dateChange)="onFromDateChange($event.value)"
+      [attr.aria-label]="'From date'"
+    />
+
+    <!-- Separator between FROM and TO -->
+    <span class="date-range-separator">–</span>
+
+    <!-- TO Date -->
+    <input
+      matEndDate
+      formControlName="end"
+      (dateChange)="onToDateChange($event.value)"
+      [attr.aria-label]="'To date'"
+    />
+  </mat-date-range-input>
+
+  <!-- Calendar icon to open picker -->
+  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+
+  <!-- Clear button -->
+  <button
+    *ngIf="showClearButton"
+    matIconSuffix
+    mat-icon-button
+    (click)="onClearDates()"
+    type="button"
+    [attr.aria-label]="'Clear date range'"
+    [disabled]="disabled"
+    matTooltip="Clear date range"
+  >
+    <mat-icon>close</mat-icon>
+  </button>
+
+  <!-- Error Message -->
+  <mat-error *ngIf="rangeErrorMessage" [id]="ariaDescribedBy">
+    {{ rangeErrorMessage }}
+  </mat-error>
+
+  <!-- Hint Text - shows first when field is focused -->
+  <mat-hint *ngIf="hint && !isRangeComplete()">
+    {{ hint }}
+  </mat-hint>
+
+  <!-- Range Status Hint -->
+  <mat-hint *ngIf="isRangeComplete()" class="range-complete-hint">
+    {{ getFromDateDisplay() }} to {{ getToDateDisplay() }}
+  </mat-hint>
+
+  <!-- Incomplete Range Hint -->
+  <mat-hint
+    *ngIf="
+      !isRangeComplete() &&
+      (dateRangeForm.get('start')?.value || dateRangeForm.get('end')?.value)
+    "
+    class="range-incomplete-hint"
+  >
+    Select both from and to dates
+  </mat-hint>
+
+  <!-- Date range picker -->
+  <mat-date-range-picker #picker></mat-date-range-picker>
+</mat-form-field>

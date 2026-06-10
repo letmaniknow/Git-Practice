@@ -1,0 +1,471 @@
+<!--
+  IMPORTANT: Only canonical/current field names from the backend/data model are used in this template.
+  Legacy/alternate field support is intentionally omitted for clarity and maintainability.
+  When adding new columns, update both this template and the column config, and provide name resolution if needed.
+-->
+<!--
+  Grid-based News List Table (future-proof, flexible, responsive)
+  This is a scaffold for the new architecture. It will be integrated step-by-step.
+-->
+<div class="news-grid-table-wrapper" role="table" aria-label="News List Table">
+  <div
+    class="news-grid-table-header news-grid-row"
+    role="row"
+    [ngStyle]="{ 'grid-template-columns': gridTemplateColumns }"
+  >
+    <div
+      *ngFor="let col of visibleColumns"
+      class="col-{{ col.id }} header-cell"
+      role="columnheader"
+      [matTooltip]="col.label"
+      matTooltipPosition="above"
+      [class.sortable]="col.id !== 'checkbox' && col.id !== 'actions'"
+      (click)="onHeaderClick(col)"
+      tabindex="{{ col.id !== 'checkbox' && col.id !== 'actions' ? 0 : -1 }}"
+      [attr.aria-sort]="
+        sortColumn === col.id
+          ? sortDirection === 'asc'
+            ? 'ascending'
+            : 'descending'
+          : null
+      "
+      [attr.aria-label]="
+        col.label +
+        (sortColumn === col.id
+          ? sortDirection === 'asc'
+            ? ', sorted ascending'
+            : ', sorted descending'
+          : '')
+      "
+      style="user-select: none; cursor: pointer"
+    >
+      <ng-container [ngSwitch]="col.id">
+        <ng-container *ngSwitchCase="'checkbox'">
+          <input
+            type="checkbox"
+            aria-label="Select all news items"
+            [checked]="isAllSelected"
+            (change)="onSelectAllChange($event)"
+          />
+        </ng-container>
+        <ng-container *ngSwitchDefault>
+          <span>{{ col.label }}</span>
+          <mat-icon
+            *ngIf="sortColumn === col.id"
+            class="sort-icon"
+            style="font-size: 16px; vertical-align: middle"
+            >{{
+              sortDirection === "asc" ? "arrow_upward" : "arrow_downward"
+            }}</mat-icon
+          >
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+  <div
+    class="news-grid-row"
+    role="row"
+    *ngFor="let newsItem of news; trackBy: trackByNewsId"
+    tabindex="0"
+    [attr.aria-label]="'News row for ' + getTitle(newsItem)"
+    [ngStyle]="{ 'grid-template-columns': gridTemplateColumns }"
+    [class.soft-deleted-row]="!!newsItem.newsDeletedAt"
+  >
+    <div
+      *ngFor="let col of visibleColumns"
+      class="col-{{ col.id }}"
+      role="cell"
+    >
+      <ng-container [ngSwitch]="col.id">
+        <ng-container *ngSwitchCase="'checkbox'">
+          <input
+            type="checkbox"
+            aria-label="Select news item"
+            [checked]="isRowSelected(newsItem.newsNewsId)"
+            (change)="onRowCheckboxChange($event, newsItem)"
+          />
+        </ng-container>
+        <ng-container *ngSwitchCase="'thumbnail'">
+          <img
+            *ngIf="getThumbnailUrl(newsItem)"
+            [src]="getThumbnailUrl(newsItem)"
+            class="thumbnail-image"
+            [alt]="
+              'Thumbnail for ' + (newsItem.newsTitleEn || newsItem.newsTitleEs)
+            "
+            (error)="onThumbnailError($event)"
+          />
+          <div
+            *ngIf="!getThumbnailUrl(newsItem)"
+            class="thumbnail-placeholder"
+            aria-label="No thumbnail"
+          >
+            <mat-icon>image_not_supported</mat-icon>
+          </div>
+        </ng-container>
+        <ng-container *ngSwitchCase="'title'">
+          <span>{{ getTitle(newsItem) }}</span>
+          <mat-chip
+            *ngIf="newsItem.newsDeletedAt"
+            color="warn"
+            class="deleted-badge"
+            selected
+            >Deleted</mat-chip
+          >
+        </ng-container>
+        <ng-container *ngSwitchCase="'category'">
+          {{ getCategoryNameById(newsItem.newsNewsCategoryId) }}
+        </ng-container>
+        <ng-container *ngSwitchCase="'status'">
+          <ng-container *ngIf="newsItem.newsWorkflowStatus as status">
+            <ng-container *ngIf="status | newsWorkflowBadge as badge">
+              <span
+                class="status-badge"
+                [style.background-color]="badge.backgroundColor"
+                [style.color]="badge.textColor"
+                [title]="badge.label"
+                role="status"
+              >
+                <span class="badge-text">{{ badge.label }}</span>
+              </span>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+        <ng-container *ngSwitchCase="'newsWorkflowStatus'">
+          <ng-container *ngIf="newsItem.newsWorkflowStatus as status">
+            <ng-container *ngIf="status | newsWorkflowBadge as badge">
+              <span
+                class="status-badge"
+                [style.background-color]="badge.backgroundColor"
+                [style.color]="badge.textColor"
+                [title]="badge.label"
+                role="status"
+              >
+                <mat-icon *ngIf="badge.icon" class="badge-icon">{{
+                  badge.icon
+                }}</mat-icon>
+                <span class="badge-text">{{ badge.label }}</span>
+              </span>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+        <ng-container *ngSwitchCase="'publishedAt'">
+          <span *ngIf="newsItem.newsPublishedAt; else notPublished">
+            {{ newsItem.newsPublishedAt | date: "dd-MMM-yyyy HH:mm" }}
+          </span>
+          <ng-template #notPublished>
+            <span class="empty-date" aria-label="Not published">—</span>
+          </ng-template>
+        </ng-container>
+        <ng-container *ngSwitchCase="'scheduledPublishAt'">
+          <span *ngIf="newsItem.newsScheduledPublishAt; else noSchedule">
+            {{ newsItem.newsScheduledPublishAt | date: "dd-MMM-yyyy HH:mm" }}
+          </span>
+          <ng-template #noSchedule>
+            <span class="empty-date" aria-label="No schedule">—</span>
+          </ng-template>
+        </ng-container>
+        <ng-container *ngSwitchCase="'createdBy'">
+          {{ getAdminUserNameById(newsItem.newsCreatedBy) }}
+        </ng-container>
+        <ng-container *ngSwitchCase="'newsPublishedBy'">
+          {{ getAdminUserNameById(newsItem.newsPublishedBy) }}
+        </ng-container>
+        <ng-container *ngSwitchCase="'featured'">
+          <mat-icon
+            *ngIf="newsItem.newsIsFeatured"
+            color="warn"
+            aria-label="Featured"
+            >star</mat-icon
+          >
+          <mat-icon
+            *ngIf="!newsItem.newsIsFeatured"
+            color="disabled"
+            aria-label="Not featured"
+            >star_outline</mat-icon
+          >
+        </ng-container>
+        <ng-container *ngSwitchCase="'actions'">
+          <div style="display: flex; align-items: center; gap: 4px">
+            <button
+              mat-icon-button
+              aria-label="View details"
+              matTooltip="View details"
+              (click)="navigateToView(newsItem.newsNewsId)"
+            >
+              <mat-icon>visibility</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              aria-label="Edit news"
+              matTooltip="Edit news"
+              (click)="navigateToEdit(newsItem.newsNewsId)"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              [matMenuTriggerFor]="actionMenu"
+              aria-label="More actions"
+              matTooltip="More actions"
+            >
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #actionMenu="matMenu">
+              <!-- Core actions -->
+              <button
+                mat-menu-item
+                aria-label="Clone news"
+                (click)="onCloneNews(newsItem)"
+                [disabled]="!!newsItem.newsDeletedAt"
+              >
+                <mat-icon>content_copy</mat-icon>
+                <span>Clone News</span>
+              </button>
+              <button
+                mat-menu-item
+                aria-label="Publish news"
+                (click)="onPublishNews(newsItem)"
+                [disabled]="
+                  newsItem.newsWorkflowStatus === 'PUBLISHED' ||
+                  !!newsItem.newsDeletedAt
+                "
+              >
+                <mat-icon>publish</mat-icon>
+                <span>Publish</span>
+              </button>
+              <button
+                mat-menu-item
+                aria-label="Unpublish news"
+                (click)="onUnpublishNews(newsItem)"
+                [disabled]="
+                  newsItem.newsWorkflowStatus !== 'PUBLISHED' ||
+                  !!newsItem.newsDeletedAt
+                "
+              >
+                <mat-icon>unpublished</mat-icon>
+                <span>Unpublish</span>
+              </button>
+              <button
+                mat-menu-item
+                aria-label="Schedule/Reschedule news"
+                (click)="onScheduleNews(newsItem)"
+                [disabled]="!!newsItem.newsDeletedAt"
+              >
+                <mat-icon>schedule</mat-icon>
+                <span>{{
+                  newsItem.newsScheduledPublishAt ? "Reschedule" : "Schedule"
+                }}</span>
+              </button>
+              <button
+                mat-menu-item
+                aria-label="Change status"
+                (click)="onChangeStatus(newsItem)"
+                [disabled]="!!newsItem.newsDeletedAt"
+              >
+                <mat-icon>sync_alt</mat-icon>
+                <span>Change Status</span>
+              </button>
+              <button
+                mat-menu-item
+                aria-label="Preview news"
+                (click)="onPreviewNews(newsItem)"
+                [disabled]="!!newsItem.newsDeletedAt"
+              >
+                <mat-icon>visibility</mat-icon>
+                <span>Preview</span>
+              </button>
+              <button
+                mat-menu-item
+                aria-label="View audit trail"
+                (click)="onViewAuditTrail(newsItem)"
+              >
+                <mat-icon>history</mat-icon>
+                <span>Audit Trail</span>
+              </button>
+              <button
+                mat-menu-item
+                aria-label="Soft delete news"
+                (click)="onSoftDeleteNews(newsItem)"
+                [disabled]="!!newsItem.newsDeletedAt"
+                class="danger-menu-item"
+              >
+                <mat-icon class="danger-menu-item">delete_outline</mat-icon>
+                <span>Soft Delete</span>
+              </button>
+              <button
+                mat-menu-item
+                aria-label="Restore news"
+                (click)="onRestoreNews(newsItem)"
+                [disabled]="!newsItem.newsDeletedAt"
+              >
+                <mat-icon>restore_from_trash</mat-icon>
+                <span>Restore</span>
+              </button>
+              <button
+                mat-menu-item
+                aria-label="Delete Permanent"
+                (click)="onDeletePermanent(newsItem)"
+                class="danger-menu-item"
+              >
+                <mat-icon class="danger-menu-item">delete_forever</mat-icon>
+                <span>Delete (Permanent)</span>
+              </button>
+              <style>
+                .danger-menu-item {
+                  color: #d32f2f !important;
+                }
+              </style>
+            </mat-menu>
+          </div>
+        </ng-container>
+        <!-- Add more custom column renderers as needed -->
+        <ng-container *ngSwitchDefault>
+          <!-- Boolean columns as icons/badges -->
+          <ng-container
+            *ngIf="
+              col.dataType === 'boolean' &&
+              col.id !== 'checkbox' &&
+              col.id !== 'actions' &&
+              col.id !== 'featured'
+            "
+          >
+            <mat-icon
+              *ngIf="newsItem[col.propertyPath]"
+              color="primary"
+              aria-label="True"
+              >check_circle</mat-icon
+            >
+            <mat-icon
+              *ngIf="!newsItem[col.propertyPath]"
+              color="disabled"
+              aria-label="False"
+              >cancel</mat-icon
+            >
+          </ng-container>
+          <ng-container
+            *ngIf="
+              !(
+                col.dataType === 'boolean' &&
+                col.id !== 'checkbox' &&
+                col.id !== 'actions' &&
+                col.id !== 'featured'
+              )
+            "
+          >
+            <!-- Canonical column formatting -->
+            <ng-container [ngSwitch]="col.id">
+              <ng-container *ngSwitchCase="'newsPublishedAt'">
+                <span *ngIf="newsItem.newsPublishedAt; else notPublished">
+                  {{ newsItem.newsPublishedAt | date: "dd-MMM-yyyy HH:mm" }}
+                </span>
+                <ng-template #notPublished>
+                  <span class="empty-date" aria-label="Not published">—</span>
+                </ng-template>
+              </ng-container>
+              <ng-container *ngSwitchCase="'newsScheduledPublishAt'">
+                <span *ngIf="newsItem.newsScheduledPublishAt; else noSchedule">
+                  {{
+                    newsItem.newsScheduledPublishAt | date: "dd-MMM-yyyy HH:mm"
+                  }}
+                </span>
+                <ng-template #noSchedule>
+                  <span class="empty-date" aria-label="No schedule">—</span>
+                </ng-template>
+              </ng-container>
+              <ng-container *ngSwitchCase="'createdBy'">
+                {{
+                  getAdminUserNameById(
+                    newsItem.newsCreatedBy || newsItem.createdBy
+                  )
+                }}
+              </ng-container>
+              <ng-container *ngSwitchCase="'newsPublishedBy'">
+                {{ getAdminUserNameById(newsItem.newsPublishedBy) }}
+              </ng-container>
+              <ng-container *ngSwitchDefault>
+                <!-- Category column fallback for canonical id -->
+                <ng-container *ngIf="col.id === 'newsNewsCategoryId'">
+                  {{ getCategoryNameById(newsItem.newsNewsCategoryId) }}
+                </ng-container>
+                <!-- Special handling for Created At and Updated At columns -->
+                <ng-container *ngIf="col.id === 'newsCreatedAt'">
+                  <span *ngIf="newsItem.newsCreatedAt; else noCreated">
+                    {{ newsItem.newsCreatedAt | date: "dd-MMM-yyyy HH:mm" }}
+                  </span>
+                  <ng-template #noCreated>
+                    <span class="empty-date" aria-label="No data">—</span>
+                  </ng-template>
+                </ng-container>
+                <ng-container *ngIf="col.id === 'updatedAt'">
+                  <span *ngIf="newsItem.newsUpdatedAt; else noUpdated">
+                    {{ newsItem.newsUpdatedAt | date: "dd-MMM-yyyy HH:mm" }}
+                  </span>
+                  <ng-template #noUpdated>
+                    <span class="empty-date" aria-label="No data">—</span>
+                  </ng-template>
+                </ng-container>
+                <!-- Special handling for Updated By column to show user name -->
+                <ng-container *ngIf="col.id === 'newsUpdatedBy'">
+                  <span *ngIf="newsItem.newsUpdatedBy; else noUpdater">
+                    {{ getAdminUserNameById(newsItem.newsUpdatedBy) }}
+                  </span>
+                  <ng-template #noUpdater>
+                    <span class="empty-date" aria-label="No data">—</span>
+                  </ng-template>
+                </ng-container>
+                <!-- Special handling for Scheduled By column to show user name -->
+                <ng-container *ngIf="col.id === 'newsScheduledBy'">
+                  <span *ngIf="newsItem.newsScheduledBy; else noScheduler">
+                    {{ getAdminUserNameById(newsItem.newsScheduledBy) }}
+                  </span>
+                  <ng-template #noScheduler>
+                    <span class="empty-date" aria-label="No data">—</span>
+                  </ng-template>
+                </ng-container>
+                <!-- Special handling for Deleted By column to show user name -->
+                <ng-container *ngIf="col.id === 'newsDeletedBy'">
+                  <span *ngIf="newsItem.newsDeletedBy; else noDeleter">
+                    {{ getAdminUserNameById(newsItem.newsDeletedBy) }}
+                  </span>
+                  <ng-template #noDeleter>
+                    <span class="empty-date" aria-label="No data">—</span>
+                  </ng-template>
+                </ng-container>
+                <ng-container
+                  *ngIf="
+                    col.id !== 'newsNewsCategoryId' &&
+                    col.id !== 'newsCreatedAt' &&
+                    col.id !== 'updatedAt' &&
+                    col.id !== 'newsUpdatedBy' &&
+                    col.id !== 'newsScheduledBy' &&
+                    col.id !== 'newsDeletedBy'
+                  "
+                >
+                  <ng-container
+                    *ngIf="
+                      newsItem[col.propertyPath] !== undefined &&
+                      newsItem[col.propertyPath] !== null &&
+                      newsItem[col.propertyPath] !== ''
+                    "
+                  >
+                    {{ newsItem[col.propertyPath] }}
+                  </ng-container>
+                  <ng-container
+                    *ngIf="
+                      newsItem[col.propertyPath] === undefined ||
+                      newsItem[col.propertyPath] === null ||
+                      newsItem[col.propertyPath] === ''
+                    "
+                  >
+                    <span class="empty-date" aria-label="No data">—</span>
+                  </ng-container>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+</div>

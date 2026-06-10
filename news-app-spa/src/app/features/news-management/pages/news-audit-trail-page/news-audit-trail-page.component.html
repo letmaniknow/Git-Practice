@@ -1,0 +1,234 @@
+<div class="audit-trail-page">
+  <!-- Modern Header with Breadcrumb Style -->
+  <div class="page-header">
+    <button
+      mat-icon-button
+      class="back-button"
+      (click)="goBack()"
+      matTooltip="Back to News List"
+    >
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="header-content">
+      <h1 class="page-title">
+        <mat-icon class="title-icon">history</mat-icon>
+        Audit Trail
+      </h1>
+      <p class="page-subtitle" *ngIf="newsItem">
+        {{ newsItem.newsTitleEn || newsItem.newsTitleEs || "News Article" }}
+      </p>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="state-container loading-state">
+    <mat-progress-spinner
+      mode="indeterminate"
+      diameter="60"
+      color="primary"
+    ></mat-progress-spinner>
+    <p class="state-message">Loading audit trail...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="!loading && error" class="state-container error-state">
+    <mat-icon class="state-icon">error_outline</mat-icon>
+    <h2>Unable to Load Audit Trail</h2>
+    <p class="state-message">{{ error }}</p>
+    <button mat-raised-button color="primary" (click)="loadAuditTrail()">
+      <mat-icon>refresh</mat-icon>
+      Retry
+    </button>
+  </div>
+
+  <!-- Content -->
+  <div *ngIf="!loading && !error" class="content-wrapper">
+    <!-- Article Info Card (ServiceNow-inspired) -->
+    <mat-card *ngIf="newsItem" class="article-info-card" elevation="2">
+      <div class="article-info-content">
+        <div class="article-icon-wrapper">
+          <mat-icon class="article-icon">article</mat-icon>
+        </div>
+        <div class="article-details">
+          <h2 class="article-title">
+            {{ newsItem.newsTitleEn || newsItem.newsTitleEs }}
+          </h2>
+          <div class="article-meta">
+            <mat-chip
+              class="status-chip"
+              [class]="'status-' + newsItem.newsWorkflowStatus.toLowerCase()"
+            >
+              {{ newsItem.newsWorkflowStatus }}
+            </mat-chip>
+            <span class="meta-item">
+              <mat-icon class="meta-icon">fingerprint</mat-icon>
+              ID: {{ newsItem.newsNewsId }}
+            </span>
+            <span class="meta-item" *ngIf="newsItem.newsCreatedAt">
+              <mat-icon class="meta-icon">calendar_today</mat-icon>
+              Created: {{ newsItem.newsCreatedAt | date: "MMM d, y" }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </mat-card>
+
+    <!-- Audit Trail Timeline (ServiceNow-inspired vertical timeline) -->
+    <mat-card class="timeline-card" elevation="2">
+      <div class="timeline-header">
+        <h3 class="timeline-title">
+          <mat-icon>timeline</mat-icon>
+          Activity Timeline
+        </h3>
+        <span class="timeline-count"
+          >{{ auditLogs.length }}
+          {{ auditLogs.length === 1 ? "entry" : "entries" }}</span
+        >
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Empty State -->
+      <div *ngIf="auditLogs.length === 0" class="empty-state">
+        <mat-icon class="empty-icon">history_toggle_off</mat-icon>
+        <h3>No Audit Records Found</h3>
+        <p>There are no audit trail entries for this news article yet.</p>
+      </div>
+
+      <!-- Timeline Items -->
+      <div *ngIf="auditLogs.length > 0" class="timeline-container">
+        <div
+          *ngFor="let log of auditLogs; let last = last"
+          class="timeline-item"
+          [class.timeline-item-last]="last"
+          [ngClass]="getActionColor(log.action)"
+        >
+          <!-- Timeline Dot -->
+          <div class="timeline-dot">
+            <mat-icon class="timeline-icon">{{
+              getActionIcon(log.action)
+            }}</mat-icon>
+          </div>
+
+          <!-- Timeline Content Card -->
+          <div class="timeline-content">
+            <!-- Compact Header: Action + User + Date in ONE line -->
+            <div class="compact-header">
+              <h4 class="action-title">{{ formatAction(log.action) }}</h4>
+              <div class="header-right-inline">
+                <span class="user-inline">
+                  <mat-icon class="inline-icon">person</mat-icon>
+                  <strong>{{ getActorName(log) }}</strong>
+                  <span class="email-inline" *ngIf="getActorEmail(log)"
+                    >({{ getActorEmail(log) }})</span
+                  >
+                </span>
+                <span class="separator">•</span>
+                <span
+                  class="date-inline"
+                  [matTooltip]="formatFullDateTime(log.createdAt)"
+                >
+                  <mat-icon class="inline-icon">schedule</mat-icon>
+                  {{ formatFullDateTime(log.createdAt) }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Compact Details: All inline horizontal format -->
+            <div class="compact-details">
+              <!-- Reason Line -->
+              <div class="detail-line" *ngIf="log.reason">
+                <mat-icon class="line-icon">info</mat-icon>
+                <span class="line-label">REASON:</span>
+                <span class="line-value">{{ log.reason }}</span>
+                <span
+                  class="category-inline"
+                  *ngIf="getCategoryFromDetails(log.reason)"
+                >
+                  <mat-icon class="cat-icon">folder</mat-icon>
+                  {{ getCategoryFromDetails(log.reason) }}
+                </span>
+              </div>
+
+              <!-- Details Line -->
+              <div class="detail-line" *ngIf="log.details">
+                <mat-icon class="line-icon">description</mat-icon>
+                <span class="line-label">DETAILS:</span>
+                <span class="line-value">{{
+                  log.details.length > 80
+                    ? (log.details | slice: 0 : 80) + "..."
+                    : log.details
+                }}</span>
+                <span
+                  class="category-inline"
+                  *ngIf="getCategoryFromDetails(log.details)"
+                >
+                  <mat-icon class="cat-icon">folder</mat-icon>
+                  {{ getCategoryFromDetails(log.details) }}
+                </span>
+              </div>
+
+              <!-- Status + Severity Line -->
+              <div
+                class="detail-line"
+                *ngIf="log.isSuccess !== undefined || log.severity"
+              >
+                <span *ngIf="log.isSuccess !== undefined" class="inline-badge">
+                  <mat-icon
+                    class="badge-icon"
+                    [class.success]="log.isSuccess"
+                    [class.error]="!log.isSuccess"
+                  >
+                    {{ log.isSuccess ? "check_circle" : "error" }}
+                  </mat-icon>
+                  <span class="badge-label">STATUS:</span>
+                  <span
+                    class="badge-value"
+                    [class.success]="log.isSuccess"
+                    [class.error]="!log.isSuccess"
+                  >
+                    {{ log.isSuccess ? "Success" : "Failed" }}
+                  </span>
+                </span>
+
+                <span *ngIf="log.severity" class="inline-badge severity">
+                  <mat-icon class="badge-icon">warning</mat-icon>
+                  <span class="badge-label">SEVERITY:</span>
+                  <span
+                    class="badge-value"
+                    [ngClass]="getSeverityColor(log.severity)"
+                  >
+                    {{ log.severity }}
+                  </span>
+                </span>
+
+                <span *ngIf="log.httpStatus" class="inline-badge http">
+                  <mat-icon class="badge-icon">http</mat-icon>
+                  <span class="badge-label">HTTP:</span>
+                  <span class="badge-value">{{ log.httpStatus }}</span>
+                </span>
+
+                <span *ngIf="log.ipAddress" class="inline-badge ip">
+                  <mat-icon class="badge-icon">computer</mat-icon>
+                  <span class="badge-value">{{ log.ipAddress }}</span>
+                </span>
+
+                <span *ngIf="log.responseTimeMs" class="inline-badge time">
+                  <mat-icon class="badge-icon">speed</mat-icon>
+                  <span class="badge-value">{{ log.responseTimeMs }}ms</span>
+                </span>
+              </div>
+
+              <!-- Error Message (if any) -->
+              <div class="detail-line error-line" *ngIf="log.errorMessage">
+                <mat-icon class="line-icon error">report_problem</mat-icon>
+                <span class="line-label">ERROR:</span>
+                <span class="line-value error">{{ log.errorMessage }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+</div>

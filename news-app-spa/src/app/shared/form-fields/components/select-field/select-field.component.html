@@ -1,0 +1,80 @@
+<!-- SelectFieldComponent Template -->
+<!-- Material Design 3 Outline Form Field with Dropdown -->
+
+<mat-form-field appearance="outline" [class]="fieldContainerClass">
+  <!-- Field Label -->
+  <mat-label [id]="fieldId + '-label'">
+    {{ label }}
+    <!-- Required Indicator -->
+    <span *ngIf="required" class="required-indicator" aria-label="required">
+      *
+    </span>
+  </mat-label>
+
+  <!-- Select Element -->
+  <mat-select
+    [value]="selectedValue"
+    [disabled]="disabled"
+    [compareWith]="compareWith"
+    [attr.aria-label]="effectiveAriaLabel"
+    [attr.aria-describedby]="hasErrorMessage ? ariaDescribedBy : null"
+    [attr.aria-invalid]="!!hasErrorMessage"
+    panelClass="select-panel-no-placeholder"
+    (selectionChange)="onSelectionChange($event.value)"
+    (focus)="onFocus()"
+    (blur)="onBlur()"
+  >
+    <!-- Placeholder Group (shown when no selection) -->
+    <mat-select-trigger
+      *ngIf="selectedValue === null || selectedValue === undefined"
+    >
+      {{ placeholder || nullOptionLabel }}
+    </mat-select-trigger>
+
+    <!-- Null Option (e.g., "All" or "None") -->
+    <mat-option *ngIf="allowNullOption" [value]="null" class="null-option">
+      {{ nullOptionLabel }}
+    </mat-option>
+
+    <!-- Divider between null and regular options (if applicable)-->
+    <mat-divider
+      *ngIf="allowNullOption && displayOptions.length > 0"
+    ></mat-divider>
+
+    <!-- Regular Options -->
+    <mat-option
+      *ngFor="let option of displayOptions; trackBy: trackByOptionValue"
+      [value]="option.value"
+      [disabled]="option.disabled"
+      [class.has-icon]="option.icon"
+    >
+      <!-- Option Icon (if provided) -->
+      <mat-icon *ngIf="option.icon" class="option-icon">
+        {{ option.icon }}
+      </mat-icon>
+
+      <!-- Option Label -->
+      <span class="option-label">{{ option.label }}</span>
+
+      <!-- Option Description (if provided) -->
+      <span *ngIf="option.description" class="option-description">
+        {{ option.description }}
+      </span>
+    </mat-option>
+
+    <!-- No Options Message -->
+    <mat-option *ngIf="displayOptions.length === 0" disabled class="no-options">
+      No options available
+    </mat-option>
+  </mat-select>
+
+  <!-- Hint Text (shows below select when focused) -->
+  <mat-hint *ngIf="hint" align="start">
+    {{ hint }}
+  </mat-hint>
+
+  <!-- Error Message (shown only when has error) -->
+  <mat-error *ngIf="hasErrorMessage" [id]="ariaDescribedBy">
+    {{ hasErrorMessage }}
+  </mat-error>
+</mat-form-field>

@@ -1,0 +1,55 @@
+::ng-deep .unified-datetime-picker-dialog {
+  .mdc-dialog__container {
+    align-items: center !important;
+  }
+
+  .mdc-dialog__surface {
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.16) !important;
+    border-radius: 12px !important;
+    overflow: hidden;
+  }
+
+  .mat-mdc-dialog-container {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+}
+
+.unified-datetime-picker-field {
+  width: 100%;
+  margin-top: 8px;
+  margin-bottom: 12px;
+
+  .datetime-input {
+    cursor: pointer;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    letter-spacing: 0.5px;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.02);
+    }
+  }
+
+  .clear-button,
+  .open-picker-button {
+    margin-right: -8px;
+    color: rgba(0, 0, 0, 0.54);
+    transition: color 0.2s ease-in-out;
+
+    &:hover {
+      color: rgba(0, 0, 0, 0.87);
+      background-color: rgba(0, 0, 0, 0.04);
+    }
+  }
+
+  .mat-mdc-form-field-error {
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  .mat-mdc-form-field-hint {
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.6);
+  }
+}

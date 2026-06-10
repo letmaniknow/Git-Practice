@@ -1,0 +1,209 @@
+<mat-card
+  class="news-card"
+  [class.compact]="compact"
+  [class.selected]="selected"
+>
+  <!-- Checkbox (Top-Right Corner) -->
+  <mat-checkbox
+    class="selection-checkbox-corner"
+    [(ngModel)]="selected"
+    (change)="toggleSelection()"
+    aria-label="Select news for bulk operations"
+  ></mat-checkbox>
+
+  <!-- MAIN CARD CONTAINER: Horizontal Layout (Image Left + Content Right) -->
+  <div class="card-container">
+    <!-- LEFT SECTION: Media/Image -->
+    <div class="media-section">
+      <div class="media-container">
+        <!-- Image -->
+        <img
+          *ngIf="news.newsMediaFileName && isImage(news.newsMediaFileName)"
+          [src]="getMediaUrl(news.newsMediaFileName)"
+          [alt]="news.newsTitleEn"
+          class="news-media"
+          loading="lazy"
+          (error)="onMediaError($event)"
+        />
+        <!-- Placeholder if no image -->
+        <div
+          *ngIf="!news.newsMediaFileName || !isImage(news.newsMediaFileName)"
+          class="media-placeholder"
+        >
+          <mat-icon>image</mat-icon>
+          <span>No Image</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT SECTION: All Content -->
+    <div class="content-section">
+      <!-- HEADER: Title + Status + Meta -->
+      <div class="card-header">
+        <div class="header-title-section">
+          <!-- Title Row -->
+          <div class="title-row">
+            <h3
+              class="news-title"
+              (click)="onView()"
+              [title]="news.newsTitleEn"
+            >
+              {{ news.newsTitleEn }}
+            </h3>
+            <mat-icon
+              class="urgent-indicator"
+              *ngIf="getStatusInfo().isUrgent"
+              matTooltip="Requires attention"
+            >
+              priority_high
+            </mat-icon>
+          </div>
+
+          <!-- Status + Category + Language -->
+          <div class="header-meta">
+            <span
+              class="status-badge"
+              [ngClass]="'status-' + getStatusClass()"
+              [title]="getStatusInfo().text"
+            >
+              <mat-icon class="status-icon">{{
+                getStatusInfo().icon
+              }}</mat-icon>
+              {{ getStatusInfo().text }}
+            </span>
+            <span class="category-tag">{{ news.newsNewsCategoryId }}</span>
+            <span
+              class="language-flag"
+              [title]="getLanguageFlag() === '🌍' ? 'Multilingual' : 'Language'"
+            >
+              {{ getLanguageFlag() }}
+            </span>
+          </div>
+
+          <!-- Meta Row: Author + Updated Time -->
+          <div class="meta-row">
+            <span class="author">By {{ news.newsCreatedBy }}</span>
+            <span class="divider">•</span>
+            <span class="updated-time" [title]="news.newsUpdatedAt">
+              {{ formatRelativeTime(news.newsUpdatedAt) }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ENGAGEMENT METRICS -->
+      <div class="engagement-metrics-section">
+        <div class="metrics-row">
+          <div class="metric-item">
+            <mat-icon class="metric-icon likes">favorite</mat-icon>
+            <span class="metric-value">{{
+              getEngagementMetrics().likes | number
+            }}</span>
+          </div>
+          <div class="metric-item">
+            <mat-icon class="metric-icon comments">chat_bubble</mat-icon>
+            <span class="metric-value">{{
+              getEngagementMetrics().comments | number
+            }}</span>
+          </div>
+          <div class="metric-item">
+            <mat-icon class="metric-icon shares">share</mat-icon>
+            <span class="metric-value">{{
+              getEngagementMetrics().shares | number
+            }}</span>
+          </div>
+          <div class="metric-item">
+            <mat-icon class="metric-icon views">visibility</mat-icon>
+            <span class="metric-value">{{
+              getEngagementMetrics().views | number
+            }}</span>
+          </div>
+          <div class="metric-item">
+            <mat-icon class="metric-icon reading-time">schedule</mat-icon>
+            <span class="metric-value">{{ getReadingTime() }}m</span>
+          </div>
+          <div class="metric-item schedule-indicator" *ngIf="isScheduled()">
+            <mat-icon class="metric-icon scheduled">calendar_today</mat-icon>
+            <span class="metric-value scheduled-time">{{
+              formatRelativeTime(news.newsScheduledPublishAt!)
+            }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTENT PREVIEW -->
+      <div class="preview-section" *ngIf="!compact">
+        <p class="preview-text">{{ getTruncatedContent(150) }}</p>
+      </div>
+
+      <!-- ADMIN ACTIONS -->
+      <div class="admin-actions-inline" *ngIf="showActions">
+        <button
+          mat-stroked-button
+          class="action-btn view-btn"
+          (click)="onView()"
+          title="View news"
+          type="button"
+        >
+          <mat-icon>visibility</mat-icon>
+          <span>View</span>
+        </button>
+        <button
+          mat-stroked-button
+          class="action-btn edit-btn"
+          (click)="onEdit()"
+          title="Edit news"
+          type="button"
+        >
+          <mat-icon>edit</mat-icon>
+          <span>Edit</span>
+        </button>
+        <button
+          mat-stroked-button
+          class="action-btn publish-btn"
+          (click)="onTogglePublish()"
+          *ngIf="news.newsWorkflowStatus !== 'Published'"
+          title="Publish news"
+          type="button"
+        >
+          <mat-icon>publish</mat-icon>
+          <span>Publish</span>
+        </button>
+        <button
+          mat-stroked-button
+          class="action-btn delete-btn"
+          (click)="onDelete()"
+          title="Soft delete news"
+          type="button"
+        >
+          <mat-icon>delete</mat-icon>
+          <span>Delete</span>
+        </button>
+        <button
+          mat-icon-button
+          [matMenuTriggerFor]="moreMenu"
+          class="more-menu-btn"
+          aria-label="More actions"
+          type="button"
+        >
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #moreMenu="matMenu">
+          <button mat-menu-item>
+            <mat-icon>download</mat-icon>
+            <span>Export</span>
+          </button>
+          <button mat-menu-item>
+            <mat-icon>content_copy</mat-icon>
+            <span>Duplicate</span>
+          </button>
+          <mat-divider></mat-divider>
+          <button mat-menu-item class="delete-menu-item">
+            <mat-icon>delete</mat-icon>
+            <span>Permanent Delete</span>
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+  </div>
+</mat-card>

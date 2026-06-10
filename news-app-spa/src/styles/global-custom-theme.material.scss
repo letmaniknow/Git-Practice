@@ -1,0 +1,802 @@
+@use '@angular/material' as mat;
+// Flat Buttons with primary color
+button[mat-flat-button][color="primary"],
+a[mat-flat-button][color="primary"] {
+  background-color: var(--color-primary, #3b82f6) !important;
+  color: white !important;
+}
+
+// Flat Buttons with warn color
+button[mat-flat-button][color="warn"],
+a[mat-flat-button][color="warn"] {
+  background-color: var(--color-error, #ef4444) !important;
+  color: white !important;
+}
+/**
+ * 🎨 MATERIAL DESIGN 3 - Angular Material v19.2.18
+ * 
+ * Complete Material component theming using CSS variables from theme.config.ts
+ * All colors are injected at runtime by theme.service.ts
+ */
+
+/**
+ * Include Material Design 3 core
+ */
+@include mat.core();
+
+/**
+ * ============================================
+ * BUTTONS & BUTTON-LIKE CONTROLS
+ * ============================================
+ */
+
+// Raised Buttons with primary color
+button[mat-raised-button][color="primary"],
+button[mat-button][color="primary"],
+button[mat-icon-button][color="primary"],
+button[mat-fab][color="primary"],
+a[mat-raised-button][color="primary"],
+a[mat-button][color="primary"] {
+  background-color: var(--color-primary, #3b82f6) !important;
+  color: white !important;
+  
+  // Remove Material's hover overlay
+  .mat-mdc-button-persistent-ripple::before,
+  .mdc-button__ripple::before,
+  .mdc-button__ripple::after {
+    background-color: transparent !important;
+    opacity: 0 !important;
+  }
+  
+  &:hover:not(:disabled) {
+    background-color: #2563eb !important;
+    color: white !important;
+    
+    // Ensure no overlay appears
+    .mat-mdc-button-persistent-ripple::before,
+    .mdc-button__ripple::before {
+      opacity: 0 !important;
+    }
+  }
+  
+  &:active:not(:disabled) {
+    background-color: #1d4ed8 !important;
+  }
+  
+  &:focus-visible {
+    outline: 2px solid #93c5fd;
+    outline-offset: 2px;
+  }
+}
+
+// Error/Warn buttons
+button[mat-raised-button][color="warn"],
+button[mat-button][color="warn"],
+button[mat-icon-button][color="warn"],
+a[mat-raised-button][color="warn"],
+a[mat-button][color="warn"] {
+  background-color: var(--color-error, #ef4444) !important;
+  color: white !important;
+  
+  &:hover:not(:disabled) {
+    background-color: #dc2626 !important;
+    color: white !important;
+  }
+  
+  &:active:not(:disabled) {
+    background-color: #b91c1c !important;
+  }
+}
+
+// Accent buttons
+button[mat-raised-button][color="accent"],
+button[mat-button][color="accent"],
+button[mat-icon-button][color="accent"] {
+  background-color: var(--color-warning, #f59e0b) !important;
+  color: white !important;
+  
+  &:hover:not(:disabled) {
+    background-color: #d97706 !important;
+    color: white !important;
+  }
+  
+  &:active:not(:disabled) {
+    background-color: #b45309 !important;
+  }
+}
+
+// Stroked buttons maintain primary border
+button[mat-stroked-button][color="primary"],
+a[mat-stroked-button][color="primary"] {
+  border-color: var(--color-primary, #3b82f6) !important;
+  color: var(--color-primary, #3b82f6) !important;
+  background-color: transparent !important;
+  
+  &:hover:not(:disabled) {
+    background-color: rgba(59, 130, 246, 0.08) !important;
+    border-color: #2563eb !important;
+    color: #2563eb !important;
+  }
+  
+  &:active:not(:disabled) {
+    background-color: rgba(59, 130, 246, 0.16) !important;
+    border-color: #1d4ed8 !important;
+    color: #1d4ed8 !important;
+  }
+}
+
+// Raised buttons WITHOUT color attribute (utility actions like upload, attach)
+// Use SAME vibrant blue as primary for mental satisfaction
+button[mat-raised-button]:not([color]),
+a[mat-raised-button]:not([color]) {
+  background-color: #3b82f6 !important; // Blue-500 (SAME as primary)
+  color: white !important;
+  border: none !important;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3) !important;
+  
+  mat-icon {
+    color: white !important;
+  }
+  
+  &:hover:not(:disabled) {
+    background-color: #2563eb !important; // Blue-600 (SAME as primary)
+    color: white !important;
+    box-shadow: 0 6px 12px rgba(37, 99, 235, 0.4),
+                0 3px 6px rgba(37, 99, 235, 0.2) !important;
+  }
+  
+  &:active:not(:disabled) {
+    background-color: #1e40af !important; // Blue-700 (SAME as primary)
+    box-shadow: 0 1px 3px rgba(30, 64, 175, 0.3) !important;
+  }
+  
+  &:disabled {
+    background-color: rgba(59, 130, 246, 0.5) !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+    box-shadow: none !important;
+  }
+}
+
+// HIGH SPECIFICITY: Force utility buttons to use vibrant blue
+// Override Material Design's default background colors
+.mat-mdc-raised-button:not([color]) {
+  background-color: #3b82f6 !important;
+  color: white !important;
+  
+  &:hover:not(:disabled) {
+    background-color: #2563eb !important;
+  }
+  
+  &:active:not(:disabled) {
+    background-color: #1e40af !important;
+  }
+  
+  // Force override Material's state layers
+  .mat-mdc-button-persistent-ripple,
+  .mat-mdc-button-persistent-ripple::before,
+  .mdc-button__ripple::before,
+  .mdc-button__ripple::after {
+    background-color: transparent !important;
+    opacity: 0 !important;
+  }
+}
+
+// Stroked buttons WITHOUT color attribute - Keep for other use cases
+button[mat-stroked-button]:not([color]),
+a[mat-stroked-button]:not([color]) {
+  border: 1.5px solid #93c5fd !important;
+  color: #2563eb !important;
+  background-color: transparent !important;
+  border-radius: 6px !important;
+  
+  mat-icon {
+    color: #3b82f6 !important;
+  }
+  
+  &:hover:not(:disabled) {
+    background-color: #eff6ff !important;
+    border-color: #60a5fa !important;
+    color: #1d4ed8 !important;
+    
+    mat-icon {
+      color: #2563eb !important;
+    }
+  }
+  
+  &:active:not(:disabled) {
+    background-color: #dbeafe !important;
+    border-color: #3b82f6 !important;
+    color: #1e40af !important;
+  }
+  
+  &:focus-visible {
+    outline: 2px solid #93c5fd;
+    outline-offset: 2px;
+  }
+}
+
+// Text buttons (mat-button) - Make more visible with subtle border
+button[mat-button]:not([color]):not(.mdc-icon-button),
+a[mat-button]:not([color]) {
+  border: 1px solid #e5e7eb !important;
+  color: #6b7280 !important;
+  background-color: transparent !important;
+  border-radius: 6px !important;
+  padding: 12px 24px !important;
+  
+  mat-icon {
+    color: #6b7280 !important;
+  }
+  
+  &:hover:not(:disabled) {
+    background-color: #f9fafb !important;
+    border-color: #d1d5db !important;
+    color: #374151 !important;
+    
+    mat-icon {
+      color: #374151 !important;
+    }
+  }
+  
+  &:active:not(:disabled) {
+    background-color: #f3f4f6 !important;
+    border-color: #9ca3af !important;
+  }
+}
+
+// Buttons with icon and text - Material Design 3 alignment
+// Ensures proper spacing between icon and text content
+button[mat-raised-button] > *,
+button[mat-button] > *,
+button[mat-stroked-button] > *,
+button[mat-flat-button] > * {
+  // Container for icon + text alignment
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: var(--spacing-sm, 8px) !important;
+}
+
+// Icon inside button with text should not have extra margins
+button[mat-raised-button] mat-icon,
+button[mat-button] mat-icon,
+button[mat-stroked-button] mat-icon,
+button[mat-flat-button] mat-icon {
+  margin: 0 !important;
+}
+
+// Button toggle group
+mat-button-toggle-group {
+  border-color: var(--color-gray-300, #d1d5db) !important;
+}
+
+mat-button-toggle {
+  color: var(--color-gray-600, #4b5563) !important;
+  
+  &.mat-button-toggle-checked {
+    background-color: var(--color-primary, #3b82f6) !important;
+    color: white !important;
+  }
+}
+
+/**
+ * ============================================
+ * FORM FIELDS & INPUTS
+ * ============================================
+ */
+
+// Form field container
+mat-form-field {
+  width: 100%;
+  
+  // Focus state
+  &.mat-focused {
+    .mdc-floating-label--float {
+      color: var(--color-primary, #3b82f6) !important;
+    }
+  }
+}
+
+// Text input styling
+.mdc-text-field--filled {
+  background-color: var(--color-gray-50, #f9fafb) !important;
+  
+  &.mdc-text-field--focused {
+    background-color: var(--color-gray-50, #f9fafb) !important;
+  }
+}
+
+// Text field underline (outline style)
+.mdc-notched-outline__leading,
+.mdc-notched-outline__notch,
+.mdc-notched-outline__trailing {
+  border-color: var(--color-gray-300, #d1d5db) !important;
+}
+
+// Focused outline
+.mat-focused .mdc-notched-outline__leading,
+.mat-focused .mdc-notched-outline__notch,
+.mat-focused .mdc-notched-outline__trailing {
+  border-color: var(--color-primary, #3b82f6) !important;
+}
+
+// Input text color
+.mdc-text-field__input {
+  color: var(--color-gray-900, #111827) !important;
+  caret-color: var(--color-primary, #3b82f6) !important;
+}
+
+// Label color
+.mdc-floating-label {
+  color: var(--color-gray-600, #4b5563) !important;
+  
+  &.mdc-floating-label--float {
+    color: var(--color-primary, #3b82f6) !important;
+  }
+}
+
+// Form field hint text
+.mat-mdc-form-field-hint-wrapper {
+  color: var(--color-gray-500, #6b7280) !important;
+}
+
+// Error text
+.mat-mdc-form-field-error {
+  color: var(--color-error, #ef4444) !important;
+}
+
+/**
+ * ============================================
+ * DROPDOWNS & SELECT
+ * ============================================
+ */
+
+// Select dropdown trigger
+.mat-mdc-select-trigger {
+  color: var(--color-gray-900, #111827) !important;
+}
+
+// Select panel with dropdown items
+.mat-mdc-select-panel {
+  background-color: white !important;
+  border-color: var(--color-gray-200, #e5e7eb) !important;
+}
+
+// Selected option special styling
+.mat-mdc-option.mat-selected:not(.mat-option-disabled) {
+  background-color: var(--color-primary, #3b82f6) !important;
+  color: white !important;
+  font-weight: 500;
+}
+
+// Option hover state
+.mat-mdc-option:hover:not(.mat-option-disabled) {
+  background-color: var(--color-gray-100, #f3f4f6) !important;
+}
+
+// Option text
+.mat-mdc-option-text {
+  color: var(--color-gray-900, #111827) !important;
+}
+
+/**
+ * ============================================
+ * AUTOCOMPLETE
+ * ============================================
+ */
+
+.mat-mdc-autocomplete-panel {
+  background-color: white !important;
+  border: 1px solid var(--color-gray-200, #e5e7eb) !important;
+  box-shadow: var(--shadow-2, 0 2px 8px rgba(0,0,0,0.16)) !important;
+}
+
+.mat-mdc-autocomplete-panel .mat-mdc-option.mat-selected {
+  background-color: var(--color-primary, #3b82f6) !important;
+  color: white !important;
+}
+
+.mat-mdc-autocomplete-panel .mat-mdc-option {
+  color: var(--color-gray-900, #111827) !important;
+  
+  &:hover:not(.mat-option-disabled) {
+    background-color: var(--color-gray-100, #f3f4f6) !important;
+  }
+}
+
+/**
+ * ============================================
+ * CHIPS
+ * ============================================
+ */
+
+mat-chip-set {
+  gap: var(--spacing-xs, 4px) !important;
+}
+
+mat-chip {
+  background-color: var(--color-primary, #3b82f6) !important;
+  color: white !important;
+  
+  &.mat-mdc-chip-disabled {
+    background-color: var(--color-gray-300, #d1d5db) !important;
+    color: var(--color-gray-600, #4b5563) !important;
+  }
+  
+  // Remove button in chip
+  .mat-mdc-chip-remove {
+    color: white !important;
+  }
+}
+
+// Primary variant chips
+mat-chip.mat-primary {
+  background-color: var(--color-primary, #3b82f6) !important;
+  color: white !important;
+}
+
+// Accent variant chips
+mat-chip.mat-accent {
+  background-color: var(--color-warning, #f59e0b) !important;
+  color: white !important;
+}
+
+// Warn variant chips
+mat-chip.mat-warn {
+  background-color: var(--color-error, #ef4444) !important;
+  color: white !important;
+}
+
+/**
+ * ============================================
+ * CARDS
+ * ============================================
+ */
+
+mat-card {
+  background-color: white !important;
+  border: 1px solid var(--color-gray-200, #e5e7eb) !important;
+  box-shadow: var(--shadow-1, 0 1px 3px rgba(0,0,0,0.12)) !important;
+}
+
+mat-card-header {
+  border-bottom: 1px solid var(--color-gray-200, #e5e7eb) !important;
+}
+
+mat-card-title {
+  color: var(--color-gray-900, #111827) !important;
+}
+
+mat-card-subtitle {
+  color: var(--color-gray-600, #4b5563) !important;
+}
+
+/**
+ * ============================================
+ * SPINNER & LOADERS
+ * ============================================
+ */
+
+mat-spinner {
+  circle {
+    stroke: var(--color-primary, #3b82f6) !important;
+  }
+  
+  &[color="accent"] circle {
+    stroke: var(--color-warning, #f59e0b) !important;
+  }
+  
+  &[color="warn"] circle {
+    stroke: var(--color-error, #ef4444) !important;
+  }
+}
+
+// Progress bar
+mat-progress-bar {
+  background-color: var(--color-gray-200, #e5e7eb) !important;
+  
+  .mdc-linear-progress__bar-inner {
+    background-color: var(--color-primary, #3b82f6) !important;
+  }
+}
+
+/**
+ * ============================================
+ * ICON STYLING
+ * ============================================
+ */
+
+mat-icon {
+  color: var(--color-gray-700, #374151) !important;
+}
+
+// Raised & Flat buttons with colors - icons should be WHITE (match text)
+button[mat-raised-button][color="primary"] mat-icon,
+button[mat-flat-button][color="primary"] mat-icon,
+button[mat-raised-button][color="warn"] mat-icon,
+button[mat-flat-button][color="warn"] mat-icon,
+button[mat-raised-button][color="accent"] mat-icon,
+button[mat-flat-button][color="accent"] mat-icon,
+a[mat-raised-button][color="primary"] mat-icon,
+a[mat-flat-button][color="primary"] mat-icon {
+  color: white !important;
+}
+
+// Icon buttons & text buttons - icons should use color variant
+mat-icon.mat-primary,
+button[mat-icon-button][color="primary"] mat-icon,
+button[mat-button][color="primary"] mat-icon,
+a[mat-icon-button][color="primary"] mat-icon,
+a[mat-button][color="primary"] mat-icon {
+  color: var(--color-primary, #3b82f6) !important;
+}
+
+// Error/Warn colored icons (for icon buttons and text buttons)
+mat-icon.mat-warn,
+button[mat-icon-button][color="warn"] mat-icon,
+button[mat-button][color="warn"] mat-icon,
+a[mat-icon-button][color="warn"] mat-icon,
+a[mat-button][color="warn"] mat-icon {
+  color: var(--color-error, #ef4444) !important;
+}
+
+// Accent colored icons
+mat-icon.mat-accent,
+button[mat-icon-button][color="accent"] mat-icon,
+button[mat-button][color="accent"] mat-icon,
+a[mat-icon-button][color="accent"] mat-icon {
+  color: var(--color-warning, #f59e0b) !important;
+}
+
+/**
+ * ============================================
+ * SLIDE TOGGLE
+ * ============================================
+ */
+
+.mdc-switch__thumb {
+  background-color: white !important;
+}
+
+.mdc-switch--checked .mdc-switch__track {
+  background-color: var(--color-primary, #3b82f6) !important;
+}
+
+.mdc-switch--checked .mdc-switch__thumb {
+  background-color: white !important;
+}
+
+/**
+ * ============================================
+ * DIALOG
+ * ============================================
+ */
+
+.mat-mdc-dialog-container {
+  background-color: white !important;
+  box-shadow: var(--shadow-3, 0 4px 16px rgba(0,0,0,0.20)) !important;
+}
+
+.mat-mdc-dialog-title {
+  color: var(--color-gray-900, #111827) !important;
+}
+
+/**
+ * ============================================
+ * MENU
+ * ============================================
+ */
+
+.mat-mdc-menu-panel {
+  background-color: white !important;
+  border: 1px solid var(--color-gray-200, #e5e7eb) !important;
+  box-shadow: var(--shadow-2, 0 2px 8px rgba(0,0,0,0.16)) !important;
+}
+
+.mat-mdc-menu-item {
+  color: var(--color-gray-900, #111827) !important;
+  
+  &:hover {
+    background-color: var(--color-gray-100, #f3f4f6) !important;
+  }
+  
+  &.mat-mdc-menu-item-highlighted {
+    background-color: var(--color-primary, #3b82f6) !important;
+    color: white !important;
+  }
+}
+
+/**
+ * ============================================
+ * DATEPICKER & CALENDAR
+ * ============================================
+ */
+
+// Datepicker toggle button
+.mat-datepicker-toggle button {
+  color: var(--color-primary, #3b82f6) !important;
+  
+  &:hover {
+    background-color: rgba(59, 130, 246, 0.08) !important;
+  }
+}
+
+// Datepicker content/calendar panel
+.mat-datepicker-content,
+.mat-calendar {
+  background-color: white !important;
+  color: var(--color-gray-900, #111827) !important;
+}
+
+// Calendar header
+.mat-calendar-body {
+  color: var(--color-gray-900, #111827) !important;
+}
+
+// Calendar month/year header
+.mat-calendar-body-label {
+  color: var(--color-gray-700, #374151) !important;
+  font-weight: 500;
+}
+
+// Navigation arrows in calendar
+.mat-calendar-body-next-button,
+.mat-calendar-body-previous-button {
+  color: var(--color-primary, #3b82f6) !important;
+  
+  &:hover:not(:disabled) {
+    background-color: rgba(59, 130, 246, 0.08) !important;
+  }
+}
+
+// Calendar day cells (default state)
+.mat-calendar-body-cell {
+  color: var(--color-gray-900, #111827) !important;
+  background-color: transparent !important;
+  
+  &:hover:not(.mat-calendar-body-disabled) {
+    background-color: var(--color-gray-100, #f3f4f6) !important;
+  }
+}
+
+// Today's date indicator (light blue border)
+.mat-calendar-body-cell.mat-calendar-body-today {
+  border-color: var(--color-primary, #3b82f6) !important;
+  border-width: 1px;
+  border-style: solid;
+}
+
+// Selected date (highlighted in primary color)
+.mat-calendar-body-selected,
+.mat-calendar-body-cell.mat-calendar-body-selected {
+  background-color: var(--color-primary, #3b82f6) !important;
+  color: white !important;
+  font-weight: 500;
+}
+
+// Range/interval cells in datepicker
+.mat-calendar-body-comparison-bridging-cell {
+  background-color: rgba(59, 130, 246, 0.12) !important;
+}
+
+// Disabled/grayed out cells
+.mat-calendar-body-disabled {
+  color: var(--color-gray-400, #9ca3af) !important;
+  cursor: not-allowed !important;
+}
+
+// Datepicker input styling
+.mat-datepicker-toggle-active mat-icon {
+  color: var(--color-primary, #3b82f6) !important;
+}
+
+/**
+ * ============================================
+ * CRITICAL BUTTON HOVER OVERRIDES
+ * These must come AFTER Material's core to ensure proper specificity
+ * ============================================
+ */
+
+// Override Material's white hover overlay on primary raised buttons
+.mdc-button--raised.mat-mdc-raised-button.mat-primary {
+  background-color: var(--color-primary, #3b82f6) !important;
+  
+  // Hide Material's hover state overlay
+  &::before,
+  .mat-mdc-button-persistent-ripple,
+  .mat-mdc-button-persistent-ripple::before,
+  .mat-ripple,
+  .mat-ripple-element {
+    background-color: transparent !important;
+    opacity: 0 !important;
+  }
+  
+  // Custom hover state
+  &:hover:not(:disabled):not([disabled]) {
+    background-color: #2563eb !important;
+    
+    // Ensure overlays stay hidden
+    &::before,
+    .mat-mdc-button-persistent-ripple,
+    .mat-mdc-button-persistent-ripple::before {
+      opacity: 0 !important;
+      background-color: transparent !important;
+    }
+  }
+  
+  // Custom active state  
+  &:active:not(:disabled):not([disabled]) {
+    background-color: #1d4ed8 !important;
+  }
+  
+  // Focus state
+  &:focus-visible {
+    outline: 2px solid #93c5fd;
+    outline-offset: 2px;
+  }
+}
+
+// Apply to all MDC button ripple elements globally
+.mdc-button__ripple::before,
+.mdc-button__ripple::after {
+  .mat-mdc-raised-button.mat-primary & {
+    opacity: 0 !important;
+    background-color: transparent !important;
+  }
+}
+
+/**
+ * ============================================
+ * FORM FIELD ERROR STATES
+ * RED BORDER AND BACKGROUND FOR INVALID FIELDS
+ * ============================================
+ */
+
+// Target invalid form fields (when touched)
+.mat-mdc-form-field.mat-form-field-invalid,
+.mat-mdc-form-field.ng-invalid.ng-touched {
+  // Red border for outline fields
+  .mdc-notched-outline {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: #f44336 !important;
+      border-width: 2px !important;
+    }
+  }
+
+  // Light red background
+  .mat-mdc-text-field-wrapper .mdc-text-field {
+    background-color: #ffebee !important;
+  }
+
+  // Red label
+  .mat-mdc-form-field-label,
+  .mdc-floating-label,
+  label {
+    color: #f44336 !important;
+  }
+}
+
+// More specific targeting for appearance="outline"
+mat-form-field[appearance="outline"].mat-form-field-invalid,
+mat-form-field[appearance="outline"].ng-invalid.ng-touched {
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing {
+    border-color: #f44336 !important;
+    border-width: 2px !important;
+  }
+
+  .mdc-text-field {
+    background-color: #ffebee !important;
+  }
+}
+
+// Ensure error message styling is prominent
+mat-error,
+.mat-mdc-form-field-error {
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: #f44336 !important;
+  padding-top: 6px !important;
+}

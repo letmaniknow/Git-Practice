@@ -1,0 +1,96 @@
+<div class="login-form-wrapper">
+  <div class="login-container">
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <div class="form-content">
+        <h2>Sign In</h2>
+
+        <!-- Authentication Error Alert -->
+        <div *ngIf="error" class="auth-error">
+          <mat-icon class="error-icon">error</mat-icon>
+          <div class="error-content">
+            <div class="error-title">Authentication Failed</div>
+            <div class="error-message">{{ error }}</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            id="email"
+            formControlName="adminUsersUsernameOrEmail"
+            type="email"
+            autocomplete="email"
+            required
+            placeholder="Enter your email"
+          />
+          <div
+            *ngIf="
+              loginForm.get('adminUsersUsernameOrEmail')?.invalid &&
+              loginForm.get('adminUsersUsernameOrEmail')?.touched
+            "
+            class="field-error"
+          >
+            <mat-icon class="icon-sm">warning</mat-icon>
+            Valid email is required.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="password-input-wrapper">
+            <input
+              id="password"
+              formControlName="adminUsersPassword"
+              [type]="showPassword ? 'text' : 'password'"
+              autocomplete="current-password"
+              required
+              placeholder="Enter your password"
+              class="password-input"
+            />
+            <button
+              mat-icon-button
+              type="button"
+              class="password-toggle-btn"
+              (click)="togglePasswordVisibility()"
+              [attr.aria-label]="
+                showPassword ? 'Hide password' : 'Show password'
+              "
+            >
+              <mat-icon>{{
+                showPassword ? "visibility" : "visibility_off"
+              }}</mat-icon>
+            </button>
+          </div>
+          <div
+            *ngIf="
+              loginForm.get('adminUsersPassword')?.invalid &&
+              loginForm.get('adminUsersPassword')?.touched
+            "
+            class="field-error"
+          >
+            <mat-icon class="icon-sm">warning</mat-icon>
+            Password is required.
+          </div>
+        </div>
+
+        <!-- Forgot Password Link -->
+        <div class="forgot-password-section">
+          <a href="/auth/forgot-password" class="forgot-password-link">
+            Forgot your password?
+          </a>
+        </div>
+
+        <button type="submit" [disabled]="loading">
+          <mat-icon *ngIf="loading" class="spinner">hourglass_bottom</mat-icon>
+          <span>{{ loading ? "Signing In..." : "Sign In" }}</span>
+        </button>
+
+        <!-- Loading Message -->
+        <div *ngIf="loading" class="loading-message">
+          <div class="spinner-dot"></div>
+          <span>Please wait while we authenticate your credentials...</span>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>

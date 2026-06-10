@@ -1,0 +1,986 @@
+<mat-card class="news-form-card">
+  <!-- Error Message Display -->
+  <app-error-message
+    *ngIf="errorMessage"
+    [title]="'Form Error'"
+    [message]="errorMessage"
+    [type]="'error'"
+    [dismissible]="true"
+    (dismiss)="errorMessage = null"
+    [attr.aria-live]="'polite'"
+  ></app-error-message>
+
+  <!-- Loading Overlay -->
+  <div *ngIf="isSubmitting" class="loading-overlay">
+    <app-loading
+      [message]="'Submitting form...'"
+      [size]="'large'"
+      [overlay]="false"
+    ></app-loading>
+  </div>
+
+  <!-- Keyboard Shortcut Tip - Compact Single Line -->
+  <div class="keyboard-tip-banner">
+    <mat-icon class="tip-icon">keyboard</mat-icon>
+    <div class="tip-content">
+      <strong>Keyboard Shortcut:</strong> Press <kbd>Ctrl</kbd> +
+      <kbd>S</kbd> to save instantly
+    </div>
+  </div>
+
+  <form [formGroup]="newsForm" (ngSubmit)="onSubmit()" class="news-form">
+    <!-- MANDATORY SECTION -->
+    <mat-card-content class="form-section mandatory-section">
+      <h2 class="section-title">Mandatory Fields</h2>
+
+      <!-- Title (English) -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Title (English)</mat-label>
+        <input
+          matInput
+          formControlName="newsTitleEn"
+          maxlength="200"
+          required
+          aria-required="true"
+        />
+        <mat-icon
+          matSuffix
+          *ngIf="newsForm.get('newsTitleEn')?.valid"
+          class="valid-icon"
+          >check_circle</mat-icon
+        >
+        <mat-error *ngIf="newsForm.get('newsTitleEn')?.hasError('required')">
+          Title in English is required
+        </mat-error>
+        <mat-error *ngIf="newsForm.get('newsTitleEn')?.hasError('maxlength')">
+          Title is too long (max 200 characters)
+        </mat-error>
+        <mat-error *ngIf="newsForm.get('newsTitleEn')?.hasError('backend')">
+          {{ newsForm.get("newsTitleEn")?.getError("backend") }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Title (Spanish) -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Title (Spanish)</mat-label>
+        <input
+          matInput
+          formControlName="newsTitleEs"
+          maxlength="200"
+          required
+          aria-required="true"
+        />
+        <mat-icon
+          matSuffix
+          *ngIf="newsForm.get('newsTitleEs')?.valid"
+          class="valid-icon"
+          >check_circle</mat-icon
+        >
+        <mat-error *ngIf="newsForm.get('newsTitleEs')?.hasError('required')">
+          Title in Spanish is required
+        </mat-error>
+        <mat-error *ngIf="newsForm.get('newsTitleEs')?.hasError('maxlength')">
+          Title is too long (max 200 characters)
+        </mat-error>
+        <mat-error *ngIf="newsForm.get('newsTitleEs')?.hasError('backend')">
+          {{ newsForm.get("newsTitleEs")?.getError("backend") }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Content (English) -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Content (English)</mat-label>
+        <textarea
+          matInput
+          formControlName="newsContentEn"
+          rows="6"
+          maxlength="5000"
+          required
+          aria-required="true"
+        ></textarea>
+        <mat-hint align="end"
+          >{{ newsForm.get("newsContentEn")?.value?.length || 0 }} /
+          5000</mat-hint
+        >
+        <mat-error *ngIf="newsForm.get('newsContentEn')?.hasError('required')">
+          Content in English is required
+        </mat-error>
+        <mat-error *ngIf="newsForm.get('newsContentEn')?.hasError('maxlength')">
+          Content is too long (max 5000 characters)
+        </mat-error>
+        <mat-error *ngIf="newsForm.get('newsContentEn')?.hasError('backend')">
+          {{ newsForm.get("newsContentEn")?.getError("backend") }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Content (Spanish) -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Content (Spanish)</mat-label>
+        <textarea
+          matInput
+          formControlName="newsContentEs"
+          rows="6"
+          maxlength="5000"
+          required
+          aria-required="true"
+        ></textarea>
+        <mat-hint align="end"
+          >{{ newsForm.get("newsContentEs")?.value?.length || 0 }} /
+          5000</mat-hint
+        >
+        <mat-error *ngIf="newsForm.get('newsContentEs')?.hasError('required')">
+          Content in Spanish is required
+        </mat-error>
+        <mat-error *ngIf="newsForm.get('newsContentEs')?.hasError('maxlength')">
+          Content is too long (max 5000 characters)
+        </mat-error>
+        <mat-error *ngIf="newsForm.get('newsContentEs')?.hasError('backend')">
+          {{ newsForm.get("newsContentEs")?.getError("backend") }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Main Media (Image/Video) -->
+      <div class="media-input-section">
+        <mat-label class="media-label">Main Media (Image/Video) *</mat-label>
+        <!-- Drag-and-drop area (optional, enable if desired) -->
+        <!--
+        <div class="file-drop-area" (drop)="onFileDrop($event)" (dragover)="$event.preventDefault()">
+          <mat-icon>cloud_upload</mat-icon>
+          <span>Drag & drop file here or</span>
+          <button mat-stroked-button color="primary" type="button" (click)="mainMediaInput.click()">
+            Choose Media File
+          </button>
+        </div>
+        -->
+        <div class="file-input-wrapper">
+          <input
+            type="file"
+            #mainMediaInput
+            (change)="onMainMediaChange($event)"
+            accept="image/*,video/*"
+            class="file-input"
+            aria-label="Main media file"
+          />
+          <button
+            mat-raised-button
+            type="button"
+            (click)="mainMediaInput.click()"
+            class="file-button upload-button"
+          >
+            <mat-icon>cloud_upload</mat-icon>
+            Choose Media File
+          </button>
+          <span class="file-name" *ngIf="mainMediaFile">{{
+            mainMediaFile.name
+          }}</span>
+        </div>
+
+        <!-- Format Support Hint -->
+        <div class="media-hint">
+          <mat-icon class="info-icon">info_outline</mat-icon>
+          <span
+            >Supported: JPEG, PNG, GIF, WebP, BMP, AVIF, HEIC/HEIF, JPEG XL |
+            MP4, MOV, WebM, AV1 (max 20MB)</span
+          >
+        </div>
+
+        <!-- Media Field Error Display (inline like other fields) -->
+        <div
+          class="media-error-container"
+          *ngIf="
+            newsForm.get('imageVideoFile')?.invalid &&
+            (newsForm.get('imageVideoFile')?.touched ||
+              newsForm.get('imageVideoFile')?.dirty)
+          "
+        >
+          <mat-error
+            *ngIf="newsForm.get('imageVideoFile')?.hasError('required')"
+          >
+            Main media file is required
+          </mat-error>
+          <mat-error
+            *ngIf="newsForm.get('imageVideoFile')?.hasError('backend')"
+          >
+            {{ newsForm.get("imageVideoFile")?.getError("backend") }}
+          </mat-error>
+        </div>
+
+        <!-- Media Preview -->
+        <div
+          *ngIf="mediaPreviewUrl"
+          class="media-preview-section mat-elevation-z2"
+        >
+          <div class="media-preview-header">
+            <mat-icon color="accent">perm_media</mat-icon>
+            <span class="media-preview-title">Current Media</span>
+          </div>
+          <div class="media-preview">
+            <ng-container
+              *ngIf="
+                newsItem?.newsMediaFileType?.startsWith('image');
+                else videoBlock
+              "
+            >
+              <img
+                [src]="mediaPreviewUrl"
+                alt="Current media preview"
+                class="preview-image"
+              />
+            </ng-container>
+            <ng-template #videoBlock>
+              <video
+                *ngIf="newsItem?.newsMediaFileType?.startsWith('video')"
+                [src]="mediaPreviewUrl"
+                controls
+                class="preview-video"
+              ></video>
+            </ng-template>
+            <div
+              *ngIf="
+                !newsItem?.newsMediaFileType?.startsWith('image') &&
+                !newsItem?.newsMediaFileType?.startsWith('video')
+              "
+              class="preview-fallback"
+            >
+              <a
+                [href]="mediaPreviewUrl"
+                target="_blank"
+                mat-stroked-button
+                color="primary"
+              >
+                <mat-icon>download</mat-icon>
+                Download Current Media
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Error Alert (Inline) -->
+      <app-error-alert
+        *ngIf="categoriesError"
+        [error]="categoriesError"
+        [isRetryLoading]="isLoadingCategories"
+        (onRetry)="loadCategories()"
+        [showRetry]="true"
+        [showDismiss]="true"
+        (onDismiss)="categoriesError = null"
+        title="Failed to Load Categories"
+        icon="category"
+      ></app-error-alert>
+
+      <!-- Category -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Category</mat-label>
+        <mat-select
+          formControlName="newsNewsCategoryId"
+          required
+          aria-required="true"
+        >
+          <mat-option *ngFor="let cat of categories" [value]="cat.id">
+            {{ cat.categoryNameEn }}
+          </mat-option>
+        </mat-select>
+        <mat-icon
+          matSuffix
+          *ngIf="newsForm.get('newsNewsCategoryId')?.valid"
+          class="valid-icon"
+          >check_circle</mat-icon
+        >
+        <mat-error
+          *ngIf="newsForm.get('newsNewsCategoryId')?.hasError('required')"
+        >
+          Category is required
+        </mat-error>
+        <mat-error
+          *ngIf="newsForm.get('newsNewsCategoryId')?.hasError('backend')"
+        >
+          {{ newsForm.get("newsNewsCategoryId")?.getError("backend") }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Source URL -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Source URL</mat-label>
+        <input
+          matInput
+          formControlName="newsSourceUrl"
+          type="url"
+          required
+          aria-required="true"
+        />
+        <mat-icon
+          matSuffix
+          *ngIf="newsForm.get('newsSourceUrl')?.valid"
+          class="valid-icon"
+          >check_circle</mat-icon
+        >
+        <mat-error *ngIf="newsForm.get('newsSourceUrl')?.hasError('required')">
+          Source URL is required
+        </mat-error>
+        <mat-error
+          *ngIf="newsForm.get('newsSourceUrl')?.hasError('invalidUrl')"
+        >
+          Invalid URL format
+        </mat-error>
+        <mat-error *ngIf="newsForm.get('newsSourceUrl')?.hasError('backend')">
+          {{ newsForm.get("newsSourceUrl")?.getError("backend") }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Workflow Status -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Workflow Status</mat-label>
+        <mat-select
+          formControlName="newsWorkflowStatus"
+          required
+          aria-required="true"
+        >
+          <mat-option
+            *ngFor="let status of workflowStatuses"
+            [value]="status"
+            [disabled]="status === 'PUBLISHED' && !canPublish"
+          >
+            {{ status | enumDisplay }}
+          </mat-option>
+        </mat-select>
+        <mat-icon
+          matSuffix
+          *ngIf="newsForm.get('newsWorkflowStatus')?.valid"
+          class="valid-icon"
+          >check_circle</mat-icon
+        >
+        <mat-error
+          *ngIf="newsForm.get('newsWorkflowStatus')?.hasError('required')"
+        >
+          Workflow status is required
+        </mat-error>
+        <mat-error
+          *ngIf="newsForm.get('newsWorkflowStatus')?.hasError('backend')"
+        >
+          {{ newsForm.get("newsWorkflowStatus")?.getError("backend") }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Scheduled Publish At (Conditional) -->
+      <div
+        *ngIf="newsForm.get('newsWorkflowStatus')?.value === 'SCHEDULED'"
+        class="conditional-field"
+      >
+        <app-unified-datetime-picker
+          [formControl]="scheduledPublishAtControl"
+          label="Scheduled Publish At"
+          placeholder="Select publication date and time"
+          [required]="true"
+          hint="Choose when this news should be published automatically"
+        ></app-unified-datetime-picker>
+      </div>
+
+      <!-- Featured News Checkbox -->
+      <div class="checkbox-section">
+        <mat-checkbox formControlName="newsIsFeatured" color="primary">
+          Featured Article
+        </mat-checkbox>
+      </div>
+    </mat-card-content>
+
+    <!-- ADVANCED SECTION (Collapsible) -->
+    <mat-expansion-panel class="advanced-section">
+      <mat-expansion-panel-header class="section-title-header">
+        <mat-panel-title class="section-title-content">
+          <span class="section-icon">◆</span>
+          Advanced Options
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <mat-card-content class="form-section">
+        <!-- Advanced Content -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Excerpt (English)</mat-label>
+          <textarea
+            matInput
+            formControlName="newsExcerptEn"
+            rows="3"
+            maxlength="500"
+          ></textarea>
+          <mat-hint align="end"
+            >{{ newsForm.get("newsExcerptEn")?.value?.length || 0 }} /
+            500</mat-hint
+          >
+          <mat-error
+            *ngIf="newsForm.get('newsExcerptEn')?.hasError('maxlength')"
+          >
+            Excerpt is too long (max 500 characters)
+          </mat-error>
+          <mat-error *ngIf="newsForm.get('newsExcerptEn')?.hasError('backend')">
+            {{ newsForm.get("newsExcerptEn")?.getError("backend") }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Excerpt (Spanish)</mat-label>
+          <textarea
+            matInput
+            formControlName="newsExcerptEs"
+            rows="3"
+            maxlength="500"
+          ></textarea>
+          <mat-hint align="end"
+            >{{ newsForm.get("newsExcerptEs")?.value?.length || 0 }} /
+            500</mat-hint
+          >
+          <mat-error
+            *ngIf="newsForm.get('newsExcerptEs')?.hasError('maxlength')"
+          >
+            Excerpt is too long (max 500 characters)
+          </mat-error>
+          <mat-error *ngIf="newsForm.get('newsExcerptEs')?.hasError('backend')">
+            {{ newsForm.get("newsExcerptEs")?.getError("backend") }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Content Format</mat-label>
+          <mat-select formControlName="newsContentFormat">
+            <mat-option value="PLAIN_TEXT">Plain Text</mat-option>
+            <mat-option value="HTML_BASIC">HTML Basic</mat-option>
+            <mat-option value="HTML_RICH">HTML Rich</mat-option>
+            <mat-option value="MARKDOWN">Markdown</mat-option>
+          </mat-select>
+          <mat-error
+            *ngIf="newsForm.get('newsContentFormat')?.hasError('backend')"
+          >
+            {{ newsForm.get("newsContentFormat")?.getError("backend") }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Tags</mat-label>
+          <input
+            matInput
+            formControlName="newsTags"
+            placeholder="Politics, Economy, Technology"
+          />
+          <mat-hint>Comma-separated tags</mat-hint>
+          <mat-error *ngIf="newsForm.get('newsTags')?.hasError('backend')">
+            {{ newsForm.get("newsTags")?.getError("backend") }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Advanced Media -->
+        <h3 class="subsection-title">Media</h3>
+        <div class="media-input-section">
+          <label class="media-label">Thumbnail</label>
+          <div class="file-input-wrapper">
+            <input
+              type="file"
+              #thumbnailInput
+              (change)="onThumbnailChange($event)"
+              accept="image/*"
+              class="file-input"
+              aria-label="Thumbnail file"
+            />
+            <button
+              mat-raised-button
+              type="button"
+              (click)="thumbnailInput.click()"
+              class="file-button upload-button"
+            >
+              <mat-icon>image</mat-icon>
+              Choose Thumbnail
+            </button>
+            <span class="file-name" *ngIf="thumbnailFile">{{
+              thumbnailFile.name
+            }}</span>
+          </div>
+        </div>
+
+        <!-- Attribution -->
+        <h3 class="subsection-title">Attribution</h3>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Source Author Name</mat-label>
+          <input
+            matInput
+            formControlName="newsSourceAuthorName"
+            maxlength="255"
+          />
+          <mat-error
+            *ngIf="newsForm.get('newsSourceAuthorName')?.hasError('maxlength')"
+          >
+            Author name is too long (max 255 characters)
+          </mat-error>
+          <mat-error
+            *ngIf="newsForm.get('newsSourceAuthorName')?.hasError('backend')"
+          >
+            {{ newsForm.get("newsSourceAuthorName")?.getError("backend") }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Source Agency</mat-label>
+          <mat-select formControlName="newsSourceAgencyId">
+            <mat-option *ngFor="let agency of agencies" [value]="agency.id">
+              {{ agency.name }}
+            </mat-option>
+          </mat-select>
+          <mat-error
+            *ngIf="newsForm.get('newsSourceAgencyId')?.hasError('backend')"
+          >
+            {{ newsForm.get("newsSourceAgencyId")?.getError("backend") }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Content Origin</mat-label>
+          <mat-select formControlName="newsContentOrigin">
+            <mat-option value="ORIGINAL">Original</mat-option>
+            <mat-option value="SYNDICATED">Syndicated</mat-option>
+            <mat-option value="USER_SUBMITTED">User Submitted</mat-option>
+            <mat-option value="PARTNER">Partner</mat-option>
+          </mat-select>
+          <mat-error
+            *ngIf="newsForm.get('newsContentOrigin')?.hasError('backend')"
+          >
+            {{ newsForm.get("newsContentOrigin")?.getError("backend") }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Breaking News -->
+        <h3 class="subsection-title">Breaking News</h3>
+        <div class="checkbox-section">
+          <mat-checkbox formControlName="newsIsBreaking" color="warn">
+            Breaking News
+          </mat-checkbox>
+        </div>
+        <div
+          *ngIf="newsForm.get('newsIsBreaking')?.value"
+          class="conditional-field"
+        >
+          <app-unified-datetime-picker
+            [formControl]="breakingExpiresAtControl"
+            label="Breaking Expires At"
+            placeholder="Select expiration date and time"
+            hint="Set when this breaking news alert expires"
+          ></app-unified-datetime-picker>
+        </div>
+
+        <!-- Advanced Publishing -->
+        <h3 class="subsection-title">Publishing</h3>
+        <app-unified-datetime-picker
+          [formControl]="embargoUntilControl"
+          label="Embargo Until"
+          placeholder="Select embargo date and time"
+          hint="Content will not be published until this date/time"
+        ></app-unified-datetime-picker>
+
+        <app-unified-datetime-picker
+          [formControl]="expiresAtControl"
+          label="Expires At"
+          placeholder="Select expiration date and time"
+          hint="Content will be archived after this date/time"
+        ></app-unified-datetime-picker>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Urgency Level</mat-label>
+          <mat-select formControlName="newsUrgencyLevel">
+            <mat-option value="LOW">Low</mat-option>
+            <mat-option value="NORMAL">Normal</mat-option>
+            <mat-option value="HIGH">High</mat-option>
+            <mat-option value="BREAKING">Breaking</mat-option>
+          </mat-select>
+          <mat-error
+            *ngIf="newsForm.get('newsUrgencyLevel')?.hasError('backend')"
+          >
+            {{ newsForm.get("newsUrgencyLevel")?.getError("backend") }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Target Audience</mat-label>
+          <input matInput formControlName="newsTargetAudience" maxlength="50" />
+          <mat-error
+            *ngIf="newsForm.get('newsTargetAudience')?.hasError('maxlength')"
+          >
+            Target audience is too long (max 50 characters)
+          </mat-error>
+          <mat-error
+            *ngIf="newsForm.get('newsTargetAudience')?.hasError('backend')"
+          >
+            {{ newsForm.get("newsTargetAudience")?.getError("backend") }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Read Time (minutes)</mat-label>
+          <input matInput type="number" formControlName="newsReadTimeMinutes" />
+          <mat-error
+            *ngIf="newsForm.get('newsReadTimeMinutes')?.hasError('backend')"
+          >
+            {{ newsForm.get("newsReadTimeMinutes")?.getError("backend") }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Location -->
+        <h3 class="subsection-title">Location</h3>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Country</mat-label>
+          <mat-select formControlName="newsCountryCode">
+            <mat-option
+              *ngFor="let country of countries"
+              [value]="country.code"
+            >
+              {{ country.name }}
+            </mat-option>
+          </mat-select>
+          <mat-error
+            *ngIf="newsForm.get('newsCountryCode')?.hasError('backend')"
+          >
+            {{ newsForm.get("newsCountryCode")?.getError("backend") }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Region</mat-label>
+          <input matInput formControlName="newsRegion" maxlength="100" />
+          <mat-error *ngIf="newsForm.get('newsRegion')?.hasError('maxlength')">
+            Region is too long (max 100 characters)
+          </mat-error>
+          <mat-error *ngIf="newsForm.get('newsRegion')?.hasError('backend')">
+            {{ newsForm.get("newsRegion")?.getError("backend") }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>City</mat-label>
+          <input matInput formControlName="newsCity" maxlength="100" />
+          <mat-error *ngIf="newsForm.get('newsCity')?.hasError('maxlength')">
+            City is too long (max 100 characters)
+          </mat-error>
+          <mat-error *ngIf="newsForm.get('newsCity')?.hasError('backend')">
+            {{ newsForm.get("newsCity")?.getError("backend") }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Latitude</mat-label>
+          <input matInput type="number" formControlName="newsLatitude" />
+          <mat-error *ngIf="newsForm.get('newsLatitude')?.hasError('backend')">
+            {{ newsForm.get("newsLatitude")?.getError("backend") }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Longitude</mat-label>
+          <input matInput type="number" formControlName="newsLongitude" />
+          <mat-error *ngIf="newsForm.get('newsLongitude')?.hasError('backend')">
+            {{ newsForm.get("newsLongitude")?.getError("backend") }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Monetization -->
+        <h3 class="subsection-title">Monetization</h3>
+        <div class="checkbox-section">
+          <mat-checkbox formControlName="newsIsSponsored" color="primary">
+            Sponsored Content
+          </mat-checkbox>
+        </div>
+        <div
+          *ngIf="newsForm.get('newsIsSponsored')?.value"
+          class="conditional-field"
+        >
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Sponsor Name</mat-label>
+            <input
+              matInput
+              formControlName="newsSponsorName"
+              maxlength="255"
+              required
+            />
+            <mat-error
+              *ngIf="newsForm.get('newsSponsorName')?.hasError('required')"
+            >
+              Sponsor name is required
+            </mat-error>
+            <mat-error
+              *ngIf="newsForm.get('newsSponsorName')?.hasError('maxlength')"
+            >
+              Sponsor name is too long (max 255 characters)
+            </mat-error>
+            <mat-error
+              *ngIf="newsForm.get('newsSponsorName')?.hasError('backend')"
+            >
+              {{ newsForm.get("newsSponsorName")?.getError("backend") }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Sponsor Logo URL</mat-label>
+            <input
+              matInput
+              formControlName="newsSponsorLogoUrl"
+              type="url"
+              required
+            />
+            <mat-error
+              *ngIf="newsForm.get('newsSponsorLogoUrl')?.hasError('required')"
+            >
+              Sponsor logo URL is required
+            </mat-error>
+            <mat-error
+              *ngIf="newsForm.get('newsSponsorLogoUrl')?.hasError('backend')"
+            >
+              {{ newsForm.get("newsSponsorLogoUrl")?.getError("backend") }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Sponsor Website URL</mat-label>
+            <input
+              matInput
+              formControlName="newsSponsorWebsiteUrl"
+              type="url"
+              required
+            />
+            <mat-error
+              *ngIf="
+                newsForm.get('newsSponsorWebsiteUrl')?.hasError('required')
+              "
+            >
+              Sponsor website URL is required
+            </mat-error>
+            <mat-error
+              *ngIf="newsForm.get('newsSponsorWebsiteUrl')?.hasError('backend')"
+            >
+              {{ newsForm.get("newsSponsorWebsiteUrl")?.getError("backend") }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="checkbox-section">
+          <mat-checkbox formControlName="newsIsPremium" color="primary">
+            Premium/Paywall
+          </mat-checkbox>
+        </div>
+        <div
+          *ngIf="newsForm.get('newsIsPremium')?.value"
+          class="conditional-field"
+        >
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Premium Tier</mat-label>
+            <mat-select formControlName="newsPremiumTier" required>
+              <mat-option value="FREE">Free</mat-option>
+              <mat-option value="BASIC">Basic</mat-option>
+              <mat-option value="PRO">Pro</mat-option>
+              <mat-option value="ENTERPRISE">Enterprise</mat-option>
+            </mat-select>
+            <mat-error
+              *ngIf="newsForm.get('newsPremiumTier')?.hasError('required')"
+            >
+              Premium tier is required
+            </mat-error>
+            <mat-error
+              *ngIf="newsForm.get('newsPremiumTier')?.hasError('backend')"
+            >
+              {{ newsForm.get("newsPremiumTier")?.getError("backend") }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- SEO -->
+        <h3 class="subsection-title">SEO</h3>
+
+        <!-- Slug (Auto-generated from title, displayed for reference) -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>URL Slug</mat-label>
+          <input
+            matInput
+            formControlName="newsSlug"
+            readonly
+            placeholder="Auto-generated from title"
+          />
+          <mat-hint>Auto-generated from the English title</mat-hint>
+          <mat-error *ngIf="newsForm.get('newsSlug')?.hasError('backend')">
+            {{ newsForm.get("newsSlug")?.getError("backend") }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Meta Title</mat-label>
+          <input matInput formControlName="newsMetaTitle" />
+          <mat-hint>SEO title for search engines</mat-hint>
+          <mat-error
+            *ngIf="newsForm.get('newsMetaTitle')?.hasError('required')"
+          >
+            Meta Title is required
+          </mat-error>
+          <mat-error *ngIf="newsForm.get('newsMetaTitle')?.hasError('backend')">
+            {{ newsForm.get("newsMetaTitle")?.getError("backend") }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Meta Description</mat-label>
+          <textarea
+            matInput
+            formControlName="newsMetaDescription"
+            rows="3"
+          ></textarea>
+          <mat-hint>SEO description for search results</mat-hint>
+          <mat-error
+            *ngIf="newsForm.get('newsMetaDescription')?.hasError('required')"
+          >
+            Meta Description is required
+          </mat-error>
+          <mat-error
+            *ngIf="newsForm.get('newsMetaDescription')?.hasError('backend')"
+          >
+            {{ newsForm.get("newsMetaDescription")?.getError("backend") }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Keywords</mat-label>
+          <input
+            matInput
+            formControlName="newsKeywords"
+            placeholder="keyword1, keyword2, keyword3"
+          />
+          <mat-error *ngIf="newsForm.get('newsKeywords')?.hasError('backend')">
+            {{ newsForm.get("newsKeywords")?.getError("backend") }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Canonical URL</mat-label>
+          <input matInput formControlName="newsCanonicalUrl" type="url" />
+          <mat-error
+            *ngIf="newsForm.get('newsCanonicalUrl')?.hasError('backend')"
+          >
+            {{ newsForm.get("newsCanonicalUrl")?.getError("backend") }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Series -->
+        <h3 class="subsection-title">Series</h3>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Series</mat-label>
+          <mat-select formControlName="newsSeriesId">
+            <mat-option *ngFor="let series of seriesList" [value]="series.id">
+              {{ series.name }}
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="newsForm.get('newsSeriesId')?.hasError('backend')">
+            {{ newsForm.get("newsSeriesId")?.getError("backend") }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Series Order</mat-label>
+          <input matInput type="number" formControlName="newsSeriesOrder" />
+          <mat-error
+            *ngIf="newsForm.get('newsSeriesOrder')?.hasError('backend')"
+          >
+            {{ newsForm.get("newsSeriesOrder")?.getError("backend") }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Internal Notes -->
+        <h3 class="subsection-title">Internal Notes</h3>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Editor Notes</mat-label>
+          <textarea
+            matInput
+            formControlName="newsEditorNotes"
+            rows="4"
+            maxlength="2000"
+          ></textarea>
+          <mat-hint align="end"
+            >{{ newsForm.get("newsEditorNotes")?.value?.length || 0 }} /
+            2000</mat-hint
+          >
+          <mat-error
+            *ngIf="newsForm.get('newsEditorNotes')?.hasError('maxlength')"
+          >
+            Notes are too long (max 2000 characters)
+          </mat-error>
+          <mat-error
+            *ngIf="newsForm.get('newsEditorNotes')?.hasError('backend')"
+          >
+            {{ newsForm.get("newsEditorNotes")?.getError("backend") }}
+          </mat-error>
+        </mat-form-field>
+      </mat-card-content>
+    </mat-expansion-panel>
+
+    <!-- Form Actions -->
+    <mat-card-actions align="end" class="form-actions">
+      <div class="actions-layout">
+        <!-- Destructive Action (left side, separated) -->
+        <div *ngIf="showDelete && isEditMode" class="destructive-actions">
+          <button
+            mat-stroked-button
+            type="button"
+            (click)="onDelete()"
+            [disabled]="isSubmitting"
+            class="delete-button"
+            matTooltip="Permanently delete this news article"
+            aria-label="Delete Article"
+          >
+            <mat-icon>delete_outline</mat-icon>
+            Delete
+          </button>
+        </div>
+
+        <!-- Primary Actions (right side) -->
+        <div class="primary-actions">
+          <button
+            mat-button
+            type="button"
+            (click)="onCancel()"
+            [disabled]="isSubmitting"
+            class="cancel-button"
+          >
+            <mat-icon>close</mat-icon>
+            Cancel
+          </button>
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="isSubmitting"
+            class="submit-button"
+            [attr.aria-busy]="isSubmitting"
+            [attr.aria-label]="
+              isSubmitting
+                ? 'Submitting form'
+                : isEditMode
+                  ? 'Update News'
+                  : 'Create News'
+            "
+            [matTooltip]="
+              isEditMode ? 'Update News (Ctrl+S)' : 'Create News (Ctrl+S)'
+            "
+            matTooltipPosition="above"
+            [matTooltipDisabled]="isSubmitting"
+          >
+            <mat-icon *ngIf="!isSubmitting">save</mat-icon>
+            <mat-spinner
+              *ngIf="isSubmitting"
+              diameter="20"
+              color="accent"
+            ></mat-spinner>
+            {{
+              isSubmitting
+                ? isEditMode
+                  ? "Updating"
+                  : "Creating"
+                : isEditMode
+                  ? "Update"
+                  : "Create"
+            }}
+          </button>
+        </div>
+      </div>
+    </mat-card-actions>
+  </form>
+</mat-card>

@@ -1,0 +1,85 @@
+<!-- News Edit Page -->
+<main class="edit-page" role="main">
+  <!-- Header Bar - Compact Industry Standard -->
+  <header class="page-header-bar">
+    <a routerLink="/news" class="back-btn" aria-label="Go back to news list">
+      <span class="back-icon" aria-hidden="true">←</span>
+      Back
+    </a>
+    <h1 class="page-title">Edit News Article</h1>
+
+    <!-- Metadata in same row -->
+    <div class="news-metadata" *ngIf="news && !(isSubmitting$ | async)">
+      <span class="metadata-item">
+        <mat-icon>label</mat-icon>
+        <span>{{ categoryName || "Loading..." }}</span>
+      </span>
+      <span class="metadata-separator">•</span>
+      <span class="metadata-item">
+        <mat-icon>person</mat-icon>
+        <span>{{ authorName || "Loading..." }}</span>
+      </span>
+      <span class="metadata-separator">•</span>
+      <span class="metadata-item">
+        <mat-icon>calendar_today</mat-icon>
+        <span>{{
+          news.newsCreatedAt
+            ? (news.newsCreatedAt | date: "MMM dd, yyyy")
+            : "Recently"
+        }}</span>
+      </span>
+    </div>
+  </header>
+
+  <!-- Error Banner -->
+  <div
+    *ngIf="errorState$ | async as error"
+    class="error-banner"
+    role="alert"
+    aria-live="assertive"
+  >
+    <div class="error-content">
+      <span class="error-icon">⚠️</span>
+      <p class="error-message">{{ error.message }}</p>
+      <button
+        *ngIf="error.canRetry"
+        class="error-retry-btn"
+        (click)="onRetry()"
+        aria-label="Retry updating news"
+      >
+        Retry
+      </button>
+      <button
+        class="error-close-btn"
+        (click)="clearError()"
+        aria-label="Close error message"
+      >
+        ✕
+      </button>
+    </div>
+  </div>
+
+  <!-- Form Container -->
+  <div class="form-container">
+    <!-- News Form -->
+    <app-news-form
+      *ngIf="news && !(isSubmitting$ | async)"
+      [isEditMode]="true"
+      [newsItem]="news"
+      [isSubmitting]="(isSubmitting$ | async) ?? false"
+      [fieldErrors]="(fieldErrors$ | async) ?? null"
+      [showDelete]="true"
+      (save)="onSave($event)"
+      (cancel)="onCancel()"
+      (delete)="onDelete()"
+      aria-label="News editing form"
+    >
+    </app-news-form>
+
+    <!-- Loading State -->
+    <div *ngIf="isSubmitting$ | async" class="loading-container">
+      <mat-spinner diameter="48"></mat-spinner>
+      <p>Loading news article...</p>
+    </div>
+  </div>
+</main>

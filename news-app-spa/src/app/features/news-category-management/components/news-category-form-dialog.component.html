@@ -1,0 +1,136 @@
+<!-- News Category Form Dialog Template -->
+
+<div class="form-dialog-container">
+  <!-- Dialog Header -->
+  <div mat-dialog-title class="dialog-header">
+    <h2 class="dialog-title">{{ dialogTitle }}</h2>
+    <button
+      mat-icon-button
+      (click)="onCancel()"
+      [disabled]="isLoading"
+      class="close-button"
+      aria-label="Close dialog"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Dialog Content -->
+  <mat-dialog-content class="dialog-content">
+    <!-- Backend Error Alert -->
+    <div *ngIf="backendErrorMessage" class="backend-error-alert">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <div class="error-content">
+        <strong>Unable to Save</strong>
+        <p>{{ backendErrorMessage }}</p>
+      </div>
+    </div>
+
+    <form [formGroup]="categoryForm" class="category-form">
+      <!-- English Name Field -->
+      <mat-form-field class="full-width" appearance="outline">
+        <mat-label>Category Name (English) *</mat-label>
+        <input
+          matInput
+          formControlName="nameEn"
+          [disabled]="isLoading"
+          maxlength="100"
+          placeholder="e.g., Technology"
+        />
+        <mat-error *ngIf="hasError('nameEn')">
+          {{ getErrorMessage("nameEn") }}
+        </mat-error>
+        <mat-hint align="end">
+          {{ categoryForm.get("nameEn")?.value?.length || 0 }}/100
+        </mat-hint>
+      </mat-form-field>
+
+      <!-- Spanish Name Field -->
+      <mat-form-field class="full-width" appearance="outline">
+        <mat-label>Categoría (Español) *</mat-label>
+        <input
+          matInput
+          formControlName="nameEs"
+          [disabled]="isLoading"
+          maxlength="100"
+          placeholder="e.g., Tecnología"
+        />
+        <mat-error *ngIf="hasError('nameEs')">
+          {{ getErrorMessage("nameEs") }}
+        </mat-error>
+        <mat-hint align="end">
+          {{ categoryForm.get("nameEs")?.value?.length || 0 }}/100
+        </mat-hint>
+      </mat-form-field>
+
+      <!-- Slug Field -->
+      <div class="slug-field-group">
+        <mat-form-field class="slug-field" appearance="outline">
+          <mat-label>Slug</mat-label>
+          <input
+            matInput
+            formControlName="slug"
+            [disabled]="isLoading"
+            placeholder="e.g., technology-news"
+          />
+          <mat-error *ngIf="hasError('slug')">
+            {{ getErrorMessage("slug") }}
+          </mat-error>
+          <mat-hint>{{ validationRules.SLUG.HINT }}</mat-hint>
+        </mat-form-field>
+        <button
+          mat-stroked-button
+          type="button"
+          (click)="generateSlug()"
+          [disabled]="isLoading || !categoryForm.get('nameEn')?.value"
+          class="generate-slug-button"
+        >
+          <mat-icon>auto_fix_high</mat-icon>
+          Generate
+        </button>
+      </div>
+
+      <!-- Description Field -->
+      <mat-form-field class="full-width" appearance="outline">
+        <mat-label>Description</mat-label>
+        <textarea
+          matInput
+          formControlName="description"
+          [disabled]="isLoading"
+          maxlength="500"
+          rows="2"
+          placeholder="Optional description for this category"
+        ></textarea>
+        <mat-error *ngIf="hasError('description')">
+          {{ getErrorMessage("description") }}
+        </mat-error>
+        <mat-hint align="end"> {{ descriptionCharCount }}/500 </mat-hint>
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+
+  <!-- Dialog Actions -->
+  <mat-dialog-actions align="end" class="dialog-actions">
+    <button
+      mat-button
+      (click)="onCancel()"
+      [disabled]="isLoading"
+      class="cancel-button"
+    >
+      {{ operationMessages.GENERAL.CANCEL_BTN }}
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onSubmit()"
+      [disabled]="categoryForm.invalid || isLoading"
+      class="submit-button"
+    >
+      <mat-icon *ngIf="isLoading" class="spinner-icon">
+        <mat-spinner diameter="20"></mat-spinner>
+      </mat-icon>
+      <span *ngIf="!isLoading">{{ submitButtonLabel }}</span>
+      <span *ngIf="isLoading">Processing...</span>
+    </button>
+  </mat-dialog-actions>
+</div>

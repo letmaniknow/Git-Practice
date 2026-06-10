@@ -1,0 +1,28 @@
+<div
+  class="loading-container"
+  [class.overlay]="overlay"
+  [class.full-screen]="fullScreen"
+  [class]="'size-' + size"
+  role="status"
+  [attr.aria-label]="message"
+>
+  <!-- Spinner Type -->
+  <div class="spinner-container" *ngIf="type === 'spinner'">
+    <div class="spinner"></div>
+  </div>
+
+  <!-- Dots Type -->
+  <div class="dots-container" *ngIf="type === 'dots'">
+    <div class="dot dot1"></div>
+    <div class="dot dot2"></div>
+    <div class="dot dot3"></div>
+  </div>
+
+  <!-- Pulse Type -->
+  <div class="pulse-container" *ngIf="type === 'pulse'">
+    <div class="pulse-circle"></div>
+  </div>
+
+  <!-- Loading Message -->
+  <p class="loading-message" *ngIf="message">{{ message }}</p>
+</div>

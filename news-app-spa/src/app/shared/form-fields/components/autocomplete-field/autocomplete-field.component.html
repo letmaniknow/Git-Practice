@@ -1,0 +1,138 @@
+<!-- AutocompleteFieldComponent Template -->
+<!-- Autocomplete input with parent-controlled filtering -->
+
+<!-- Form Field with Material outline style -->
+<mat-form-field
+  [class]="fieldContainerClass"
+  class="autocomplete-field"
+  appearance="outline"
+  [attr.id]="fieldId"
+>
+  <!-- Label (dynamic with required indicator) -->
+  <mat-label *ngIf="label" class="field-label">
+    {{ label }}
+    <span *ngIf="required" class="required-indicator" aria-label="required">
+      *
+    </span>
+  </mat-label>
+
+  <!-- Input with autocomplete trigger -->
+  <input
+    matInput
+    [matAutocomplete]="autocompletePanel"
+    [value]="inputValue"
+    (input)="onInputChange($any($event).target.value)"
+    (focus)="onFocus()"
+    (blur)="onBlur()"
+    [disabled]="disabled"
+    [attr.aria-label]="effectiveAriaLabel"
+    [attr.aria-describedby]="ariaDescribedBy"
+    [attr.aria-invalid]="!!hasErrorMessage"
+    [attr.aria-required]="required"
+    [attr.aria-autocomplete]="'list'"
+    [attr.aria-expanded]="panelOpen"
+    type="text"
+    spellcheck="false"
+  />
+
+  <!-- Hint Text (shows below input when focused) -->
+  <mat-hint *ngIf="hint" align="start">
+    {{ hint }}
+  </mat-hint>
+
+  <!-- Loading spinner (shows parent's loading state) -->
+  <mat-spinner
+    *ngIf="showLoadingSpinner"
+    class="loading-spinner"
+    matSuffix
+    [diameter]="24"
+    [strokeWidth]="2"
+  ></mat-spinner>
+
+  <!-- Clear button -->
+  <button
+    *ngIf="showClearButton && !showLoadingSpinner"
+    mat-icon-button
+    (click)="onClear()"
+    class="clear-button"
+    type="button"
+    [attr.aria-label]="'Clear'"
+    [disabled]="disabled"
+    matTooltip="Clear search"
+    matSuffix
+  >
+    <mat-icon>close</mat-icon>
+  </button>
+
+  <!-- Error message -->
+  <mat-error
+    *ngIf="hasErrorMessage"
+    [id]="ariaDescribedBy"
+    class="error-message"
+  >
+    {{ hasErrorMessage }}
+  </mat-error>
+
+  <!-- Hint: Minimum characters -->
+  <mat-hint *ngIf="showMinCharsHint" class="min-chars-hint">
+    {{ minCharsHintText }}
+  </mat-hint>
+
+  <!-- Hint: Filtered count -->
+  <mat-hint
+    *ngIf="shouldShowFilteredItems() && !isLoading"
+    class="results-hint"
+  >
+    {{ filteredItems.length }} result{{ filteredItems.length !== 1 ? "s" : "" }}
+    found
+  </mat-hint>
+</mat-form-field>
+
+<!-- Autocomplete suggestions panel (defined in template) -->
+<mat-autocomplete
+  #autocompletePanel="matAutocomplete"
+  (openedChange)="onPanelStateChanged($any($event))"
+>
+  <!-- Regular suggestions -->
+  <mat-optgroup
+    *ngFor="let item of filteredItems; trackBy: trackByOptionValue"
+    class="suggestion-optgroup"
+  >
+    <mat-option [value]="item" (onSelectionChange)="onItemSelected(item)">
+      <!-- Item icon (if provided) -->
+      <mat-icon *ngIf="item.icon" class="item-icon">
+        {{ item.icon }}
+      </mat-icon>
+
+      <!-- Item content wrapper -->
+      <div class="option-content">
+        <!-- Item label (bold) -->
+        <span class="item-label">{{ getDisplayValue(item) }}</span>
+
+        <!-- Item description (if showItemDescription=true) -->
+        <span
+          *ngIf="showItemDescription && item.description"
+          class="item-description"
+        >
+          {{ item.description }}
+        </span>
+      </div>
+    </mat-option>
+  </mat-optgroup>
+
+  <!-- No results message -->
+  <mat-optgroup *ngIf="showNoResults" class="no-results-group">
+    <div class="no-results-message">
+      <mat-icon class="no-results-icon">search_off</mat-icon>
+      <span>No results found for "{{ inputValue }}"</span>
+    </div>
+  </mat-optgroup>
+
+  <!-- Empty state (before typing) -->
+  <mat-optgroup *ngIf="inputValue === ''" class="empty-state-group">
+    <div class="empty-state-message">
+      <mat-icon class="empty-state-icon">info</mat-icon>
+      <span>{{ minCharsHintText }}</span>
+    </div>
+  </mat-optgroup>
+</mat-autocomplete>

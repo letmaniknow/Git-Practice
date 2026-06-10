@@ -1,0 +1,339 @@
+// Professional, modern alignment for column customization dialog
+
+.column-customization-dialog {
+  display: flex;
+  flex-direction: column;
+  min-width: 420px;
+  max-width: 700px;
+  max-height: 90vh;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.12);
+  overflow: hidden;
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 28px 12px 28px;
+  border-bottom: 1px solid #e0e0e0;
+  background: #f8f9fa;
+}
+
+.dialog-header h2 {
+  display: flex;
+  align-items: center;
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.header-icon {
+  margin-right: 10px;
+  color: #1976d2;
+}
+
+.close-button {
+  margin-left: 12px;
+}
+
+.dialog-content {
+  flex: 1 1 auto;
+  padding: 18px 28px 0 28px;
+  overflow-y: auto;
+}
+
+
+.search-section {
+  display: flex;
+  align-items: flex-end;
+  gap: 22px;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+}
+
+.search-container {
+  flex: 1 1 60%;
+  min-width: 220px;
+}
+
+.global-controls {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+button[mat-stroked-button], button[mat-flat-button] {
+  min-width: 120px;
+  height: 38px;
+  font-weight: 500;
+  font-size: 1rem;
+  border-radius: 6px;
+}
+
+.preset-buttons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+
+
+.mat-expansion-panel-header {
+  display: flex !important;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: 1.08rem;
+  background: #f5f7fa;
+  border-radius: 6px 6px 0 0;
+  padding: 0 18px 0 14px !important;
+  min-height: 48px !important;
+  height: 48px !important;
+  gap: 12px;
+}
+
+.mat-expansion-panel-header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 auto;
+}
+
+.mat-expansion-panel-header .mat-checkbox {
+  margin-left: 10px;
+  margin-right: 0;
+  vertical-align: middle;
+  align-self: center;
+}
+
+.mat-expansion-panel-body {
+  padding: 0 0 0 18px;
+}
+
+
+
+.column-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 18px 0 14px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 1rem;
+  min-height: 48px;
+  height: 48px;
+  gap: 12px;
+}
+
+.column-row .column-checkbox {
+  margin-right: 10px;
+  margin-left: 0;
+  vertical-align: middle;
+  align-self: center;
+  height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+.column-row .column-icon {
+  margin-right: 8px;
+  font-size: 1.1em;
+  color: #607d8b;
+  align-self: center;
+  display: flex;
+  align-items: center;
+}
+
+.column-label {
+  flex: 1 1 auto;
+  font-weight: 400;
+  padding-left: 2px;
+  display: flex;
+  align-items: center;
+}
+
+.column-row:last-child {
+  border-bottom: none;
+}
+
+
+.column-checkbox {
+  margin-right: 10px;
+  margin-left: 0;
+  vertical-align: middle;
+  align-self: center;
+  height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+.column-label {
+  flex: 1 1 auto;
+  font-weight: 400;
+  padding-left: 2px;
+}
+
+.info-section {
+  margin: 12px 0 20px 0;
+  color: #607d8b;
+  font-size: 0.97rem;
+  display: flex;
+  align-items: center;
+}
+
+.info-icon {
+  margin-right: 6px;
+  color: #1976d2;
+}
+
+.columns-section {
+  margin-bottom: 28px;
+}
+
+.column-accordion {
+  background: none;
+}
+
+// Sticky footer for actions
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 28px;
+  border-top: 1px solid #e0e0e0;
+  background: #fafbfc;
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+}
+
+@media (max-width: 600px) {
+  .column-customization-dialog {
+    min-width: 0;
+    max-width: 98vw;
+    padding: 0;
+  }
+  .dialog-header, .dialog-content, .dialog-actions {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  .search-section {
+    flex-direction: column;
+    gap: 10px;
+  }
+}
+
+.search-container {
+  flex: 1 1 60%;
+}
+
+.global-controls {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.preset-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.info-section {
+  margin: 10px 0 18px 0;
+  color: #607d8b;
+  font-size: 0.97rem;
+  display: flex;
+  align-items: center;
+}
+
+.info-icon {
+  margin-right: 6px;
+  color: #1976d2;
+}
+
+.columns-section {
+  margin-bottom: 24px;
+}
+
+.column-accordion {
+  background: none;
+}
+
+.mat-expansion-panel-header {
+  font-weight: 600;
+  font-size: 1.08rem;
+}
+
+.mat-expansion-panel-body {
+  padding: 0 0 0 12px;
+}
+
+.column-row {
+  display: flex;
+  align-items: center;
+  padding: 7px 0;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 1rem;
+}
+
+.column-row:last-child {
+  border-bottom: none;
+}
+
+.column-checkbox {
+  margin-right: 12px;
+}
+
+.column-label {
+  flex: 1 1 auto;
+  font-weight: 400;
+}
+
+// Sticky footer for actions
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 28px;
+  border-top: 1px solid #e0e0e0;
+  background: #fafbfc;
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+}
+
+// Button tweaks
+button[mat-stroked-button], button[mat-flat-button] {
+  min-width: 110px;
+  font-weight: 500;
+}
+
+button[mat-stroked-button].mat-primary {
+  border-color: #1976d2;
+  color: #1976d2;
+}
+
+button[mat-stroked-button].mat-warn {
+  border-color: #d32f2f;
+  color: #d32f2f;
+}
+
+// Responsive
+@media (max-width: 600px) {
+  .column-customization-dialog {
+    min-width: 0;
+    max-width: 98vw;
+    padding: 0;
+  }
+  .dialog-header, .dialog-content, .dialog-actions {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+}

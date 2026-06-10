@@ -1,0 +1,63 @@
+<div class="admin-dashboard-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1>News Management</h1>
+    </div>
+    <div class="header-actions">
+      <!-- Create News Button -->
+      <button
+        mat-raised-button
+        color="primary"
+        routerLink="/news/create"
+        matTooltip="Create new news article"
+        aria-label="Create new news article"
+        class="create-news-btn"
+      >
+        <mat-icon>add_circle</mat-icon>
+        Create News
+      </button>
+
+      <!-- Column Customization Button -->
+      <button
+        mat-icon-button
+        (click)="openColumnCustomization()"
+        matTooltip="Customize columns"
+        aria-label="Customize table columns"
+        class="customize-columns-btn"
+      >
+        <mat-icon>view_week</mat-icon>
+      </button>
+
+      <!-- Language Toggle -->
+      <mat-slide-toggle
+        [checked]="currentLanguageToggle"
+        (change)="toggleLanguage()"
+        color="primary"
+        [attr.aria-label]="'Switch language display'"
+        class="header-language-toggle"
+      >
+        <span class="toggle-label">{{
+          currentLanguage === "en" ? "EN" : "ES"
+        }}</span>
+      </mat-slide-toggle>
+    </div>
+  </div>
+
+  <!-- Search & Filter Section (OUTSIDE TABLE - At Page Level) -->
+  <div class="search-filters-section">
+    <app-news-search-filters
+      [currentFiltersState]="currentFiltersState"
+      [availableCategories]="availableCategories"
+      [availableWorkflowStatuses]="availableWorkflowStatuses"
+      (filtersChanged)="onFiltersChanged($event)"
+    ></app-news-search-filters>
+  </div>
+
+  <!-- News List Table Component -->
+  <div class="table-container">
+    <app-news-list-table
+      [currentLanguage]="currentLanguage"
+    ></app-news-list-table>
+  </div>
+</div>

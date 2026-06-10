@@ -1,0 +1,48 @@
+<div
+  class="error-message-container"
+  [class]="'type-' + type"
+  [class.compact]="compact"
+  [class.toast]="position === 'toast'"
+  [attr.role]="getAriaRole()"
+  [attr.aria-live]="type === 'error' ? 'assertive' : 'polite'"
+>
+  <div class="error-content">
+    <!-- Icon -->
+    <div class="error-icon" *ngIf="showIcon" aria-hidden="true">
+      <mat-icon [attr.aria-label]="type + ' icon'">{{
+        getIconName()
+      }}</mat-icon>
+    </div>
+
+    <!-- Content -->
+    <div class="error-text">
+      <h3 class="error-title" *ngIf="title && !compact">{{ title }}</h3>
+      <p class="error-message">{{ message }}</p>
+    </div>
+
+    <!-- Actions -->
+    <div class="error-actions">
+      <!-- Retry Button -->
+      <button
+        type="button"
+        class="btn btn-retry"
+        *ngIf="showRetry"
+        (click)="onRetry()"
+        [attr.aria-label]="'Retry: ' + retryText"
+      >
+        {{ retryText }}
+      </button>
+
+      <!-- Dismiss Button -->
+      <button
+        type="button"
+        class="btn btn-dismiss"
+        *ngIf="dismissible"
+        (click)="onDismiss()"
+        aria-label="Dismiss error message"
+      >
+        ✕
+      </button>
+    </div>
+  </div>
+</div>

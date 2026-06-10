@@ -1,0 +1,102 @@
+<!-- News Category Delete Dialog Template -->
+
+<div class="delete-dialog-container">
+  <!-- Dialog Header -->
+  <div mat-dialog-title class="dialog-header delete-header">
+    <mat-icon class="warning-icon">warning</mat-icon>
+    <h2 class="dialog-title">{{ operationMessages.DELETE.TITLE }}</h2>
+    <button
+      mat-icon-button
+      (click)="onCancel()"
+      [disabled]="isLoading"
+      class="close-button"
+      aria-label="Close dialog"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Dialog Content -->
+  <mat-dialog-content class="dialog-content">
+    <!-- Confirmation Message -->
+    <div class="confirmation-message">
+      <p>{{ operationMessages.DELETE.CONFIRM_MESSAGE }}</p>
+    </div>
+
+    <!-- Category Details Card -->
+    <div class="category-details-card">
+      <div class="detail-row">
+        <span class="detail-label">Category (English):</span>
+        <span class="detail-value">{{ category.newsCategoriesNameEn }}</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">Categoría (Español):</span>
+        <span class="detail-value">{{ category.newsCategoriesNameEs }}</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">Slug:</span>
+        <code class="detail-value slug-value">{{
+          category.newsCategoriesSlug
+        }}</code>
+      </div>
+
+      <div class="detail-row" *ngIf="category.newsCategoriesDescription">
+        <span class="detail-label">Description:</span>
+        <span class="detail-value description-value">
+          {{ truncateText(category.newsCategoriesDescription, 100) }}
+        </span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">Created:</span>
+        <span class="detail-value">{{ formatDate(category.createdAt) }}</span>
+      </div>
+
+      <div class="detail-row">
+        <span class="detail-label">Last Updated:</span>
+        <span class="detail-value">{{ formatDate(category.updatedAt) }}</span>
+      </div>
+    </div>
+
+    <!-- Warning Notice -->
+    <div class="warning-notice">
+      <mat-icon class="notice-icon">info</mat-icon>
+      <div class="notice-text">
+        <p class="notice-title">Soft-Delete (Secure)</p>
+        <p class="notice-description">
+          This category will be deactivated and hidden from the list, but will
+          be preserved in the system. Existing news articles tagged with this
+          category will retain the category reference. Administrators can
+          restore this category at any time.
+        </p>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <!-- Dialog Actions -->
+  <mat-dialog-actions align="end" class="dialog-actions">
+    <button
+      mat-button
+      (click)="onCancel()"
+      [disabled]="isLoading"
+      class="cancel-button"
+    >
+      {{ operationMessages.GENERAL.CANCEL_BTN }}
+    </button>
+    <button
+      mat-raised-button
+      color="warn"
+      (click)="onConfirmDelete()"
+      [disabled]="isLoading"
+      class="delete-button"
+    >
+      <mat-icon *ngIf="isLoading" class="spinner-icon">
+        <mat-spinner diameter="20"></mat-spinner>
+      </mat-icon>
+      <span *ngIf="!isLoading">{{ operationMessages.DELETE.CONFIRM_BTN }}</span>
+      <span *ngIf="isLoading">Deleting...</span>
+    </button>
+  </mat-dialog-actions>
+</div>
