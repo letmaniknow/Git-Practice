@@ -1,0 +1,489 @@
+HELP.md
+
+# =============================================================================
+# GRADLE BUILD SYSTEM
+# =============================================================================
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+.gradletasknamecache
+
+# =============================================================================
+# MAVEN BUILD SYSTEM (if used)
+# =============================================================================
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+.flattened-pom.xml
+
+# =============================================================================
+# IDE - SPRING TOOLS SUITE (STS)
+# =============================================================================
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+.sts4-cache/
+
+# =============================================================================
+# IDE - INTELLIJ IDEA
+# =============================================================================
+.idea
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+*.iml
+*.iws
+*.ipr
+*.ids
+*.orig
+*.sublime-project
+*.sublime-workspace
+
+# =============================================================================
+# IDE - NETBEANS
+# =============================================================================
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+nb-configuration.xml
+
+# =============================================================================
+# IDE - ECLIPSE
+# =============================================================================
+.classpath
+.project
+.cproject
+.c9/
+*.launch
+.settings/
+*.dylib
+*.dll
+*.exe
+*.o
+*.so
+
+# =============================================================================
+# IDE - VISUAL STUDIO CODE
+# =============================================================================
+.vscode/
+.vscode
+*.code-workspace
+.history/
+.vscode-test
+
+# =============================================================================
+# ENVIRONMENT & CONFIGURATION FILES (NEVER COMMIT SENSITIVE DATA)
+# =============================================================================
+# Application configuration files with local/secret values
+.env
+.env.local
+.env.*.local
+.env.development
+.env.test
+.env.production
+.env.staging
+*.pem
+*.key
+*.keystore
+*.pfx
+*.p12
+*.jks
+
+# Spring Boot application properties
+application-local.yaml
+application-local.yml
+application-dev.yaml
+application-dev.yml
+application-secret.yaml
+application-secret.yml
+application.properties.local
+application.yaml.local
+application.yml.local
+
+# Database connection strings (local)
+application-db-local.yaml
+application-db-dev.yaml
+
+# API Keys, tokens, secrets
+secrets.properties
+secrets.yaml
+secrets.yml
+*.secrets
+.secrets
+
+# =============================================================================
+# LOGS & TEMPORARY FILES
+# =============================================================================
+logs/
+log/
+*.log
+*.log.*
+*.out
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+*.tmp
+*.temp
+*.bak
+*.backup
+*.orig
+merge_file_*
+
+# =============================================================================
+# TEST REPORTS & COVERAGE
+# =============================================================================
+test-results/
+test-reports/
+coverage/
+jacoco.exec
+.coverage
+.coverage.*
+htmlcov/
+site/
+*.lcov
+junit-results.xml
+surefire-reports/
+failsafe-reports/
+
+# =============================================================================
+# JVM & PROFILING
+# =============================================================================
+*.hprof
+*.prof
+*.jfr
+.jvm.options
+core
+java.core
+.profiler
+
+# =============================================================================
+# COMPILATION & BUILD ARTIFACTS
+# =============================================================================
+*.class
+*.jar
+!gradle-wrapper.jar
+!maven-wrapper.jar
+*.war
+*.ear
+*.nar
+*.zip
+*.tar.gz
+*.rar
+*.7z
+*.exe
+*.dll
+*.dylib
+*.so
+
+# =============================================================================
+# DOCKER & CONTAINERIZATION
+# =============================================================================
+.dockerignore
+docker-compose.override.yml
+.docker
+docker-compose.local.yml
+
+# =============================================================================
+# DATABASE FILES (LOCAL DEVELOPMENT)
+# =============================================================================
+*.db
+*.sqlite
+*.sqlite3
+*.h2
+*.h2.db
+data/
+database/
+*.ldf
+*.mdf
+
+# =============================================================================
+# GRADLE WRAPPER (keep but ignore lock files)
+# =============================================================================
+.gradle/
+gradlew
+gradlew.bat
+gradle/wrapper/gradle-wrapper.jar
+gradle/wrapper/gradle-wrapper.properties
+
+# =============================================================================
+# MISCELLANEOUS
+# =============================================================================
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+.directory
+.Trash-*
+
+# IDE plugin files
+.idea/*.xml
+.idea/*.iml
+.idea/codeStyles/
+.idea/inspectionProfiles/
+.idea/shelf/
+.idea/tasks.xml
+
+# Compiled class file
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# Maven
+.m2/
+maven-wrapper.properties
+
+# Generated files
+generated/
+generated-sources/
+generated-test-sources/
+
+# Lombok annotation processor
+lombok.config
+
+# See https://docs.github.com/get-started/getting-started-with-git/ignoring-files for more about ignoring files.
+
+# =============================================================================
+# BUILD ARTIFACTS & COMPILED OUTPUT
+# =============================================================================
+/dist
+/tmp
+/out-tsc
+/bazel-out
+/build
+*.js
+*.js.map
+*.css
+*.css.map
+
+# =============================================================================
+# DEPENDENCIES & NODE MODULES
+# =============================================================================
+/node_modules
+/node_modules - copia
+/node_modules - backup
+/node_modules - old
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# =============================================================================
+# ANGULAR CACHE & BUILD
+# =============================================================================
+/.angular/cache
+.ng
+.angular
+
+# =============================================================================
+# IDEs AND EDITORS
+# =============================================================================
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history
+.vscode-server
+*.code-workspace
+
+# WebStorm / PhpStorm
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+.idea_modules/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+.sublime-session
+
+# Eclipse
+.classpath
+.project
+.c9/
+*.launch
+.settings/
+*.tern-port
+
+# IntelliJ IDEA
+*.swp
+*.swo
+*~
+.classpath
+.factorypath
+.c9/
+*.launch
+.settings/
+.vscode-test
+*.user
+*.userosscache
+*.sln.docstates
+
+# VS Code extensions folder
+.vscode-test
+
+# =============================================================================
+# OPERATING SYSTEM FILES
+# =============================================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+.directory
+.Trash-*
+
+# =============================================================================
+# TESTING & COVERAGE
+# =============================================================================
+/coverage
+/karma-results.txt
+.nyc_output
+coverage/
+lcov-report/
+*.lcov
+test-results.xml
+junit.xml
+
+# =============================================================================
+# TEMPORARY FILES & LOGS
+# =============================================================================
+*.log
+logs/
+*.temp
+*.tmp
+*.bak
+*.backup
+*.swp
+*.swo
+*~
+.sass-cache/
+/connect.lock
+/libpeerconnection.log
+testem.log
+/typings
+*.rar
+*.zip
+*.7z
+*.tar.gz
+
+# Build logs
+build.log
+npm-build.log
+yarn-build.log
+
+# =============================================================================
+# ENVIRONMENT & CONFIGURATION FILES
+# =============================================================================
+# Environment files (NEVER commit sensitive data)
+.env
+.env.local
+.env.*.local
+.env.development.local
+.env.test.local
+.env.production.local
+environment.dev.ts
+environment.prod.ts
+.env.*
+!.env.example
+
+# =============================================================================
+# PACKAGE MANAGER LOCK FILES (Consider committing these for reproducibility)
+# =============================================================================
+# Uncomment if you prefer NOT to commit lock files:
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
+
+# =============================================================================
+# ANGULAR / TYPESCRIPT
+# =============================================================================
+/typings
+tslint.json
+*.js
+!*.config.js
+!karma.conf.js
+!protractor.conf.js
+*.js.map
+*.d.ts
+
+# =============================================================================
+# DIST & ARTIFACTS
+# =============================================================================
+/dist
+/bazel-out
+/bazel-bin
+
+# =============================================================================
+# MISCELLANEOUS
+# =============================================================================
+.prettierignore
+.prettierrc
+.eslintignore
+*.orig
+merge_file_*
+.git/objects/pack/*.tmp
+.git/logs/
+
+# Docker files (if using Docker)
+.dockerignore
+docker-compose.override.yml
+
+# Git
+.git/hooks
+.git/info/exclude
+
