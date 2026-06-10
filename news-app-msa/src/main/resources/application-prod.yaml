@@ -1,0 +1,284 @@
+# ============================================================
+# PRODUCTION PROFILE CONFIGURATION
+# ============================================================
+# This profile is for production deployment.
+# Activate with: --spring.profiles.active=prod
+#
+# IMPORTANT: All sensitive values MUST be provided via
+# environment variables. Never commit secrets to this file!
+# ============================================================
+
+spring:
+  # ------------------------------------------------------------
+  # Database Configuration (Production - PostgreSQL)
+  # ============================================================
+  # MIGRATED FROM SQL SERVER TO POSTGRESQL
+  # All search queries updated to use PostgreSQL FTS (Full-Text Search)
+  # ============================================================
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://prod-db-server:5432/news_app_prod}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: ${DB_POOL_MAX:20}
+      minimum-idle: ${DB_POOL_MIN:5}
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      leak-detection-threshold: 60000
+
+  # ------------------------------------------------------------
+  # JPA/Hibernate (Production settings - PostgreSQL)
+  # ------------------------------------------------------------
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate # NEVER use 'update' or 'create' in production!
+    show-sql: false # Disable SQL logging
+    open-in-view: false # Disable OSIV for better performance
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        generate_statistics: false
+        jdbc:
+          batch_size: 50
+        order_inserts: true
+        order_updates: true
+
+# ============================================================
+# PRODUCTION CORS CONFIGURATION - HARDENED SECURITY
+# ============================================================
+# CRITICAL: Replace with YOUR actual production domains
+# SECURITY: Never use wildcard "*" in production
+# 
+# Update these domains to match your deployment:
+#   - Frontend: https://news.example.com
+#   - Admin Panel: https://admin.example.com
+# ============================================================
+cors:
+  allowed-origins: "${CORS_ALLOWED_ORIGINS:https://news.example.com,https://admin.example.com}"
+
+  # ------------------------------------------------------------
+  # Email Configuration (Production SMTP)
+  # ------------------------------------------------------------
+  mail:
+    host: ${MAIL_HOST:smtp.gmail.com}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+# ------------------------------------------------------------
+# JWT Configuration (Production - MUST use env variables!)
+# ------------------------------------------------------------
+jwt:
+  # CRITICAL: Use strong 256-bit secret from environment variable
+  secret: ${JWT_SECRET}
+  accessTokenExpiration: ${JWT_ACCESS_EXPIRATION:604800000} # 7 days
+  refreshTokenExpiration: ${JWT_REFRESH_EXPIRATION:2592000000} # 30 days
+  issuer: ${JWT_ISSUER:TheNewsApp}
+
+# ------------------------------------------------------------
+# Logging (Production - minimal, structured)
+# ------------------------------------------------------------
+logging:
+  level:
+    root: WARN
+    com.mmva.news: INFO
+    org.springframework.security: WARN
+    org.springframework.web: WARN
+    org.hibernate: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: ${LOG_PATH:/var/log/newsapp-app}/newsapp-app.log
+  logback:
+    rollingpolicy:
+      max-file-size: 100MB
+      max-history: 30
+      total-size-cap: 3GB
+
+# ------------------------------------------------------------
+# File Storage (Production paths - use mounted volumes)
+# ------------------------------------------------------------
+# New unified media storage structure
+media:
+  root-path: ${MEDIA_ROOT_PATH:/app/data/media}
+
+# ------------------------------------------------------------
+# Rate Limiting (Stricter for production)
+# ------------------------------------------------------------
+rateLimit:
+  cooldownSeconds: 1
+  maxRequestsPerHour: ${RATE_LIMIT_HOURLY:500}
+
+# ------------------------------------------------------------
+# Management/Actuator (Restricted in production)
+# ------------------------------------------------------------
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when_authorized
+      probes:
+        enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+    tags:
+      application: ${spring.application.name}
+      environment: production
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
+
+# ------------------------------------------------------------
+# Swagger/OpenAPI (Disabled in production)
+# ------------------------------------------------------------
+springdoc:
+  api-docs:
+    enabled: ${SWAGGER_ENABLED:false}
+  swagger-ui:
+    enabled: ${SWAGGER_ENABLED:false}
+
+# ------------------------------------------------------------
+# Firebase Configuration (Production)
+# ------------------------------------------------------------
+# Enable Firebase for push notifications in production.
+# Provide credentials file path via environment variable.
+firebase:
+  enabled: ${FIREBASE_ENABLED:true}
+  credentials-path: ${FIREBASE_CREDENTIALS_PATH:/app/config/firebase-service-account.json}
+  project-id: ${FIREBASE_PROJECT_ID:}
+
+# ------------------------------------------------------------
+# Analytics Configuration (Production Overrides)
+# ------------------------------------------------------------
+# Inherits from application.yaml, override only if needed.
+# For high-traffic production, consider:
+#   - sampling.enabled: true
+#   - sampling.rate: 0.25 (25% of requests)
+#   - retention.period: 30d (shorter retention)
+app:
+  analytics:
+    # Uncomment to enable sampling for high traffic:
+    # sampling:
+    #   enabled: true
+    #   rate: 0.25
+    # Uncomment to reduce retention period:
+    # retention:
+    #   period: 30d
+
+# ------------------------------------------------------------
+# Security Alerts (Production)
+# ------------------------------------------------------------
+security:
+  alerts:
+    enabled: true
+    new-device-alert:
+      enabled: true
+      include-ip-address: false # GDPR compliance
+    new-location-alert:
+      enabled: true
+      country-level-only: true # Reduce alert fatigue
+    links:
+      base-url: ${APP_BASE_URL:https://thenews.app}
+
+# ------------------------------------------------------------
+# Data Encryption (GDPR Compliance)
+# ------------------------------------------------------------
+app:
+  encryption:
+    enabled: true
+    secret: ${ENCRYPTION_SECRET}  # REQUIRED: 256-bit key in hex format
+    algorithm: AES/GCM/NoPadding
+    key-length: 256
+
+# ============================================================
+# ELASTICSEARCH CONFIGURATION (Production)
+# ============================================================
+# Multi-tier search architecture with Elasticsearch enabled for production
+# Architecture:
+#   Tier 1: Elasticsearch (fast, ~10-50ms) - PRIMARY search engine
+#   Tier 2: PostgreSQL FTS (reliable, ~50-100ms) - AUTOMATIC fallback
+#
+# Graceful degradation: If Elasticsearch is down, search continues via PostgreSQL FTS!
+#
+# Required Environment Variables:
+#   ELASTICSEARCH_ENABLED         - true (required)
+#   ELASTICSEARCH_HOST            - ES server hostname
+#   ELASTICSEARCH_PORT            - ES server port (9200)
+#   ELASTICSEARCH_USERNAME        - ES credentials
+#   ELASTICSEARCH_PASSWORD        - ES credentials
+#   ELASTICSEARCH_PROTOCOL        - https (recommended)
+# ============================================================
+elasticsearch:
+  enabled: ${ELASTICSEARCH_ENABLED:false}
+  host: ${ELASTICSEARCH_HOST:localhost}
+  port: ${ELASTICSEARCH_PORT:9200}
+  protocol: ${ELASTICSEARCH_PROTOCOL:https}
+  username: ${ELASTICSEARCH_USERNAME:elastic}
+  password: ${ELASTICSEARCH_PASSWORD}
+
+  index:
+    name: ${ELASTICSEARCH_INDEX_NAME:news-articles}
+    settings:
+      number_of_shards: ${ELASTICSEARCH_SHARDS:1}
+      number_of_replicas: ${ELASTICSEARCH_REPLICAS:1}
+
+  search:
+    max-results: ${ELASTICSEARCH_MAX_RESULTS:100}
+    timeout-seconds: ${ELASTICSEARCH_TIMEOUT:30}
+    fuzzy:
+      enabled: ${ELASTICSEARCH_FUZZY_ENABLED:true}
+      max-expansions: ${ELASTICSEARCH_FUZZY_MAX_EXPANSIONS:50}
+      prefix-length: ${ELASTICSEARCH_FUZZY_PREFIX_LENGTH:0}
+
+# ------------------------------------------------------------
+# Server Configuration
+# ------------------------------------------------------------
+server:
+  port: ${SERVER_PORT:8080}
+  shutdown: graceful
+  tomcat:
+    max-threads: ${TOMCAT_MAX_THREADS:200}
+    min-spare-threads: 20
+    accept-count: 100
+    connection-timeout: 20000
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/html,text/xml,text/plain
+    min-response-size: 1024
+
+# ------------------------------------------------------------
+# Stripe Payment Configuration (Production)
+# ------------------------------------------------------------
+# CRITICAL: Use live keys in production, never test keys!
+# Get live keys from: https://dashboard.stripe.com/apikeys
+stripe:
+  secret-key: ${STRIPE_SECRET_KEY} # REQUIRED in production
+  publishable-key: ${STRIPE_PUBLISHABLE_KEY} # REQUIRED in production
+  webhook-secret: ${STRIPE_WEBHOOK_SECRET} # REQUIRED for webhooks
+
+# ------------------------------------------------------------
+# Spring Lifecycle
+# ------------------------------------------------------------
+spring.lifecycle:
+  timeout-per-shutdown-phase: 30s

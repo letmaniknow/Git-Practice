@@ -1,0 +1,814 @@
+# ============================================================
+# COMMON APPLICATION CONFIGURATION
+# ============================================================
+# This file contains shared settings for all profiles.
+# Profile-specific settings are in:
+#   - application-dev.yaml  (Development)
+#   - application-prod.yaml (Production)
+#
+# Activate a profile:
+#   - Command line: --spring.profiles.active=prod
+#   - Environment:  SPRING_PROFILES_ACTIVE=prod
+#   - IDE: Set in run configuration
+# ============================================================
+
+spring:
+  profiles:
+    # Default profile if none specified
+    default: dev
+
+  application:
+    name: newsapp-app
+
+  # ------------------------------------------------------------
+  # File Upload Configuration (Common)
+  # ------------------------------------------------------------
+  servlet:
+    multipart:
+      max-file-size: ${MAX_FILE_SIZE:20MB}
+      max-request-size: ${MAX_REQUEST_SIZE:20MB}
+
+# ------------------------------------------------------------
+# Application Info & Configuration
+# ------------------------------------------------------------
+app:
+  name: TheNews
+  version: 1.0.0
+
+  # ------------------------------------------------------------
+  # Request Analytics Configuration
+  # ------------------------------------------------------------
+  # Tracks all HTTP requests for admin analytics dashboard.
+  # Used for: traffic analysis, performance monitoring, security.
+  # Always enabled for social apps - essential for product decisions.
+  analytics:
+    # Core Settings (Always On)
+    enabled: true # Always enabled - no conditional logic
+    async: true # Non-blocking - minimal performance impact
+
+    # Exclusions (Static Assets & Health Checks)
+    # Exclude from tracking to reduce noise and database size.
+    # Only exclude truly non-product paths.
+    exclude-patterns:
+      - /actuator/** # Spring Actuator health checks
+      - /swagger-ui/** # API documentation UI
+      - /v3/api-docs/** # OpenAPI spec
+      - /health # Health endpoint
+      - /favicon.ico # Browser favicon
+      - /**/*.css # Stylesheets
+      - /**/*.js # JavaScript files
+      - /**/*.png # Images
+      - /**/*.jpg
+      - /**/*.gif
+      - /**/*.ico
+      - /**/*.woff # Fonts
+      - /**/*.woff2
+
+    # Sampling (High-Traffic Optimization)
+    # Use if database grows too fast (e.g., >1M requests/day).
+    # Start with 100%, reduce to 10-25% only if needed.
+    sampling:
+      enabled: false # Disabled by default - track everything
+      rate: 1.0 # 1.0 = 100%, 0.25 = 25%, 0.1 = 10%
+
+    # Data Retention (Auto-Cleanup)
+    # Automatically delete old analytics data.
+    # Keeps database size manageable, runs daily at 2 AM.
+    retention:
+      enabled: true # Always enabled for data hygiene
+      period: 90d # Keep last 90 days (adjust per needs)
+      cleanup-cron: "0 0 2 * * ?" # Daily at 2:00 AM
+
+    # Privacy & Security
+    # Mask sensitive headers in database (GDPR compliance).
+    sensitive-headers:
+      - Authorization # JWT tokens
+      - Cookie # Session cookies
+      - X-Api-Key # API keys
+      - X-Auth-Token # Auth tokens
+
+    # Field length limits (prevent database overflow)
+    max-header-length: 1024 # 1KB max per header
+    max-uri-length: 2048 # 2KB max URI length
+
+# ------------------------------------------------------------
+# Rate Limiting (Default values, can be overridden per profile)
+# ------------------------------------------------------------
+rateLimit:
+  cooldownSeconds: ${RATE_LIMIT_COOLDOWN:1}
+  maxRequestsPerHour: ${RATE_LIMIT_HOURLY:1000}
+
+# ============================================================
+# CORS CONFIGURATION - Security Hardened
+# ============================================================
+# Controls which domains can access the API from browsers.
+#
+# SECURITY: Production uses explicit domains, NOT wildcard "*"
+#
+# Development (dev profile):
+#   - http://localhost:4200 (Angular app)
+#   - http://localhost:3000 (React/alternative frontend)
+#   - http://localhost:8080 (other local services)
+#
+# Production (prod profile):
+#   - Set in application-prod.yaml with actual domain
+#   - Example: https://news.example.com
+# ============================================================
+cors:
+  allowed-origins: "http://localhost:4200,http://localhost:3000,http://localhost:8080"
+
+# ============================================================
+# RESILIENCE4J CIRCUIT BREAKER CONFIGURATION (Netflix Pattern)
+# ============================================================
+# Handles Elasticsearch failures gracefully with automatic fallback
+# When ES fails, circuit opens and falls back to PostgreSQL (zero latency)
+# When ES recovers, circuit closes automatically (self-healing)
+# ============================================================
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true
+        recordExceptions:
+          - java.net.ConnectException
+          - java.net.SocketTimeoutException
+          - org.elasticsearch.client.ResponseException
+          - java.io.IOException
+    instances:
+      elasticsearchSearch:
+        baseConfig: default
+        # When to open circuit (mark as broken)
+        failureRateThreshold: 50 # 50% failure rate opens circuit
+        slowCallRateThreshold: 100 # Slow calls don't matter
+        slowCallDurationThreshold: 2s # What counts as slow
+        slidingWindowSize: 10 # Check last 10 requests
+        minimumNumberOfCalls: 5 # Need 5 failures before opening
+
+        # When to test recovery (HALF_OPEN state)
+        waitDurationInOpenState: 30s # Wait 30 sec before testing
+        permittedNumberOfCallsInHalfOpenState: 2 # Try 2 requests to recover
+        automaticTransitionFromOpenToHalfOpenEnabled: true # Auto-test after timeout
+
+        # Success threshold (how many successes to close circuit)
+        successThreshold: 2 # 2 successes in HALF_OPEN → CLOSED
+
+# ============================================================
+# MEDIA STORAGE CONFIGURATION
+# ============================================================
+# Centralized media storage with data-first approach.
+# Golden Rules:
+#   1. PRESERVE FIRST - Save original before any processing
+#   2. NEVER DELETE ORIGINALS - Move to archive disk weekly
+#   3. TRACK EVERYTHING - Every upload logged to database
+#   4. ENTITY SEPARATION - Each entity type has own folder
+#   5. DATE ORGANIZATION - YYYY/MM/DD for easy archival
+# ============================================================
+media:
+  # Storage provider: local | s3 | azure | gcs (future)
+  provider: local
+
+  # Root path (overridden in dev/prod profiles)
+  root-path: ${MEDIA_ROOT_PATH:./media}
+
+  # ------------------------------------------------------------
+  # Folder Structure
+  # ------------------------------------------------------------
+  # media/
+  # ├── originals/     <- Raw uploads (SACRED - never modify)
+  # ├── processed/     <- Optimized files served to users
+  # ├── quarantine/    <- Failed processing / security issues
+  # └── archive/       <- Replaced files (on update/delete)
+  # ------------------------------------------------------------
+  paths:
+    originals: ${media.root-path}/originals
+    processed: ${media.root-path}/processed
+    quarantine: ${media.root-path}/quarantine
+    archive: ${media.root-path}/archive
+
+  # ------------------------------------------------------------
+  # Entity-Specific Configuration
+  # ------------------------------------------------------------
+  entities:
+    news:
+      originals: ${media.paths.originals}/news
+      processed: ${media.paths.processed}/news
+      thumbnails: ${media.paths.processed}/news/thumbnails
+      archive: ${media.paths.archive}/news
+      quarantine: ${media.paths.quarantine}/news
+
+    users:
+      originals: ${media.paths.originals}/users
+      avatars: ${media.paths.processed}/users/avatars
+      archive: ${media.paths.archive}/users
+      quarantine: ${media.paths.quarantine}/users
+
+    admin:
+      originals: ${media.paths.originals}/admin
+      avatars: ${media.paths.processed}/admin/avatars
+      archive: ${media.paths.archive}/admin
+      quarantine: ${media.paths.quarantine}/admin
+
+    ads:
+      originals: ${media.paths.originals}/ads
+      banners: ${media.paths.processed}/ads/banners
+      videos: ${media.paths.processed}/ads/videos
+      archive: ${media.paths.archive}/ads
+      quarantine: ${media.paths.quarantine}/ads
+
+  # ------------------------------------------------------------
+  # Domain-Specific Image Processing
+  # ------------------------------------------------------------
+  processing:
+    # Retry failed processing
+    max-retries: 3
+    retry-delay-seconds: 60
+
+    # News images - content display sizes
+    news:
+      image:
+        max-width: 1920
+        max-height: 1080
+        quality: 85
+        formats: [jpg, jpeg, png, gif, webp]
+
+        # Configurable image sizes for news content
+        sizes:
+          # Thumbnail for lists and notifications (4:3 aspect ratio)
+          thumbnail:
+            enabled: true
+            width: 200
+            height: 150
+            quality: 0.75
+            preserve-aspect-ratio: true
+            cropping: false
+
+          # Card for mobile compact views (16:9 aspect ratio)
+          card:
+            enabled: true
+            width: 400
+            height: 225
+            quality: 0.80
+            preserve-aspect-ratio: true
+            cropping: false
+
+          # Hero for web display (16:9 aspect ratio)
+          hero:
+            enabled: true
+            width: 800
+            height: 450
+            quality: 0.85
+            preserve-aspect-ratio: true
+            cropping: false
+
+    # User images - profile and avatar sizes
+    users:
+      image:
+        max-width: 1024
+        max-height: 1024
+        quality: 85
+        formats: [jpg, jpeg, png, gif, webp]
+
+        # Configurable image sizes for user profiles
+        sizes:
+          # Square avatar for profiles (1:1 aspect ratio)
+          avatar:
+            enabled: true
+            width: 120
+            height: 120
+            quality: 0.85
+            preserve-aspect-ratio: true
+            cropping: true
+
+          # Profile image for larger displays
+          profile:
+            enabled: true
+            width: 300
+            height: 300
+            quality: 0.85
+            preserve-aspect-ratio: true
+            cropping: true
+
+    # Ad images - banner and promotional sizes
+    ads:
+      image:
+        max-width: 1920
+        max-height: 1080
+        quality: 85
+        formats: [jpg, jpeg, png, gif, webp]
+
+        # Configurable image sizes for advertisements
+        sizes:
+          # Banner for ad displays
+          banner:
+            enabled: true
+            width: 800
+            height: 200
+            quality: 0.85
+            preserve-aspect-ratio: false
+            cropping: true
+
+    # Thumbnail generation
+    thumbnail:
+      width: 300
+      height: 200
+      quality: 80
+
+    # Video (future)
+    video:
+      formats: [mp4, webm]
+      max-size-mb: 100
+
+  # ------------------------------------------------------------
+  # Retention Policy
+  # ------------------------------------------------------------
+  # Note: Originals moved to analytics disk weekly (manual/scheduled)
+  retention:
+    quarantine-days: 30 # Cleanup failed after 30 days
+    archive-days: 90 # Cleanup old versions after 90 days
+    cleanup-cron: "0 0 3 * * ?" # Daily at 3:00 AM
+
+  # ------------------------------------------------------------
+  # Upload Validation
+  # ------------------------------------------------------------
+  validation:
+    max-file-size-mb: 20
+    allowed-image-types: [image/jpeg, image/png, image/gif, image/webp]
+    allowed-video-types: [video/mp4, video/webm]
+
+# ------------------------------------------------------------
+# Info Endpoint (for Actuator)
+# ------------------------------------------------------------
+info:
+  app:
+    name: ${spring.application.name}
+    description: TheNews Application API
+    version: 1.0.0
+    java:
+      version: 21
+
+# ------------------------------------------------------------
+# Async Thread Pool Configuration
+# ------------------------------------------------------------
+async:
+  executor:
+    core-pool-size: ${ASYNC_CORE_POOL_SIZE:5}
+    max-pool-size: ${ASYNC_MAX_POOL_SIZE:20}
+    queue-capacity: ${ASYNC_QUEUE_CAPACITY:100}
+    thread-name-prefix: Async-
+    keep-alive-seconds: 60
+    await-termination-seconds: 60
+
+# ------------------------------------------------------------
+# Google OAuth2 Configuration
+# ------------------------------------------------------------
+google:
+  client-id: ${GOOGLE_CLIENT_ID:your-google-client-id.apps.googleusercontent.com}
+
+# ------------------------------------------------------------
+# Apple Sign In Configuration
+# ------------------------------------------------------------
+# Apple requires: client-id (Service ID or Bundle ID), team-id
+# Apple identity tokens are verified against Apple's public keys
+# ------------------------------------------------------------
+apple:
+  # For web: Service ID (e.g., com.yourcompany.newsapp.signin)
+  # For iOS: Bundle ID (e.g., com.yourcompany.newsapp)
+  client-id: ${APPLE_CLIENT_ID:your-apple-bundle-id}
+
+# ============================================================
+# FIREBASE CLOUD MESSAGING (Push Notifications)
+# ============================================================
+# Set app.firebase.enabled=true and provide credentials in production
+# For development, set to false to use mock service
+# ============================================================
+firebase:
+  # Enable/disable Firebase integration
+  enabled: ${FIREBASE_ENABLED:false}
+
+  # Path to Firebase service account JSON file
+  # Download from: Firebase Console > Project Settings > Service Accounts > Generate new private key
+  credentials-path: ${FIREBASE_CREDENTIALS_PATH:firebase-service-account.json}
+
+  # Optional: Override project ID (auto-detected from credentials if not set)
+  project-id: ${FIREBASE_PROJECT_ID:}
+
+# ============================================================
+# PUSH NOTIFICATION SETTINGS
+# ============================================================
+push:
+  # Default topics that devices subscribe to on registration
+  default-topics:
+    - all_news
+    - breaking_news
+
+  # Maximum notifications per batch (FCM limit is 500)
+  batch-size: ${PUSH_BATCH_SIZE:500}
+
+  # Retry configuration
+  retry:
+    max-attempts: ${PUSH_RETRY_MAX_ATTEMPTS:3}
+    delay-seconds: ${PUSH_RETRY_DELAY_SECONDS:60}
+
+  # Cleanup configuration
+  cleanup:
+    # Days after which inactive devices are marked stale
+    device-inactive-days: ${PUSH_DEVICE_INACTIVE_DAYS:90}
+    # Days after which delivery records are deleted
+    notification-retention-days: ${PUSH_NOTIFICATION_RETENTION_DAYS:90}
+
+  # --------------------------------------------------------
+  # Digest Notification Scheduler (Daily/Weekly)
+  # --------------------------------------------------------
+  # Automatically sends curated news digests to subscribers.
+  # Industry standard: Daily at 8 AM, Weekly on Sunday 9 AM.
+  # Admins can still send manual digests via API endpoints.
+  # --------------------------------------------------------
+  digest:
+    # Enable/disable automatic digest notifications
+    enabled: ${PUSH_DIGEST_ENABLED:true}
+
+    # Daily digest schedule (default: 8 AM every day)
+    # Cron format: second minute hour day-of-month month day-of-week
+    daily-cron: ${PUSH_DIGEST_DAILY_CRON:0 0 8 * * ?}
+
+    # Weekly digest schedule (default: 9 AM every Sunday)
+    weekly-cron: ${PUSH_DIGEST_WEEKLY_CRON:0 0 9 ? * SUN}
+
+    # Number of top news items to include in daily digest
+    daily-count: ${PUSH_DIGEST_DAILY_COUNT:5}
+
+    # Number of top news items to include in weekly digest
+    weekly-count: ${PUSH_DIGEST_WEEKLY_COUNT:10}
+
+# ============================================================
+# ELASTICSEARCH CONFIGURATION (Advanced Search)
+# ============================================================
+# Elasticsearch settings for multi-tier search architecture:
+#   Tier 1: Elasticsearch (fast full-text, ~10-50ms) - PRIMARY if enabled
+#   Tier 2: PostgreSQL FTS (reliable fallback, ~50-100ms) - ALWAYS available
+#
+# Architecture: ES-First with automatic PostgreSQL FTS fallback
+# This enables graceful degradation: if ES is down, search still works!
+#
+# Configuration:
+#   - Dev Profile: Elasticsearch ENABLED for fast development iteration
+#   - Prod Profile: Elasticsearch configurable via environment variables
+#
+# ============================================================
+elasticsearch:
+  # Feature Toggle - Enable/disable Elasticsearch functionality
+  # Dev: true (fast search), Prod: ${ELASTICSEARCH_ENABLED:true} (via env vars)
+  enabled: ${ELASTICSEARCH_ENABLED:true}
+
+  # Connection Settings
+  host: ${ELASTICSEARCH_HOST:localhost}
+  port: ${ELASTICSEARCH_PORT:9200}
+  protocol: ${ELASTICSEARCH_PROTOCOL:http}
+
+  # Authentication (for production)
+  username: ${ELASTICSEARCH_USERNAME:elastic}
+  password: ${ELASTICSEARCH_PASSWORD:changeme}
+
+  # Index Settings
+  index:
+    name: ${ELASTICSEARCH_INDEX_NAME:news-articles}
+    settings:
+      number_of_shards: ${ELASTICSEARCH_SHARDS:1}
+      number_of_replicas: ${ELASTICSEARCH_REPLICAS:0}
+
+  # Search Configuration
+  search:
+    # Maximum number of results to return
+    max-results: ${ELASTICSEARCH_MAX_RESULTS:100}
+
+    # Search timeout in seconds
+    timeout-seconds: ${ELASTICSEARCH_TIMEOUT:30}
+
+    # Fuzzy search settings (enable for typo tolerance)
+    fuzzy:
+      enabled: ${ELASTICSEARCH_FUZZY_ENABLED:true}
+      max-expansions: ${ELASTICSEARCH_FUZZY_MAX_EXPANSIONS:50}
+      prefix-length: ${ELASTICSEARCH_FUZZY_PREFIX_LENGTH:0}
+
+# ============================================================
+# GEOIP CONFIGURATION
+# ============================================================
+# Multi-source geolocation with fallback chain:
+# 1. Client Headers (GPS from Flutter/Web - most accurate)
+# 2. Cloudflare Headers (if behind CF)
+# 3. ip-api.com (free, 45 req/min, city-level accuracy)
+# ============================================================
+geoip:
+  # Enable/disable GeoIP service entirely
+  enabled: ${GEOIP_ENABLED:true}
+
+  # Client-provided location headers (from Flutter/Web apps)
+  client-headers:
+    enabled: true
+    # Trust client location without IP validation
+    trust-client: true
+    # Cross-validate client location with IP lookup (for fraud detection)
+    validate-with-ip: false
+    # Max allowed distance (km) between client and IP location
+    max-distance-km: 500
+    # Custom header names (match your mobile app implementation)
+    headers:
+      latitude: X-Client-Latitude
+      longitude: X-Client-Longitude
+      country-code: X-Client-Country
+      city: X-Client-City
+      timezone: X-Client-Timezone
+      region-code: X-Client-Region
+      accuracy: X-Client-Location-Accuracy
+
+  # ip-api.com configuration (free tier: 45 requests/minute)
+  ip-api:
+    enabled: true
+    base-url: http://ip-api.com/json
+    timeout: ${GEOIP_TIMEOUT:5s}
+    read-timeout: ${GEOIP_READ_TIMEOUT:5s}
+    rate-limit-per-minute: 45
+    lang: en
+
+  # Cloudflare headers (if behind Cloudflare)
+  cloudflare:
+    enabled: true
+    trust-cloudflare: true
+
+  # Cache configuration (reduces API calls)
+  cache:
+    enabled: true
+    max-size: ${GEOIP_CACHE_MAX_SIZE:10000}
+    ttl: ${GEOIP_CACHE_TTL:24h}
+
+  # Privacy settings (GDPR compliance)
+  privacy:
+    hash-ip-addresses: false
+    log-ip-addresses: ${GEOIP_LOG_IPS:false}
+    store-coordinates: true
+    store-city-level: true
+    store-isp-data: true
+
+# ============================================================
+# SECURITY EMAIL NOTIFICATIONS
+# ============================================================
+# Send email alerts for security-related events:
+# - New device login detected
+# - Login from new location
+# - Suspicious activity detected
+# ============================================================
+security:
+  alerts:
+    # Master switch for all security alert notifications
+    enabled: ${SECURITY_ALERTS_ENABLED:true}
+
+    # New device login alerts
+    new-device-alert:
+      enabled: true
+      # Include IP address in email (privacy consideration)
+      include-ip-address: false
+      # Include location information
+      include-location: true
+      # Include device details (browser, OS)
+      include-device-details: true
+      # Skip alerts for trusted devices
+      skip-trusted-devices: true
+      # Minimum trust level to skip alerts (0-100)
+      trust-threshold: 80
+
+    # New location login alerts
+    new-location-alert:
+      enabled: true
+      # Include IP address in email
+      include-ip-address: false
+      # Include previous location for comparison
+      include-previous-location: true
+      # Alert even if device is trusted
+      alert-even-if-device-trusted: true
+      # Only alert for country changes (not city)
+      country-level-only: false
+
+    # Suspicious activity alerts
+    suspicious-activity:
+      enabled: true
+      # Risk score threshold (0-100)
+      risk-threshold: 70
+      # Failed attempts before alert
+      failed-attempts-threshold: 3
+      # Alert on VPN/Proxy usage
+      alert-on-proxy: false
+      # Alert on shared device
+      alert-on-shared-device: true
+
+    # Action links in emails
+    links:
+      base-url: ${APP_BASE_URL:https://thenews.app}
+      secure-account-url: /account/security
+      change-password-url: /account/change-password
+      login-history-url: /account/login-history
+      report-unauthorized-url: /support/report-unauthorized
+      trust-device-url: /account/devices/trust
+
+    # Email appearance
+    appearance:
+      primary-color: "#007bff"
+      warning-color: "#dc3545"
+      success-color: "#28a745"
+      company-name: TheNews
+      support-email: ${SUPPORT_EMAIL:support@thenews.app}
+  # ============================================================
+  # MONETIZATION CONFIGURATION
+  # ============================================================
+  # Multi-provider ad integration architecture
+  # Supports: Google AdSense, Google AdMob, Facebook Ads, Criteo, PubMatic
+  #
+  # Design:
+  # - Each provider has its own configuration namespace
+  # - Common settings: enabled, sync-interval-hours, api-timeout-seconds
+  # - Provider-specific: client-id, client-secret, app-id, publisher-id, etc.
+  # - Credentials can be overridden via environment variables
+  # ============================================================
+  monetization:
+    # ============================================================
+    # EXTERNAL AD PROVIDERS (AdSense, AdMob, Facebook, etc.)
+    # ============================================================
+    adproviders:
+      # ========================================
+      # Google AdSense Configuration
+      # ========================================
+      # Revenue share: 68% publisher, 32% Google
+      # Audience: Display network publishers, blog monetization
+      # Ad formats: Display, Link, Matched Content, In-article
+      # Minimum traffic: ~100K monthly page views recommended
+      # ========================================
+      google-adsense:
+        # Master enable/disable flag
+        enabled: ${GOOGLE_ADSENSE_ENABLED:false}
+
+        # OAuth Credentials
+        ad-provider-client-id: ${GOOGLE_ADSENSE_CLIENT_ID:dummy-client-id-placeholder}
+        ad-provider-client-secret: ${GOOGLE_ADSENSE_CLIENT_SECRET:dummy-client-secret-placeholder}
+        ad-provider-publisher-id: ${GOOGLE_ADSENSE_PUBLISHER_ID:pub-dummy-publisher-id}
+
+        # OAuth Redirect URI
+        ad-provider-redirect-uri: ${GOOGLE_ADSENSE_REDIRECT_URI:http://localhost:8080/api/v1/admin/ad-providers/google-adsense/oauth-callback}
+
+        # API Configuration
+        ad-provider-api-endpoint: https://adsense.googleapis.com/v2
+        ad-provider-token-storage-path: tokens/google-adsense
+        ad-provider-api-timeout-seconds: ${ADSENSE_API_TIMEOUT:30}
+
+        # Sync Configuration
+        ad-provider-sync-interval-hours: ${ADSENSE_SYNC_INTERVAL:1}
+        ad-provider-sync-max-retries: ${ADSENSE_SYNC_RETRIES:3}
+        ad-provider-store-raw-responses: ${ADSENSE_STORE_RAW_RESPONSES:false}
+        ad-provider-max-metrics-lookback-days: ${ADSENSE_LOOKBACK_DAYS:90}
+        ad-provider-auto-refresh-token: ${ADSENSE_AUTO_REFRESH_TOKEN:true}
+
+      # ========================================
+      # Google AdMob Configuration
+      # ========================================
+      # Revenue share: 68% publisher, 32% Google
+      # Audience: Mobile app developers (iOS/Android)
+      # Ad formats: Banner, Interstitial, Rewarded, Native, Rewarded Interstitial
+      # Minimum traffic: Works well with any size app (including small scale)
+      # Mediation: Supports Facebook, IronSource, Vungle, Unity Ads, etc.
+      # ========================================
+      google-admob:
+        # Master enable/disable flag
+        enabled: ${GOOGLE_ADMOB_ENABLED:false}
+
+        # OAuth Credentials
+        ad-provider-client-id: ${GOOGLE_ADMOB_CLIENT_ID:dummy-client-id-placeholder}
+        ad-provider-client-secret: ${GOOGLE_ADMOB_CLIENT_SECRET:dummy-client-secret-placeholder}
+        ad-provider-app-id: ${GOOGLE_ADMOB_APP_ID:ca-app-pub-dummy-app-id}
+
+        # OAuth Redirect URI
+        ad-provider-redirect-uri: ${GOOGLE_ADMOB_REDIRECT_URI:http://localhost:8080/api/v1/admin/ad-providers/google-admob/oauth-callback}
+
+        # API Configuration
+        ad-provider-api-endpoint: https://admob.googleapis.com/v1
+        ad-provider-token-storage-path: tokens/google-admob
+        ad-provider-api-timeout-seconds: ${ADMOB_API_TIMEOUT:30}
+
+        # Sync Configuration
+        ad-provider-sync-interval-hours: ${ADMOB_SYNC_INTERVAL:1}
+        ad-provider-sync-max-retries: ${ADMOB_SYNC_RETRIES:3}
+        ad-provider-store-raw-responses: ${ADMOB_STORE_RAW_RESPONSES:false}
+        ad-provider-max-metrics-lookback-days: ${ADMOB_LOOKBACK_DAYS:90}
+        ad-provider-auto-refresh-token: ${ADMOB_AUTO_REFRESH_TOKEN:true}
+
+        # Multi-app support
+        ad-provider-app-ids: ${ADMOB_APP_IDS:}
+
+      # ========================================
+      # Facebook Audience Network Configuration
+      # ========================================
+      # Revenue share: Variable, typically 70-80% publisher
+      # Audience: Mobile app developers, web publishers
+      # Ad formats: In-Stream Video, Native, Banner, Interstitial
+      # Minimum traffic: Works with any size (supports mediation partners)
+      # Mediation: Part of Facebook's mediation network
+      # ========================================
+      facebook-audience-network:
+        # Master enable/disable flag
+        enabled: ${FACEBOOK_AUDIENCE_NETWORK_ENABLED:false}
+
+        # OAuth Credentials
+        ad-provider-app-id: ${FACEBOOK_APP_ID:dummy-app-id-placeholder}
+        ad-provider-app-secret: ${FACEBOOK_APP_SECRET:dummy-app-secret-placeholder}
+        ad-provider-access-token: ${FACEBOOK_ACCESS_TOKEN:dummy-access-token-placeholder}
+        ad-provider-publisher-id: ${FACEBOOK_PUBLISHER_ID:pub_dummy-publisher-id}
+
+        # API Configuration
+        ad-provider-api-version: ${FACEBOOK_API_VERSION:v18.0}
+        ad-provider-api-endpoint: https://graph.facebook.com
+        ad-provider-api-timeout-seconds: ${FACEBOOK_API_TIMEOUT:30}
+
+        # Sync Configuration
+        ad-provider-sync-interval-hours: ${FACEBOOK_SYNC_INTERVAL:1}
+        ad-provider-sync-max-retries: ${FACEBOOK_SYNC_RETRIES:3}
+        ad-provider-store-raw-responses: ${FACEBOOK_STORE_RAW_RESPONSES:false}
+        ad-provider-max-metrics-lookback-days: ${FACEBOOK_LOOKBACK_DAYS:90}
+
+        # Breakdown Configuration
+        ad-provider-include-breakdown: ${FACEBOOK_INCLUDE_BREAKDOWN:true}
+        ad-provider-include-country-breakdown: ${FACEBOOK_INCLUDE_COUNTRY_BREAKDOWN:false}
+
+      # ========================================
+      # Criteo (Future)
+      # ========================================
+      # criteo:
+      #   enabled: false
+      #   ad-provider-client-id: placeholder
+
+      # ========================================
+      # PubMatic (Future)
+      # ========================================
+      # pubmatic:
+      #   enabled: false
+      #   ad-provider-client-id: placeholder
+
+# ============================================================
+# EXTERNAL API CONFIGURATION
+# ============================================================
+# Configuration for external API integrations using RestClient.
+# Includes timeout settings, retry policies, and API credentials.
+# ============================================================
+external:
+  # ------------------------------------------------------------
+  # HTTP Client Configuration (RestClient)
+  # ------------------------------------------------------------
+  http-client:
+    # Connection timeouts (milliseconds)
+    connect-timeout: ${HTTP_CONNECT_TIMEOUT:5000}
+    read-timeout: ${HTTP_READ_TIMEOUT:10000}
+
+    # Connection pooling
+    max-connections: ${HTTP_MAX_CONNECTIONS:20}
+    max-connections-per-route: ${HTTP_MAX_CONNECTIONS_PER_ROUTE:5}
+
+    # Retry configuration
+    max-retries: ${HTTP_MAX_RETRIES:3}
+    retry-backoff-ms: ${HTTP_RETRY_BACKOFF:1000}
+
+  # ------------------------------------------------------------
+  # News API Configuration
+  # ------------------------------------------------------------
+  news-api:
+    # Base URL for News API service
+    base-url: ${NEWS_API_BASE_URL:https://newsapi.org}
+
+    # API Key for authentication
+    api-key: ${NEWS_API_KEY:your-news-api-key-here}
+
+    # Request timeout (milliseconds)
+    timeout: ${NEWS_API_TIMEOUT:10000}
+
+    # Rate limiting
+    requests-per-minute: ${NEWS_API_RPM:50}
+
+    # Cache configuration
+    cache-enabled: ${NEWS_API_CACHE_ENABLED:true}
+    cache-ttl-minutes: ${NEWS_API_CACHE_TTL:15}
+
+  # ------------------------------------------------------------
+  # Weather API Configuration (Future)
+  # ------------------------------------------------------------
+  # weather-api:
+  #   base-url: ${WEATHER_API_BASE_URL:https://api.openweathermap.org}
+  #   api-key: ${WEATHER_API_KEY:your-weather-api-key}
+  #   timeout: ${WEATHER_API_TIMEOUT:5000}
+
+  # ------------------------------------------------------------
+  # Social Media APIs (Future)
+  # ------------------------------------------------------------
+  # twitter-api:
+  #   base-url: ${TWITTER_API_BASE_URL:https://api.twitter.com}
+  #   api-key: ${TWITTER_API_KEY:your-twitter-api-key}
+  #   timeout: ${TWITTER_API_TIMEOUT:5000}
+
+  # linkedin-api:
+  #   base-url: ${LINKEDIN_API_BASE_URL:https://api.linkedin.com}
+  #   api-key: ${LINKEDIN_API_KEY:your-linkedin-api-key}
+  #   timeout: ${LINKEDIN_API_TIMEOUT:5000}
