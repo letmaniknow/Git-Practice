@@ -1,0 +1,343 @@
+/* Dialog Overlay */
+.dialog-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: var(--spacing-md, 16px);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.dialog-overlay.dialog-danger {
+  --dialog-color: var(--color-error, #ef4444);
+  --dialog-hover: var(--color-error-dark, #dc2626);
+}
+
+.dialog-overlay.dialog-warning {
+  --dialog-color: var(--color-warning, #f59e0b);
+  --dialog-hover: var(--color-warning-dark, #d97706);
+}
+
+.dialog-overlay.dialog-info {
+  --dialog-color: var(--color-primary, #3b82f6);
+  --dialog-hover: var(--color-primary-dark, #1e40af);
+}
+
+/* Dialog Container */
+.dialog-container {
+  background: var(--color-bg, #ffffff);
+  border-radius: var(--border-radius-lg, 12px);
+  box-shadow: var(--shadow-3, 0 10px 20px rgba(0, 0, 0, 0.19));
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideIn 0.3s ease-out;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Dialog Header */
+.dialog-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-lg, 24px);
+  padding: var(--spacing-lg, 24px);
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+}
+
+.dialog-icon {
+  font-size: 1.75rem;
+  flex-shrink: 0;
+  color: var(--dialog-color, var(--color-warning, #f59e0b));
+  line-height: 1;
+}
+
+.dialog-title {
+  font-size: var(--font-size-h4, 1.25rem);
+  font-weight: 600;
+  color: var(--color-text-dark, #111827);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Dialog Body */
+.dialog-body {
+  padding: var(--spacing-lg, 24px);
+  flex: 1;
+  overflow-y: auto;
+}
+
+.dialog-message {
+  color: var(--color-text-medium, #6b7280);
+  line-height: 1.6;
+  margin: 0;
+  font-size: var(--font-size-regular, 1rem);
+}
+
+/* Dialog Footer (Actions) */
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-md, 16px);
+  padding: var(--spacing-md, 16px) var(--spacing-lg, 24px);
+  background: var(--color-surface, #f9fafb);
+  border-top: 1px solid var(--color-border, #e5e7eb);
+}
+
+/* Material Button Styling */
+button {
+  min-width: var(--icon-button-touch-target, 48px);
+  min-height: var(--icon-button-touch-target, 48px);
+  border-radius: var(--border-radius-md, 8px);
+  font-size: var(--font-size-small, 0.875rem);
+  font-weight: 600;
+  letter-spacing: 0.0125em;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm, 8px);
+  padding: var(--spacing-sm, 8px) var(--spacing-md, 16px);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.cancel-button {
+  color: var(--dialog-color, var(--color-warning, #f59e0b));
+  border: 1px solid var(--color-border, #e5e7eb);
+  background: transparent;
+}
+
+.cancel-button:hover:not(:disabled) {
+  background: var(--overlay-hover-light, rgba(0, 0, 0, 0.04));
+}
+
+.confirm-button {
+  background: var(--dialog-color, var(--color-warning, #f59e0b));
+  color: white;
+  box-shadow: var(--shadow-2, 0 2px 8px rgba(0,0,0,0.08));
+  border: none;
+}
+
+.confirm-button:hover:not(:disabled) {
+  background: var(--dialog-hover, var(--color-warning-dark, #d97706));
+  box-shadow: var(--shadow-3, 0 10px 20px rgba(0, 0, 0, 0.19));
+}
+
+/* Icons inside buttons */
+.confirm-icon,
+.spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--icon-md, 24px);
+  height: var(--icon-md, 24px);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Accessibility */
+.dialog-overlay:focus-visible {
+  outline-offset: 2px;
+  outline: 3px solid var(--dialog-color, #f57c00);
+}
+
+button:focus-visible {
+  outline-offset: 2px;
+  outline: 2px solid var(--dialog-color, #f57c00);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .dialog-overlay {
+    padding: 0.75rem;
+  }
+
+  .dialog-container {
+    max-width: 100%;
+    border-radius: 0;
+  }
+
+  .dialog-header,
+  .dialog-body,
+  .dialog-footer {
+    padding: 1rem;
+  }
+
+  .dialog-footer {
+    flex-direction: column-reverse;
+  }
+
+  button {
+    width: 100%;
+  }
+}
+
+
+.btn-danger:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+.btn-warning {
+  background: #d97706;
+  color: white;
+}
+
+.btn-warning:hover:not(:disabled) {
+  background: #b45309;
+}
+
+.btn-info {
+  background: #2563eb;
+  color: white;
+}
+
+.btn-info:hover:not(:disabled) {
+  background: #1d4ed8;
+}
+
+/* Dialog Type Styling */
+.dialog-danger .dialog-icon {
+  color: #dc2626;
+}
+
+.dialog-warning .dialog-icon {
+  color: #d97706;
+}
+
+.dialog-info .dialog-icon {
+  color: #2563eb;
+}
+
+/* Spinner */
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .dialog-content {
+    margin: 1rem;
+    max-width: calc(100% - 2rem);
+  }
+  
+  .dialog-header {
+    padding: 1rem 1rem 0.5rem 1rem;
+  }
+  
+  .dialog-body {
+    padding: 0 1rem 0.5rem 1rem;
+  }
+  
+  .dialog-footer {
+    flex-direction: column;
+    padding: 1rem;
+    gap: 0.5rem;
+  }
+  
+  .btn {
+    width: 100%;
+  }
+  
+  .dialog-title {
+    font-size: 1.125rem;
+  }
+}
+
+/* Focus management */
+.dialog-overlay:focus {
+  outline: none;
+}
+
+.btn:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .dialog-content {
+    border: 2px solid #000;
+  }
+  
+  .btn {
+    border: 2px solid currentColor;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .dialog-overlay,
+  .dialog-content,
+  .btn,
+  .spinner {
+    animation: none;
+  }
+}

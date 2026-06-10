@@ -1,0 +1,9 @@
+/* DIAGNOSTIC: Force all parent containers to allow horizontal overflow */
+.table-wrapper, .table-container, .admin-dashboard-container, body, html {
+  overflow-x: visible !important;
+}
+
+/* DIAGNOSTIC: Force horizontal scrollbar to always show on .table-wrapper */
+.table-wrapper {
+  overflow-x: scroll !important;
+}

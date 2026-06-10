@@ -1,0 +1,301 @@
+/**
+ * 🚨 ERROR MESSAGE COMPONENT STYLES
+ * 
+ * Industry-standard error notification styling with:
+ * - Toast notification support (fixed positioning)
+ * - Type variants (error, warning, info)
+ * - Smooth animations (slide-in, fade-out)
+ * - Accessibility features (focus states, contrast)
+ * - Responsive design
+ */
+
+/* Main Container */
+.error-message-container {
+  border-radius: var(--border-radius-md, 8px);
+  border: 1px solid;
+  border-left: 4px solid;
+  margin: var(--spacing-md, 16px) 0;
+  box-shadow: var(--shadow-2, 0 3px 6px rgba(0, 0, 0, 0.08));
+  animation: slideIn 0.3s ease-out;
+  transition: all 0.3s ease;
+}
+
+/* Toast Position (fixed top) */
+.error-message-container.toast {
+  position: fixed;
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 500px;
+  width: calc(100% - var(--spacing-lg, 24px));
+  margin: 0;
+  z-index: 1000;
+  box-shadow: var(--shadow-3, 0 10px 25px rgba(0, 0, 0, 0.15));
+}
+
+.error-message-container.compact {
+  margin: var(--spacing-sm, 8px) 0;
+}
+
+/* Content Layout */
+.error-content {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md, 16px);
+  padding: var(--spacing-md, 16px);
+}
+
+.error-message-container.compact .error-content {
+  padding: var(--spacing-sm, 8px);
+  align-items: center;
+}
+
+/* Icon */
+.error-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.error-message-container.compact .error-icon {
+  margin-top: 0;
+  font-size: 1.25rem;
+}
+
+/* Text Content */
+.error-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.error-title {
+  font-size: var(--font-size-regular, 1rem);
+  font-weight: 600;
+  margin: 0 0 var(--spacing-xs, 4px) 0;
+  line-height: 1.4;
+}
+
+.error-message {
+  font-size: var(--font-size-small, 0.875rem);
+  line-height: 1.5;
+  margin: 0;
+  max-width: 100%;
+  word-wrap: break-word;
+}
+
+.error-message-container.compact .error-message {
+  font-size: 0.8125rem;
+}
+
+/* Actions */
+.error-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm, 8px);
+  flex-shrink: 0;
+}
+
+/* Buttons */
+.btn {
+  padding: var(--spacing-sm, 8px) var(--spacing-md, 16px);
+  border-radius: var(--border-radius-md, 8px);
+  font-size: var(--font-size-small, 0.875rem);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.btn-retry {
+  background: transparent;
+  color: inherit;
+  border-color: currentColor;
+}
+
+.btn-retry:hover {
+  background: currentColor;
+  color: white;
+}
+
+.btn-dismiss {
+  background: transparent;
+  color: inherit;
+  border: none;
+  padding: var(--spacing-xs, 4px) var(--spacing-sm, 8px);
+  font-size: 1.5rem;
+  opacity: 0.6;
+  min-width: auto;
+  min-height: auto;
+  line-height: 1;
+}
+
+.btn-dismiss:hover {
+  opacity: 1;
+  background: var(--overlay-hover-light, rgba(0, 0, 0, 0.04));
+}
+
+.btn-dismiss:focus-visible {
+  opacity: 1;
+}
+
+/* Type Variants - Error */
+.type-error {
+  background: var(--color-error-light, #fef2f2);
+  border-color: var(--color-error, #ef4444);
+  border-left-color: var(--color-error, #ef4444);
+  color: var(--color-error-dark, #991b1b);
+}
+
+.type-error .error-title {
+  color: var(--color-error-dark, #991b1b);
+}
+
+.type-error .error-message {
+  color: var(--color-error-dark, #991b1b);
+}
+
+.type-error .error-icon {
+  color: var(--color-error, #ef4444);
+}
+
+/* Type Variants - Warning */
+.type-warning {
+  background: var(--color-warning-light, #fffbeb);
+  border-color: var(--color-warning, #f59e0b);
+  border-left-color: var(--color-warning, #f59e0b);
+  color: var(--color-warning-dark, #7c2d12);
+}
+
+.type-warning .error-title {
+  color: var(--color-warning-dark, #7c2d12);
+}
+
+.type-warning .error-message {
+  color: var(--color-warning-dark, #7c2d12);
+}
+
+.type-warning .error-icon {
+  color: var(--color-warning, #f59e0b);
+}
+
+/* Type Variants - Info */
+.type-info {
+  background: var(--color-info-light, #eff6ff);
+  border-color: var(--color-info, #2196f3);
+  border-left-color: var(--color-info, #2196f3);
+  color: #1e3a8a;
+}
+
+.type-info .error-title {
+  color: #1e3a8a;
+}
+
+.type-info .error-message {
+  color: #1e40af;
+}
+
+.type-info .error-icon {
+  color: var(--color-info, #2196f3);
+}
+
+/* Animations */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .error-message-container.toast {
+    top: 70px;
+    max-width: calc(100% - var(--spacing-md, 16px));
+    width: calc(100% - var(--spacing-md, 16px));
+  }
+
+  .error-content {
+    gap: var(--spacing-sm, 8px);
+    padding: var(--spacing-md, 16px) var(--spacing-sm, 8px);
+  }
+
+  .error-icon {
+    font-size: 1.25rem;
+  }
+}
+.error-message-container.borderless {
+  border: none;
+  box-shadow: none;
+}
+
+.error-message-container.centered {
+  text-align: center;
+}
+
+.error-message-container.centered .error-content {
+  justify-content: center;
+}
+
+.error-message-container.full-width {
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* State classes for programmatic control */
+.error-message-container.hidden {
+  display: none;
+}
+
+.error-message-container.loading .btn-retry {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error-message-container.loading .btn-retry::after {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  margin-left: 0.5rem;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

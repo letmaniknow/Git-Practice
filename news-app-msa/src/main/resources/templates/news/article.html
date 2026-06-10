@@ -1,0 +1,317 @@
+<!doctype html>
+<html
+  lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.thymeleaf.org"
+>
+  <head>
+    <!-- Basic Meta Tags -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- SEO Meta Tags -->
+    <title th:text="${pageTitle}">News Article</title>
+    <meta name="description" th:content="${metaDescription}" />
+    <meta name="keywords" th:content="${keywords}" />
+    <meta name="author" th:content="${articleMeta.author}" />
+    <meta
+      name="robots"
+      content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
+    />
+
+    <!-- Canonical URL -->
+    <link rel="canonical" th:href="${canonicalUrl}" />
+
+    <!-- Open Graph Meta Tags (Facebook, LinkedIn, etc.) -->
+    <meta property="og:title" th:content="${openGraph.title}" />
+    <meta property="og:description" th:content="${openGraph.description}" />
+    <meta property="og:image" th:content="${openGraph.image}" />
+    <meta property="og:image:width" th:content="${openGraph.imageWidth}" />
+    <meta property="og:image:height" th:content="${openGraph.imageHeight}" />
+    <meta property="og:image:alt" th:content="${openGraph.imageAlt}" />
+    <meta property="og:url" th:content="${openGraph.url}" />
+    <meta property="og:type" th:content="${openGraph.type ?: 'article'}" />
+    <meta property="og:site_name" th:content="${openGraph.siteName}" />
+    <meta property="og:locale" th:content="${openGraph.locale ?: 'en_US'}" />
+    <meta
+      property="article:published_time"
+      th:content="${#temporals.format(openGraph.publishedTime, 'yyyy-MM-dd\'T\'HH:mm:ssXXX')}"
+    />
+    <meta
+      property="article:modified_time"
+      th:content="${#temporals.format(openGraph.modifiedTime, 'yyyy-MM-dd\'T\'HH:mm:ssXXX')}"
+    />
+    <meta property="article:author" th:content="${openGraph.author}" />
+    <meta property="article:section" th:content="${openGraph.section}" />
+    <meta
+      property="article:tag"
+      th:each="tag : ${openGraph.tags}"
+      th:content="${tag}"
+    />
+
+    <!-- Twitter Card Meta Tags -->
+    <meta
+      name="twitter:card"
+      th:content="${twitterCard.card ?: 'summary_large_image'}"
+    />
+    <meta name="twitter:site" th:content="${twitterCard.site}" />
+    <meta name="twitter:creator" th:content="${twitterCard.creator}" />
+    <meta name="twitter:title" th:content="${twitterCard.title}" />
+    <meta name="twitter:description" th:content="${twitterCard.description}" />
+    <meta name="twitter:image" th:content="${twitterCard.image}" />
+    <meta name="twitter:image:alt" th:content="${twitterCard.imageAlt}" />
+    <meta name="twitter:url" th:content="${twitterCard.url}" />
+    <meta name="twitter:domain" th:content="${twitterCard.domain}" />
+
+    <!-- Article-specific Meta Tags -->
+    <meta property="article:author" th:content="${articleMeta.author}" />
+    <meta property="article:section" th:content="${articleMeta.section}" />
+    <meta
+      property="article:published_time"
+      th:content="${#temporals.format(articleMeta.publishedTime, 'yyyy-MM-dd\'T\'HH:mm:ssXXX')}"
+    />
+    <meta
+      property="article:modified_time"
+      th:content="${#temporals.format(articleMeta.modifiedTime, 'yyyy-MM-dd\'T\'HH:mm:ssXXX')}"
+    />
+    <meta property="article:word_count" th:content="${articleMeta.wordCount}" />
+    <meta
+      property="article:reading_time"
+      th:content="${articleMeta.readingTime}"
+    />
+    <meta
+      th:if="${articleMeta.isBreaking}"
+      name="news_breaking"
+      content="breaking"
+    />
+
+    <!-- Schema.org Structured Data (JSON-LD) -->
+    <script type="application/ld+json" th:text="${structuredDataJson}"></script>
+
+    <!-- Additional SEO and Performance Meta Tags -->
+    <meta name="theme-color" content="#ffffff" />
+    <meta name="msapplication-TileColor" content="#ffffff" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+
+    <!-- Preconnect to external domains for performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" th:href="@{/favicon.ico}" />
+    <link rel="apple-touch-icon" th:href="@{/apple-touch-icon.png}" />
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" th:href="@{/css/news-article.css}" />
+  </head>
+
+  <body>
+    <!-- Skip to main content for accessibility -->
+    <a href="#main-content" class="sr-only">Skip to main content</a>
+
+    <!-- Header -->
+    <header role="banner">
+      <nav aria-label="Main navigation">
+        <div class="container">
+          <a th:href="@{/}" class="logo">NewsApp</a>
+          <ul class="nav-menu">
+            <li><a th:href="@{/}">Home</a></li>
+            <li><a th:href="@{/categories}">Categories</a></li>
+            <li><a th:href="@{/about}">About</a></li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content" role="main">
+      <article
+        class="news-article"
+        itemscope
+        itemtype="https://schema.org/NewsArticle"
+      >
+        <!-- Article Header -->
+        <header class="article-header">
+          <!-- Breaking News Badge -->
+          <div th:if="${articleMeta.isBreaking}" class="breaking-badge">
+            BREAKING NEWS
+          </div>
+
+          <!-- Article Title -->
+          <h1
+            class="article-title speakable-headline"
+            th:text="${news.newsTitleEn}"
+            itemprop="headline"
+          >
+            Article Title
+          </h1>
+
+          <!-- Article Meta Information -->
+          <div class="article-meta">
+            <time
+              th:datetime="${#temporals.format(news.newsPublishedAt, 'yyyy-MM-dd')}"
+              th:text="${#temporals.format(news.newsPublishedAt, 'MMM dd, yyyy HH:mm')}"
+              itemprop="datePublished"
+            >
+              Publication Date
+            </time>
+
+            <span th:if="${articleMeta.author}" class="author">
+              By
+              <span th:text="${articleMeta.author}" itemprop="author"
+                >Author</span
+              >
+            </span>
+
+            <span th:if="${articleMeta.readingTime}" class="reading-time">
+              <span th:text="${articleMeta.readingTime}"></span> min read
+            </span>
+
+            <span th:if="${articleMeta.wordCount}" class="word-count">
+              <span th:text="${articleMeta.wordCount}"></span> words
+            </span>
+          </div>
+
+          <!-- Article Excerpt -->
+          <p
+            th:if="${news.newsExcerptEn}"
+            class="article-excerpt speakable-summary"
+            th:text="${news.newsExcerptEn}"
+            itemprop="description"
+          >
+            Article excerpt
+          </p>
+        </header>
+
+        <!-- Article Featured Image -->
+        <figure th:if="${news.newsThumbnailUrl}" class="article-image">
+          <img
+            th:src="${news.newsThumbnailUrl}"
+            th:alt="${openGraph.imageAlt}"
+            itemprop="image"
+            loading="lazy"
+          />
+          <figcaption
+            th:if="${news.newsImageCaption}"
+            th:text="${news.newsImageCaption}"
+          ></figcaption>
+        </figure>
+
+        <!-- Article Content -->
+        <div
+          class="article-content"
+          th:utext="${news.newsContentEn}"
+          itemprop="articleBody"
+        >
+          <!-- Article content will be rendered here -->
+        </div>
+
+        <!-- Article Tags -->
+        <div th:if="${openGraph.tags}" class="article-tags">
+          <span class="tags-label">Tags:</span>
+          <span
+            th:each="tag : ${openGraph.tags}"
+            class="tag"
+            th:text="${tag}"
+          ></span>
+        </div>
+
+        <!-- Article Footer -->
+        <footer class="article-footer">
+          <div class="article-stats">
+            <span class="published-date">
+              Published:
+              <time
+                th:datetime="${#temporals.format(news.newsPublishedAt, 'yyyy-MM-dd\'T\'HH:mm:ssXXX')}"
+                th:text="${#temporals.format(news.newsPublishedAt, 'MMM dd, yyyy \'at\' HH:mm')}"
+              ></time>
+            </span>
+
+            <span
+              th:if="${news.createdAt != news.newsPublishedAt}"
+              class="modified-date"
+            >
+              Last modified:
+              <time
+                th:datetime="${#temporals.format(news.createdAt, 'yyyy-MM-dd\'T\'HH:mm:ssXXX')}"
+                th:text="${#temporals.format(news.createdAt, 'MMM dd, yyyy \'at\' HH:mm')}"
+              ></time>
+            </span>
+          </div>
+
+          <!-- Social Sharing Buttons -->
+          <div class="social-share">
+            <span class="share-label">Share this article:</span>
+            <a
+              th:href="${'https://twitter.com/intent/tweet?text=' + pageTitle + '&url=' + canonicalUrl}"
+              class="share-btn twitter"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Share on Twitter"
+            >
+              Twitter
+            </a>
+            <a
+              th:href="${'https://www.facebook.com/sharer/sharer.php?u=' + canonicalUrl}"
+              class="share-btn facebook"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Share on Facebook"
+            >
+              Facebook
+            </a>
+            <a
+              th:href="${'https://www.linkedin.com/sharing/share-offsite/?url=' + canonicalUrl}"
+              class="share-btn linkedin"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Share on LinkedIn"
+            >
+              LinkedIn
+            </a>
+          </div>
+        </footer>
+      </article>
+
+      <!-- Related Articles Section (Placeholder) -->
+      <aside class="related-articles" aria-labelledby="related-heading">
+        <h2 id="related-heading">Related Articles</h2>
+        <p>This section would contain related news articles.</p>
+      </aside>
+    </main>
+
+    <!-- Footer -->
+    <footer role="contentinfo">
+      <div class="container">
+        <p>&copy; 2024 NewsApp. All rights reserved.</p>
+        <nav aria-label="Footer navigation">
+          <ul>
+            <li><a th:href="@{/privacy}">Privacy Policy</a></li>
+            <li><a th:href="@{/terms}">Terms of Service</a></li>
+            <li><a th:href="@{/contact}">Contact</a></li>
+          </ul>
+        </nav>
+      </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script th:src="@{/js/news-article.js}" defer></script>
+
+    <!-- Analytics and Tracking (Example) -->
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=GA_TRACKING_ID"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "GA_TRACKING_ID");
+    </script>
+  </body>
+</html>

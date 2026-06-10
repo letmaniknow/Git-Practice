@@ -1,0 +1,181 @@
+/* ============================================================================
+   ADMIN DASHBOARD PAGE CONTAINER
+   ============================================================================ */
+
+.admin-dashboard-container {
+  width: 100%;
+  margin: 0;
+  padding: 8px 16px 16px 16px;
+  min-height: calc(100vh - 4rem);
+  font-family: var(--font-family, 'Segoe UI, Arial, sans-serif');
+  box-sizing: border-box;
+}
+
+/* ============================================================================
+   PAGE HEADER
+   ============================================================================ */
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+  flex-wrap: wrap;
+  gap: var(--spacing-sm, 8px);
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 0;
+  flex: 1 1 auto;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: var(--font-size-h2, 1.75rem);
+  font-weight: 600;
+  color: var(--color-text-dark, #111827);
+}
+
+/* ============================================================================
+   SEARCH & FILTER SECTION (AT PAGE LEVEL - OUTSIDE TABLE)
+   ============================================================================ */
+
+.search-filters-section {
+  margin: 0;
+  padding: 6px 16px;
+  background: transparent;
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+}
+
+.header-actions {
+  display: flex;
+  gap: var(--spacing-sm, 8px);
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.create-news-btn {
+  background-color: var(--color-primary-blue, #1976d2) !important;
+  color: white !important;
+  font-weight: 500;
+  padding: 0 16px !important;
+  height: 44px !important;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.create-news-btn:hover {
+  background-color: var(--color-primary-blue-dark, #1565c0) !important;
+  box-shadow: 0 4px 8px rgba(25, 118, 210, 0.25);
+}
+
+.create-news-btn:active {
+  transform: scale(0.98);
+}
+
+.create-news-btn mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+.customize-columns-btn {
+  color: var(--color-primary-blue);
+  transition: all 0.2s ease;
+}
+
+.customize-columns-btn:hover {
+  background-color: var(--color-bg-blue-tint);
+  transform: scale(1.1);
+}
+
+.customize-columns-btn:active {
+  transform: scale(0.95);
+}
+
+.header-language-toggle {
+  margin: 0 var(--spacing-sm, 8px);
+}
+
+.toggle-label {
+  margin-left: var(--spacing-xs, 4px);
+  font-weight: 500;
+  font-size: var(--font-size-small, 0.875rem);
+}
+
+/* ============================================================================
+   TABLE CONTAINER
+   ============================================================================ */
+
+
+.table-container {
+  width: 100%;
+  margin-top: 4px;
+  background: var(--color-surface, #ffffff);
+  border-radius: var(--border-radius-lg, 12px);
+  border: 1px solid var(--color-border, #e5e7eb);
+  box-shadow: var(--shadow-1, 0 1px 3px rgba(0, 0, 0, 0.12));
+  /* overflow removed to allow .table-wrapper to scroll */
+  box-sizing: border-box;
+}
+
+/* ============================================================================
+   RESPONSIVE DESIGN
+   ============================================================================ */
+
+@media (max-width: 1024px) {
+  .admin-dashboard-container {
+    padding: 6px 12px 12px 12px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-bottom: 6px;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 768px) {
+  .admin-dashboard-container {
+    padding: 4px 8px 8px 8px;
+    min-height: auto;
+  }
+
+  .page-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .header-actions {
+    width: 100%;
+    flex-direction: column;
+    gap: var(--spacing-sm, 8px);
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-dashboard-container {
+    padding: 2px 4px 4px 4px;
+  }
+
+  .page-header {
+    padding-bottom: 4px;
+  }
+
+  .page-header h1 {
+    font-size: 1.25rem;
+  }
+}

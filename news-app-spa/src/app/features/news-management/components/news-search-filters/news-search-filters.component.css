@@ -1,0 +1,408 @@
+/* NEWS SEARCH FILTERS COMPONENT STYLES
+ * MD3 Filter Bar — all native Angular Material components, zero CSS hacks
+ */
+
+/* ============================================================================ */
+/* OUTER CARD WRAPPER */
+/* ============================================================================ */
+
+.news-search-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: var(--spacing-sm, 8px) var(--spacing-md, 16px);
+  background-color: var(--color-surface, #f9fafb);
+  border-radius: var(--border-radius-lg, 12px);
+  border: 1px solid var(--color-border, #e5e7eb);
+  box-shadow: var(--shadow-1, 0 1px 3px rgba(0, 0, 0, 0.12));
+  margin-bottom: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ============================================================================ */
+/* ROW 1: Filter controls */
+/* ============================================================================ */
+
+.filters-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--filter-gap, 12px);
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ============================================================================ */
+/* FORM FIELDS — UNIFIED ALIGNMENT & SIZING FOR ALL FIELDS */
+/* ============================================================================ */
+
+/* Industry Standard: All filter fields are EQUAL SIZE
+   - Same flex ratio ensures equal distribution
+   - width: 100% overrides Material's content-based sizing
+   - Same min-width creates visual uniformity
+   - height: 44px enforces exact size
+   This matches Google, LinkedIn, and professional UX standards */
+.search-input-field,
+.status-select-field,
+.category-select-field,
+.date-range-field,
+.admin-user-field {
+  flex: 1 1 var(--filter-field-flex-basis, 160px);
+  min-width: var(--filter-field-min-width, 140px);
+  width: 100%;
+  height: var(--components-input-height, 44px);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+/* Status field - hide the chips container, show only the count text in trigger */
+.status-select-field ::ng-deep .selected-chips-container {
+  display: none !important;
+}
+
+.status-select-field ::ng-deep .mat-mdc-form-field-flex {
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.date-range-field ::ng-deep .mat-mdc-form-field-flex {
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+}
+
+.date-range-field ::ng-deep .mdc-text-field {
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.date-range-field ::ng-deep .mdc-notched-outline {
+  height: 100% !important;
+}
+
+.date-range-field ::ng-deep .mdc-notched-outline__leading,
+.date-range-field ::ng-deep .mdc-notched-outline__notch,
+.date-range-field ::ng-deep .mdc-notched-outline__trailing {
+  height: 100% !important;
+}
+
+.date-range-field ::ng-deep .mat-mdc-input-element {
+  padding: 0 0 0 var(--spacing-md, 12px) !important;
+  height: 100% !important;
+  line-height: 44px !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  vertical-align: middle !important;
+}
+
+.date-range-field ::ng-deep .mat-mdc-form-field-infix {
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  height: 100% !important;
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.date-range-field ::ng-deep .mdc-text-field__affix-space {
+  padding: 0 !important;
+  margin: 0 !important;
+  height: 100% !important;
+}
+
+
+/* ============================================================================ */
+/* SEARCH MODE TOGGLE — mat-button-toggle-group                                 */
+/* INDUSTRY STANDARD: Same height and flex as form fields for perfect alignment */
+/* Designed by Material exactly for exclusive toggle selections                 */
+/* ============================================================================ */
+
+.search-mode-toggle {
+  flex: 1 1 0%;
+  min-width: 240px;
+  max-width: 320px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: stretch;
+  height: var(--input-height, 44px);
+  border-radius: var(--border-radius-md, 8px);
+  border: 1px solid var(--color-border, #e5e7eb) !important;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0 !important;
+}
+
+.search-mode-toggle ::ng-deep .mat-mdc-button-toggle {
+  height: 100% !important;
+  line-height: var(--input-height, 44px) !important;
+  min-width: 0 !important;
+  flex: 1 1 0% !important;
+  padding: 0 var(--spacing-sm, 8px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  font-size: var(--form-input-font-size, 0.875rem) !important;
+}
+
+.search-mode-toggle ::ng-deep .mat-mdc-button-toggle-group {
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: stretch !important;
+  gap: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 100% !important;
+  flex: 1 1 0% !important;
+}
+
+/* ============================================================================ */
+/* ROW 2: Active filter chips (MD3 Input Chips pattern)                         */
+/* Visible only when at least one filter is active                              */
+/* ============================================================================ */
+
+.active-filters-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--chip-gap, 8px);
+  padding: 12px 0 4px 0;
+  margin-top: 16px;
+  border-top: 1px solid var(--color-border, #e5e7eb);
+  min-height: var(--components-input-height, 44px);
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.active-label {
+  font-size: var(--font-size-small, 0.75rem);
+  font-weight: 700;
+  color: var(--color-text-medium, #6b7280);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  flex-shrink: 0;
+  padding-right: var(--spacing-md, 16px);
+  line-height: var(--components-input-height, 44px);
+  display: flex;
+  align-items: center;
+  height: var(--components-input-height, 44px);
+  white-space: nowrap;
+}
+
+.clear-all-button {
+  margin-left: auto;
+  flex: 0 0 auto !important;
+  font-weight: 600;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: var(--spacing-xs, 4px);
+  height: var(--components-input-height, 44px) !important;
+  min-height: var(--components-input-height, 44px) !important;
+  padding: 0 16px !important;
+  box-sizing: border-box !important;
+  white-space: nowrap;
+  font-size: 14px;
+  font-weight: 600;
+  width: auto !important;
+  min-width: min-content !important;
+  max-width: fit-content !important;
+  line-height: 1 !important;
+}
+
+.clear-all-button ::ng-deep .mat-mdc-button-base {
+  width: auto !important;
+  min-width: auto !important;
+  min-height: auto !important;
+  height: 100% !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
+}
+
+.clear-all-button ::ng-deep .mdc-button {
+  width: auto !important;
+  min-width: auto !important;
+  min-height: auto !important;
+  max-width: fit-content !important;
+  flex: 0 0 auto !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.clear-all-button ::ng-deep .mdc-button__ripple {
+  width: auto !important;
+  padding: 0 !important;
+}
+
+.clear-all-button mat-icon {
+  width: 20px !important;
+  height: 20px !important;
+  font-size: 20px !important;
+  line-height: 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Material chips alignment - industry standard sizing */
+.active-filters-row ::ng-deep .mdc-chip {
+  min-height: var(--chip-height, 32px) !important;
+  height: var(--chip-height, 32px) !important;
+  line-height: var(--chip-height, 32px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 var(--spacing-sm, 8px) !important;
+}
+
+.active-filters-row ::ng-deep .mat-mdc-chip-set {
+  display: flex !important;
+  flex: 0 1 auto !important;
+  flex-wrap: nowrap !important;
+  gap: var(--chip-gap, 8px) !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow-x: auto !important;
+  min-width: 0 !important;
+  flex-grow: 1 !important;
+}
+
+/* Material Autocomplete Panel Styling */
+::ng-deep .mat-mdc-autocomplete-panel {
+  box-shadow: var(--shadow-2, 0 4px 6px rgba(0, 0, 0, 0.1)) !important;
+  border-radius: var(--border-radius-md, 8px) !important;
+  border: 1px solid var(--color-border, #e5e7eb) !important;
+  margin-top: var(--spacing-xs, 4px) !important;
+}
+
+/* SELECT/DROPDOWN PANEL - Material Design 3 Compact Standard */
+::ng-deep .mat-mdc-select-panel {
+  box-shadow: var(--shadow-2, 0 4px 6px rgba(0, 0, 0, 0.1)) !important;
+  border-radius: var(--border-radius-md, 8px) !important;
+  border: 1px solid var(--color-border, #e5e7eb) !important;
+  margin-top: var(--spacing-xs, 4px) !important;
+}
+
+/* Industry Standard: Compact dropdown options (Google, LinkedIn, Figma)
+   - Min-height: 32px (compact professional standard)
+   - Padding: 4px vertical, 12px horizontal (tight but not cramped)
+   - Text: 14px (label font size)
+   - Alignment: Vertically centered, icon+text left-aligned
+*/
+::ng-deep .mat-mdc-option {
+  min-height: var(--option-height, 40px) !important;
+  height: auto !important;
+  padding: var(--option-padding-vertical, 4px) var(--option-padding-horizontal, 12px) !important;
+  font-size: var(--form-input-font-size, 0.875rem) !important;
+  line-height: 1.4 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+}
+
+/* Material Select Dropdown Arrow (inside the field, centered) */
+::ng-deep .mat-mdc-form-field .mat-mdc-select-arrow {
+  margin-right: var(--spacing-sm, 8px) !important;
+  margin-left: var(--spacing-xs, 4px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: var(--icon-md, 24px) !important;
+  height: var(--icon-md, 24px) !important;
+  font-size: var(--icon-md, 24px) !important;
+  flex-shrink: 0 !important;
+}
+
+/* Material Select value/trigger area - ensure selected text is centered */
+::ng-deep .mat-mdc-select {
+  display: flex !important;
+  align-items: center !important;
+  height: 100% !important;
+}
+
+/* Material Autocomplete trigger (Created By field) - centered, no padding constraints */
+::ng-deep .mat-mdc-autocomplete-trigger {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  height: 100% !important;
+  width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* ============================================================================ */
+/* RESPONSIVE */
+/* ============================================================================ */
+
+@media (max-width: 768px) {
+  .news-search-filters {
+    padding: var(--spacing-sm, 8px);
+  }
+
+  .search-input-field,
+  .status-select-field,
+  .category-select-field,
+  .date-range-field,
+  .admin-user-field,
+  .search-mode-toggle {
+    flex: 1 1 100%;
+    width: 100%;
+    min-width: 100%;
+  }
+
+  .search-mode-toggle ::ng-deep .mat-button-toggle {
+    flex: 1 !important;
+  }
+
+  .search-mode-toggle ::ng-deep .mat-button-toggle-group {
+    width: 100% !important;
+  }
+
+  .active-filters-row {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .active-label {
+    flex-basis: 100%;
+    order: -1;
+    padding-right: 0;
+    padding-bottom: var(--spacing-xs, 4px);
+  }
+
+  .clear-all-button {
+    margin-left: auto;
+  }
+}
+
+
+
+
+

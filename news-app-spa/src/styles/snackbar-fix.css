@@ -1,0 +1,101 @@
+/**
+ * SNACKBAR FIX - NUCLEAR OPTION WITH ::ng-deep
+ * This file is loaded LAST in angular.json to override EVERYTHING
+ * 
+ * ROOT CAUSE: Material's .mdc-snackbar__surface has white background
+ * TARGET: <div class="mdc-snackbar__surface mat-mdc-snackbar-surface">
+ */
+
+/* ============================================================================
+   FORCE TRANSPARENT ON ALL MATERIAL WRAPPERS
+   Using ::ng-deep to penetrate view encapsulation
+   ============================================================================ */
+
+/* Custom element (mat-snack-bar-container) */
+::ng-deep mat-snack-bar-container {
+  background-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+}
+
+/* Class selector */
+::ng-deep .mat-mdc-snack-bar-container {
+  background-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+}
+
+/* THE CRITICAL ONE - WHITE BACKGROUND ELEMENT (both classes) */
+::ng-deep .mdc-snackbar__surface.mat-mdc-snackbar-surface,
+::ng-deep mat-snack-bar-container .mdc-snackbar__surface.mat-mdc-snackbar-surface {
+  background-color: transparent !important;
+  background: transparent !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+/* Individual class fallbacks */
+::ng-deep .mdc-snackbar__surface {
+  background-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+::ng-deep .mat-mdc-snackbar-surface {
+  background-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* MDC Snackbar wrapper */
+::ng-deep .mdc-snackbar {
+  background-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Label wrapper */
+::ng-deep .mat-mdc-snack-bar-label,
+::ng-deep .mdc-snackbar__label {
+  background-color: transparent !important;
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Component host - should be transparent wrapper */
+::ng-deep app-custom-snackbar,
+::ng-deep .app-custom-snackbar-host {
+  display: block !important;
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Panel class variations */
+::ng-deep .info-snackbar,
+::ng-deep .error-snackbar,
+::ng-deep .success-snackbar,
+::ng-deep .warning-snackbar {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}

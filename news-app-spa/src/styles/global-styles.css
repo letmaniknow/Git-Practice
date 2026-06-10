@@ -1,0 +1,214 @@
+/* CSS variables are injected by theme.service.ts at runtime from theme.config.ts */
+/* Do NOT import static CSS variables - they are generated dynamically */
+
+html,
+body {
+  width: 100vw;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  box-sizing: border-box;
+  max-width: 100vw;
+}
+
+/**
+ * ============================================
+ * ICON BUTTON STANDARDS - Single Source of Truth
+ * ============================================
+ *
+ * All icon buttons across the app MUST follow these standards:
+ * - 48x48px touch target (Material Design minimum)
+ * - Consistent padding around icons (24px icon + 12px padding)
+ * - Proper flexbox alignment
+ * - Consistent hover states
+ * - No hardcoded sizes - use CSS variables
+ *
+ * This ensures all buttons are properly aligned and sized.
+ */
+
+/* Icon button base styles - Material Design v19 */
+button[mat-icon-button],
+a[mat-icon-button] {
+  /* Touch target size (48x48px minimum per Material Design) */
+  min-width: var(--icon-button-touch-target, 48px) !important;
+  min-height: var(--icon-button-touch-target, 48px) !important;
+  width: var(--icon-button-touch-target, 48px) !important;
+  height: var(--icon-button-touch-target, 48px) !important;
+
+  /* Center icon inside button */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  /* Remove default margins */
+  margin: 0 !important;
+
+  /* Proper padding using CSS variable */
+  padding: var(--icon-button-md-padding, 12px) !important;
+
+  /* Border radius for modern appearance */
+  border-radius: var(--border-radius-md, 8px) !important;
+
+  /* Smooth transitions */
+  transition: all 0.2s ease !important;
+
+  /* Remove any inherited button styles */
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Icon inside button - CRITICAL for alignment */
+button[mat-icon-button] mat-icon,
+a[mat-icon-button] mat-icon {
+  /* Icon sizing from theme */
+  width: var(--icon-md, 24px) !important;
+  height: var(--icon-md, 24px) !important;
+  font-size: var(--icon-md, 24px) !important;
+  line-height: var(--icon-md, 24px) !important;
+
+  /* Ensure icon is centered and not affected by parent flex */
+  flex-shrink: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Hover state - subtle background change */
+button[mat-icon-button]:hover,
+a[mat-icon-button]:hover {
+  background: var(--overlay-hover-light, rgba(0, 0, 0, 0.04)) !important;
+}
+
+/* Focus state for accessibility */
+button[mat-icon-button]:focus-visible,
+a[mat-icon-button]:focus-visible {
+  outline: 2px solid var(--color-primary, #3b82f6) !important;
+  outline-offset: 2px !important;
+}
+
+/* Active/pressed state */
+button[mat-icon-button]:active,
+a[mat-icon-button]:active {
+  background: var(--overlay-active-light, rgba(0, 0, 0, 0.08)) !important;
+}
+
+/* Small icon buttons (e.g., in tables) */
+button[mat-icon-button].mat-mdc-button-size-small,
+a[mat-icon-button].mat-mdc-button-size-small {
+  width: 40px !important;
+  height: 40px !important;
+  padding: var(--icon-button-sm-padding, 8px) !important;
+}
+
+button[mat-icon-button].mat-mdc-button-size-small mat-icon,
+a[mat-icon-button].mat-mdc-button-size-small mat-icon {
+  width: var(--icon-sm, 20px) !important;
+  height: var(--icon-sm, 20px) !important;
+  font-size: var(--icon-sm, 20px) !important;
+  line-height: var(--icon-sm, 20px) !important;
+}
+
+/* Large icon buttons */
+button[mat-icon-button].mat-mdc-button-size-large,
+a[mat-icon-button].mat-mdc-button-size-large {
+  width: 56px !important;
+  height: 56px !important;
+  padding: var(--icon-button-lg-padding, 16px) !important;
+}
+
+button[mat-icon-button].mat-mdc-button-size-large mat-icon,
+a[mat-icon-button].mat-mdc-button-size-large mat-icon {
+  width: var(--icon-lg, 32px) !important;
+  height: var(--icon-lg, 32px) !important;
+  font-size: var(--icon-lg, 32px) !important;
+  line-height: var(--icon-lg, 32px) !important;
+}
+
+/* Icon buttons with colors */
+button[mat-icon-button][color="primary"] mat-icon,
+a[mat-icon-button][color="primary"] mat-icon {
+  color: var(--color-primary, #3b82f6) !important;
+}
+
+button[mat-icon-button][color="warn"] mat-icon,
+a[mat-icon-button][color="warn"] mat-icon {
+  color: var(--color-error, #ef4444) !important;
+}
+
+button[mat-icon-button][color="accent"] mat-icon,
+a[mat-icon-button][color="accent"] mat-icon {
+  color: var(--color-warning, #f59e0b) !important;
+}
+
+/* COLUMN CUSTOMIZATION DIALOG - Horizontal Layout */
+.group-content .column-item {
+  display: grid;
+  grid-template-columns: 32px 1fr 32px;
+  grid-template-areas: "checkbox info visibility";
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 0;
+  min-height: 48px;
+  transition: background-color 0.2s ease;
+}
+
+.group-content .column-item:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.group-content .column-item .checkbox-container {
+  grid-area: checkbox;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+.group-content .column-item .column-info {
+  grid-area: info;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  width: 100%;
+}
+
+.group-content .column-item .visibility-status {
+  grid-area: visibility;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* Responsive: Stack vertically on very small screens */
+@media (max-width: 480px) {
+  .group-content .column-item {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "checkbox"
+      "info"
+      "visibility";
+    gap: 8px;
+    text-align: center;
+    padding: 12px 8px;
+  }
+
+  .group-content .column-item .column-info {
+    text-align: left;
+  }
+
+  .group-content .column-item .checkbox-container,
+  .group-content .column-item .visibility-status {
+    justify-content: center;
+  }
+}

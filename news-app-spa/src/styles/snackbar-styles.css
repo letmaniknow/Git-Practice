@@ -1,0 +1,118 @@
+/**
+ * Custom Snackbar Container Styles
+ * 
+ * GOAL: Remove Material's default white wrapper completely.
+ * Only show our custom component with its own background.
+ * 
+ * Industry Standard: Single layer, no double wrapper.
+ */
+
+/* ============================================================================
+   MATERIAL SNACKBAR CONTAINER - Complete Transparency (ALL LEVELS)
+   ============================================================================ */
+
+/* Root container */
+::ng-deep .mat-mdc-snack-bar-container {
+  z-index: 9999 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+/* Snackbar wrapper with panelClass */
+::ng-deep .mat-mdc-snack-bar-container.error-snackbar,
+::ng-deep .mat-mdc-snack-bar-container.info-snackbar,
+::ng-deep .mat-mdc-snack-bar-container.success-snackbar,
+::ng-deep .mat-mdc-snack-bar-container.warning-snackbar {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* All nested panelClass selectors */
+::ng-deep .error-snackbar,
+::ng-deep .info-snackbar,
+::ng-deep .success-snackbar,
+::ng-deep .warning-snackbar {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  min-width: 0 !important;
+  max-width: none !important;
+}
+
+/* MDC Snackbar element */
+::ng-deep .mat-mdc-snack-bar-container .mdc-snackbar,
+::ng-deep .error-snackbar .mdc-snackbar,
+::ng-deep .info-snackbar .mdc-snackbar,
+::ng-deep .success-snackbar .mdc-snackbar,
+::ng-deep .warning-snackbar .mdc-snackbar {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* MDC Surface layer - the main culprit for white background */
+::ng-deep .mat-mdc-snack-bar-container .mdc-snackbar__surface,
+::ng-deep .error-snackbar .mdc-snackbar__surface,
+::ng-deep .info-snackbar .mdc-snackbar__surface,
+::ng-deep .success-snackbar .mdc-snackbar__surface,
+::ng-deep .warning-snackbar .mdc-snackbar__surface {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  min-width: 0 !important;
+  max-width: none !important;
+}
+
+/* Material Snackbar Surface alternative class */
+::ng-deep .mat-mdc-snack-bar-container .mat-mdc-snackbar-surface,
+::ng-deep .error-snackbar .mat-mdc-snackbar-surface,
+::ng-deep .info-snackbar .mat-mdc-snackbar-surface,
+::ng-deep .success-snackbar .mat-mdc-snackbar-surface,
+::ng-deep .warning-snackbar .mat-mdc-snackbar-surface {
+  background: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Label wrapper */
+::ng-deep .mat-mdc-snack-bar-container .mat-mdc-snack-bar-label,
+::ng-deep .error-snackbar .mat-mdc-snack-bar-label,
+::ng-deep .info-snackbar .mat-mdc-snack-bar-label,
+::ng-deep .success-snackbar .mat-mdc-snack-bar-label,
+::ng-deep .warning-snackbar .mat-mdc-snack-bar-label {
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+/* Any div inside snackbar container */
+::ng-deep .mat-mdc-snack-bar-container > *:not(app-custom-snackbar),
+::ng-deep .mat-mdc-snack-bar-container > * > *:not(.custom-snackbar-container) {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Force transparency on Material's elements only, NOT our custom component */
+::ng-deep .mat-mdc-snack-bar-container > div:not(app-custom-snackbar),
+::ng-deep .mat-mdc-snack-bar-container .mdc-snackbar,
+::ng-deep .mat-mdc-snack-bar-container .mdc-snackbar__surface,
+::ng-deep .mat-mdc-snack-bar-container .mat-mdc-snackbar-surface,
+::ng-deep .mat-mdc-snack-bar-container .mat-mdc-snack-bar-label:not(:has(.custom-snackbar-container)) {
+  background-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+}
+

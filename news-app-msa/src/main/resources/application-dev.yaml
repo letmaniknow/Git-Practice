@@ -1,0 +1,200 @@
+# ============================================================
+# DEVELOPMENT PROFILE CONFIGURATION
+# ============================================================
+# This profile is for local development environment.
+# Activate with: --spring.profiles.active=dev
+# ============================================================
+
+spring:
+  # ------------------------------------------------------------
+  # Database Configuration (PostgreSQL Local Development)
+  # ------------------------------------------------------------
+  datasource:
+    url: jdbc:postgresql://localhost:5432/news_app_dev
+    username: newsapp
+    password: newsapp123
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 5
+      minimum-idle: 2
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  # ------------------------------------------------------------
+  # JPA/Hibernate (Development settings)
+  # JPA manages schema in dev - creates tables and constraints from entities
+  # In production, DB admin applies changes manually for safety
+  # ------------------------------------------------------------
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update # JPA auto-updates schema from entity annotations
+    #show-sql: true # Show SQL queries in console
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        use_sql_comments: true
+        jdbc:
+          batch_size: 50
+          fetch_size: 50
+
+  # Disable Flyway in development (JPA manages schema instead)
+  flyway:
+    enabled: false
+    baseline-on-migrate: false
+
+  # ------------------------------------------------------------
+  # Email Configuration (Development - use MailHog or similar)
+  # ------------------------------------------------------------
+  mail:
+    host: localhost
+    port: 1025
+    username: ""
+    password: ""
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
+# ------------------------------------------------------------
+# JWT Configuration (Development)
+# ------------------------------------------------------------
+jwt:
+  secret: DevSecretKeyForLocalTesting2024ThisIsNotSecureForProduction!
+  accessTokenExpiration: 604800000 # 7 days
+  refreshTokenExpiration: 2592000000 # 30 days
+  issuer: TheNewsApp-Dev
+
+# ------------------------------------------------------------
+# Logging (Verbose for debugging)
+# ------------------------------------------------------------
+logging:
+  level:
+    root: INFO
+    com.mmva.news: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.web: DEBUG
+    org.hibernate.SQL: INFO # Change to DEBUG to see all SQL queries
+    org.hibernate.type.descriptor.sql.BasicBinder: INFO # Change to TRACE to see parameter bindings
+    org.hibernate.tool.schema: WARN # Suppress schema update DDL noise
+
+# ------------------------------------------------------------
+# File Storage (Local paths)
+# ------------------------------------------------------------
+# New unified media storage structure
+media:
+  root-path: "C:\\Users\\cmanikan\\Documents\\MicroServices\\PP\\TheNews\\media"
+
+# ------------------------------------------------------------
+# Management/Actuator (All endpoints enabled for dev)
+# ------------------------------------------------------------
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always
+
+# ------------------------------------------------------------
+# Swagger/OpenAPI (Enabled)
+# ------------------------------------------------------------
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+
+# ------------------------------------------------------------
+# Stripe Payment Configuration (Development)
+# ------------------------------------------------------------
+# For development, these can be left empty or use test keys
+# Get test keys from: https://dashboard.stripe.com/test/apikeys
+stripe:
+  secret-key: ${STRIPE_SECRET_KEY:} # Leave empty for dev
+  publishable-key: ${STRIPE_PUBLISHABLE_KEY:} # Leave empty for dev
+  webhook-secret: ${STRIPE_WEBHOOK_SECRET:} # Leave empty for dev
+
+# ------------------------------------------------------------
+# Analytics Configuration (Inherits from application.yaml)
+# ------------------------------------------------------------
+# All analytics settings come from main config.
+# Override here only if dev needs different behavior:
+#
+# app:
+#   analytics:
+#     sampling:
+#       enabled: true  # Sample 10% in dev to reduce DB size
+#       rate: 0.1
+#     retention:
+#       period: 7d     # Keep only 1 week in dev
+# ------------------------------------------------------------
+
+# Data Encryption (Development - Test Key)
+# ============================================================
+app:
+  encryption:
+    enabled: false
+    secret: a1b2c3d4e5f6789012345678901234567890123456789012345678901234567890 # Development test key (256-bit)
+    algorithm: AES/GCM/NoPadding
+    key-length: 256
+
+# ============================================================
+# ELASTICSEARCH CONFIGURATION (Development)
+# ============================================================
+# Full-text search enhancement layer (OPTIONAL with graceful fallback)
+# Provides: Fast ranking (10-50ms vs 100-200ms for Postgres)
+# Architecture: PostgreSQL FTS Primary + Circuit Breaker to ES
+#
+# ✅ App boots successfully WITHOUT Elasticsearch
+# ✅ If ES is running: Auto-detected, used for fast search
+# ✅ If ES is down: Auto-fallback to PostgreSQL FTS (zero latency)
+# ✅ Circuit Breaker: Automatically recovers when ES comes online
+#
+# To start Elasticsearch locally for performance:
+#   docker run -d -p 9200:9200 \
+#     -e "xpack.security.enabled=false" \
+#     docker.elastic.co/elasticsearch/elasticsearch:8.13.0
+#
+# Then optionally enable:
+#   elasticsearch.enabled=true
+# ============================================================
+elasticsearch:
+  enabled:
+    false # DEFAULT: Disabled (PostgreSQL works perfectly)
+    # Optional: Set to true when ES is available for 10x speed
+  host: localhost
+  port: 9200
+  protocol: http # Plain HTTP (security disabled for dev)
+  username: elastic
+  password: changeme
+
+  # Index Settings
+  index:
+    name: news-articles
+    settings:
+      number_of_shards: 1 # Dev: 1 shard (production: scale as needed)
+      number_of_replicas: 0 # Dev: no replicas (production: 1-2)
+
+  # Search Configuration
+  search:
+    max-results: 100
+    timeout-seconds: 30
+    fuzzy:
+      enabled: true # Enable fuzzy matching (for typos)
+      max-expansions: 50
+      prefix-length: 0
+
+# ============================================================
+# RATE LIMITING (Development - Disabled for testing)
+# ============================================================
+rateLimit:
+  enabled: false
+  cooldownSeconds: 0
+  requestsPerMinute: 10000
+  burstCapacity: 1000

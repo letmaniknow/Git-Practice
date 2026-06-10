@@ -1,0 +1,521 @@
+/**
+ * TextInputFieldComponent Styles
+ * Component-specific overrides for text input fields
+ *
+ * Base shared styles imported from _form-fields-base.css:
+ * - :host height, display, alignment
+ * - Focus outline (WCAG AA compliance)
+ * - Subscript management (hints/errors)
+ * - Floating label animation
+ * - Form field container sizing
+ */
+
+@import '../_form-fields-base.css';
+
+/* SIMPLIFIED: Let height cascade naturally from :host (44px) */
+::ng-deep .mat-mdc-text-field-wrapper {
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+::ng-deep .mat-mdc-form-field-flex {
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  width: 100% !important;
+}
+
+::ng-deep .mdc-text-field {
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+::ng-deep .mdc-notched-outline {
+  height: 100% !important;
+}
+
+::ng-deep .mdc-notched-outline__leading,
+::ng-deep .mdc-notched-outline__notch,
+::ng-deep .mdc-notched-outline__trailing {
+  height: 100% !important;
+}
+
+::ng-deep .mdc-text-field__input,
+::ng-deep .mat-mdc-input-element {
+  padding: 0 0 0 var(--spacing-md, 12px) !important;
+  height: 100% !important;
+  line-height: 44px !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  vertical-align: middle !important;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+}
+
+::ng-deep .mdc-text-field__input-wrapper {
+  padding: 0 !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+}
+
+::ng-deep .mat-form-field-wrapper {
+  height: 100% !important;
+  width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+}
+
+::ng-deep .mat-mdc-form-field-infix {
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  height: 100% !important;
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+::ng-deep .mat-mdc-form-field-focus-overlay {
+  height: var(--components-input-height, 44px) !important;
+  top: 0 !important;
+}
+
+::ng-deep .mdc-text-field__affix-space {
+  padding: 0 !important;
+  margin: 0 !important;
+  height: 100% !important;
+}
+
+::ng-deep .mdc-text-field__suffix {
+  padding: 0 var(--spacing-sm, 8px) 0 var(--spacing-xs, 4px) !important;
+  margin: 0 !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  flex-shrink: 0 !important;
+  gap: var(--spacing-xs, 4px) !important;
+}
+
+::ng-deep .mdc-text-field__end {
+  display: flex !important;
+  gap: var(--spacing-xs, 4px) !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 var(--spacing-sm, 8px) !important;
+  height: 100% !important;
+  flex-shrink: 0 !important;
+}
+
+::ng-deep .mat-mdc-form-field-icon-suffix {
+  width: auto !important;
+  height: 24px !important;
+  min-height: 24px !important;
+  font-size: 24px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-shrink: 0 !important;
+  padding: 0 var(--spacing-xs, 4px) !important;
+}
+
+::ng-deep .mat-mdc-icon-button[matsuffix] {
+  width: 48px !important;
+  height: 48px !important;
+  min-width: 48px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 8px !important;
+  margin: 0 calc(-8px * 0.5) 0 0 !important;
+  flex-shrink: 0 !important;
+}
+
+/**
+ * Form Field Container
+ * Base styling for all text inputs
+ */
+mat-form-field {
+  width: 100%;
+  display: block;
+
+  /**
+   * Output Formatting
+   * MD3 outline form field with Material tokens
+   */
+  --mdc-theme-primary: var(--color-primary, #1976d2);
+  --mdc-theme-surface: var(--color-surface, #ffffff);
+  --mdc-theme-error: var(--color-error, #dc2626);
+
+  /**
+   * Border (Outline) Styling
+   * Light gray border in idle state
+   */
+  --mdc-notched-outline__leading-width: 12px;
+}
+
+/**
+ * Form Field Label
+ * Floating label that moves above input when focused or has value
+ * Font size now unified in _form-fields-base.css
+ */
+::ng-deep .mat-mdc-form-field-floating-label {
+  /**
+   * Material Design 3 label positioning
+   * Top: 12px is MD3 standard for outline fields
+   */
+  top: 12px !important;
+  left: 12px !important;
+  color: var(--color-text-secondary, #6b7280);
+}
+
+/**
+ * Input Element
+ * Text input styling
+ */
+input[matInput] {
+  /**
+   * Padding & Layout
+   * Height: 44px (WCAG AA minimum touch target)
+   */
+  padding: 0 0 0 var(--spacing-md, 12px);
+  height: var(--components-input-height, 44px);
+  line-height: var(--components-input-height, 44px);
+
+  /**
+   * Typography
+   * Material standard for input text
+   */
+  font-size: var(--font-size-small, 0.875rem);
+  font-weight: 400;
+  font-family: var(--font-family-base, Roboto, -apple-system, BlinkMacSystemFont, serif);
+
+  /**
+   * Color
+   * Text color, placeholder color
+   */
+  color: var(--color-text-primary, #1f2937);
+
+  /**
+   * Placeholder Styling
+   * Gray, slightly transparent
+   */
+  &::placeholder {
+    color: var(--color-text-secondary, #6b7280) !important;
+    opacity: 0.7 !important;
+  }
+
+  /**
+   * Focus State
+   * Blue outline with subtle shadow (accessible, clear feedback)
+   */
+  &:focus {
+    outline: none; /* Removed by Material, but just in case */
+
+    /**
+     * Focus ring - visible and accessible
+     * Material handles this via mdc-text-field focus state
+     */
+  }
+
+  /**
+   * Error State
+   * Use component's has-error class strategy
+   */
+  &:invalid {
+    border-color: var(--color-error, #dc2626);
+  }
+
+  /**
+   * Disabled State
+   * Grayed out, cursor not-allowed
+   */
+  &:disabled {
+    background-color: var(--color-surface-disabled, #f3f4f6);
+    color: var(--color-text-disabled, #9ca3af);
+    cursor: not-allowed;
+  }
+
+  /**
+   * Selection Highlight
+   * When user selects text
+   */
+  &::selection {
+    background-color: rgba(25, 118, 210, 0.2);
+    color: var(--color-text-primary, #1f2937);
+  }
+}
+
+/**
+ * CRITICAL: Material MDC Input Control Placeholder Styling
+ * This selector targets the actual MDC input control that Material uses
+ * WITHOUT this, placeholder won't show in Material Design 3 form fields
+ * This matches the implementation in AutocompleteFieldComponent
+ */
+::ng-deep .mat-mdc-form-field-input-control::placeholder {
+  color: var(--color-text-secondary, #6b7280) !important;
+  opacity: 0.7 !important;
+}
+
+/**
+ * Prefix Icon Container - HIDDEN
+ * Icon alignment issues - hiding for clean UI
+ */
+
+/* Main icon prefix container */
+::ng-deep .mat-mdc-form-field-icon-prefix {
+  display: none !important;
+}
+
+/**
+ * Suffix: Clear Button & Icons
+ * Spacing for clear button and other suffix elements
+ */
+::ng-deep .mat-mdc-form-field-suffix {
+  /**
+   * Spacing between input and suffix
+   */
+  margin-left: var(--spacing-xs, 4px);
+}
+
+/**
+ * Clear Button
+ * Icon button to clear the input
+ */
+.clear-button {
+  /**
+   * Size (WCAG AA: 44px minimum touch target)
+   * Material icon button is 40px by default, padding adds 4px
+   */
+  width: var(--components-button-touch-target, 48px);
+  height: var(--components-button-touch-target, 48px);
+
+  /**
+   * Padding
+   * Center the icon within touch target
+   */
+  padding: var(--components-button-sm-padding, 8px);
+
+  /**
+   * Color & Hover State
+   */
+  color: var(--color-text-secondary, #6b7280);
+
+  &:hover:not(:disabled) {
+    color: var(--color-primary, #1976d2);
+    background-color: rgba(25, 118, 210, 0.08);
+  }
+
+  &:focus {
+    outline: 2px solid var(--color-primary, #1976d2);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  /**
+   * Icon inside button
+   */
+  mat-icon {
+    font-size: var(--components-icon-size-sm, 20px);
+    width: var(--components-icon-size-sm, 20px);
+    height: var(--components-icon-size-sm, 20px);
+  }
+}
+
+/**
+ * Prefix Icon
+ * No extra styling - parent container handles centering
+ */
+::ng-deep .mat-mdc-form-field-prefix mat-icon {
+  width: 24px !important;
+  height: 24px !important;
+  font-size: 24px !important;
+}
+
+/* Infix icons (inside input area) */
+::ng-deep .mat-mdc-form-field-infix mat-icon {
+  width: 24px !important;
+  height: 24px !important;
+  font-size: 24px !important;
+  line-height: 24px !important;
+}
+
+/**
+ * Error Message
+ * Red text shown below input when validation fails
+ */
+mat-error {
+  font-size: var(--font-size-xs, 0.75rem);
+  font-weight: 400;
+  color: var(--color-error, #dc2626);
+  margin-top: var(--spacing-xs, 4px);
+
+  /**
+   * Animation: Fade in
+   */
+  animation: fadeIn 200ms ease-in;
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-2px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/**
+ * Hint Text
+ * Helper text or character count shown below input
+ */
+mat-hint {
+  font-size: var(--font-size-xs, 0.75rem);
+  color: var(--color-text-secondary, #6b7280);
+  margin-top: var(--spacing-xs, 4px);
+
+  /**
+   * Align right for character counter
+   */
+  &[align='end'] {
+    text-align: right;
+  }
+}
+
+/**
+ * Required Indicator
+ * Red asterisk (*) shown for required fields
+ */
+.required-indicator {
+  color: var(--color-error, #dc2626);
+  font-weight: bold;
+  margin-left: var(--spacing-xs, 4px);
+
+  /**
+   * Accessibility: This is semantic (not purely decorative)
+   * Screen readers will read: "Label name required"
+   */
+}
+
+/**
+ * Container State Classes
+ * Applied dynamically from component
+ */
+
+/**
+ * Has Value: When input has text
+ * Used for styling when user has entered data
+ */
+mat-form-field.has-value {
+  /**
+   * Optional: Add background highlight for filled state
+   * Currently not used, but available for future theming
+   */
+}
+
+/**
+ * Has Icon: When prefix icon is shown
+ */
+mat-form-field.has-icon {
+  /**
+   * Can be used to adjust spacing if needed
+   */
+}
+
+/**
+ * Is Focused: When input has focus
+   */
+mat-form-field.is-focused {
+  /**
+   * Optional: Add glow effect or other focus indication
+   * Material handles most focus styling automatically
+   */
+}
+
+/**
+ * Is Disabled: When field is disabled
+ */
+mat-form-field.is-disabled {
+  /**
+   * Optional: Dim the entire field
+   * Material handles this automatically
+   */
+}
+
+/**
+ * Has Error: When validation error exists
+ */
+mat-form-field.has-error {
+  /**
+   * Error state styling
+   */
+  --mdc-theme-error: var(--color-error, #dc2626);
+
+  /**
+   * Optional: Red border or background
+   * Material shows error via mat-error, but we can enhance it
+   */
+}
+
+/**
+ * Responsive Design
+ * Works seamlessly on mobile, tablet, desktop
+ */
+@media (max-width: 600px) {
+  mat-form-field {
+    /**
+     * Mobile: Full width by default
+     * No special handling needed
+     */
+  }
+
+  input[matInput] {
+    /**
+     * Mobile: Ensure touch target 44x44px
+     */
+    height: var(--components-input-height, 44px);
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+}
+
+/**
+ * Dark Mode Support (Future)
+ * When dark mode theme is applied
+ */
+@media (prefers-color-scheme: dark) {
+  /**
+   * Dark theme would use different CSS variable values
+   * Automatically handled by theme.config.ts
+   */
+  mat-form-field {
+    --mdc-theme-surface: var(--color-surface-dark, #1f2937);
+  }
+
+  input[matInput] {
+    color: var(--color-text-primary-dark, #f3f4f6);
+    background-color: var(--color-surface-dark, #1f2937);
+  }
+}
+
+/**
+ * Print Styles (Future)
+ * Hide buttons and interactive elements when printing
+ */
+@media print {
+  .clear-button {
+    display: none;
+  }
+}

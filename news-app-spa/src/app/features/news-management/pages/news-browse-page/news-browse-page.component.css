@@ -1,0 +1,665 @@
+/* Container and Layout */
+.page-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: var(--spacing-md, 16px) var(--spacing-lg, 24px);
+  min-height: calc(100vh - 4rem);
+  font-family: var(--font-family, 'Segoe UI, Arial, sans-serif');
+  position: relative;
+}
+
+/* Floating Language Toggle */
+.floating-language-toggle {
+  position: fixed;
+  bottom: var(--spacing-lg, 24px);
+  right: var(--spacing-lg, 24px);
+  z-index: 1000;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.floating-language-toggle[hidden] {
+  display: none;
+}
+
+.language-toggle {
+  background: var(--color-bg, #ffffff);
+  padding: var(--spacing-sm, 8px);
+  border-radius: var(--border-radius-sm, 4px);
+  box-shadow: var(--shadow-2);
+}
+
+/* Header Language Toggle */
+.header-language-toggle {
+  margin: 0 var(--spacing-md, 16px);
+}
+
+.toggle-label {
+  margin-left: var(--spacing-sm, 8px);
+  font-weight: 500;
+}
+
+/* Create Button - Material Design 3 Icon + Text Alignment */
+.create-button {
+  margin-left: var(--spacing-md, 16px);
+  white-space: nowrap;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: var(--spacing-sm, 8px) !important;
+  padding: 8px 16px !important;
+  min-height: var(--icon-button-touch-target, 48px) !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+}
+
+/* Page Header */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-sm, 8px);
+  padding-bottom: var(--spacing-md, 16px);
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+  flex-wrap: wrap;
+  gap: var(--spacing-md, 16px);
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: var(--spacing-xs, 4px);
+  flex: 1 1 auto;
+  margin-bottom: 0;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: var(--font-size-h2, 2rem);
+  font-weight: 600;
+  color: var(--color-text-dark, #111827);
+}
+
+.page-subtitle {
+  margin: 0;
+  font-size: var(--font-size-small, 0.875rem);
+  color: var(--color-text-medium, #6b7280);
+  font-weight: 400;
+}
+
+.header-actions {
+  display: flex;
+  gap: var(--spacing-sm, 8px);
+  align-items: center;
+}
+
+/* ============================================================================
+   Filter Errors Section - Industry Standard: Below search bar
+   Shows errors related to loading categories/statuses
+   ============================================================================ */
+.filter-errors-section {
+  width: 100%;
+  margin: var(--spacing-md, 16px) 0 var(--spacing-lg, 24px) 0;
+  padding: var(--spacing-md, 16px);
+  background-color: rgba(239, 68, 68, 0.02);
+  border: 1px solid rgba(239, 68, 68, 0.1);
+  border-radius: var(--border-radius-md, 8px);
+}
+
+.error-alerts-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md, 16px);
+}
+
+/* ============================================================================
+   News Error Section - Industry Standard: In content area
+   Shows errors related to loading news
+   ============================================================================ */
+.article-error-section {
+  width: 100%;
+  margin-bottom: var(--spacing-lg, 24px);
+  padding: var(--spacing-md, 16px);
+}
+
+/* Search Section - Compact & Clean */
+.search-section {
+  margin: var(--spacing-sm, 8px) 0 var(--spacing-lg, 24px) 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: var(--spacing-md, 16px);
+  width: 100%;
+}
+
+/* Search Filters Wrapper - Component container */
+.search-filters-wrapper {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* Ensure component takes full width */
+.search-filters-wrapper app-news-search-filters {
+  display: block;
+  width: 100%;
+}
+
+/* Right: Results count & Page size */
+.toolbar-right {
+  display: flex;
+  gap: var(--spacing-sm, 8px);
+  align-items: center;
+  flex-shrink: 0;
+  flex-wrap: nowrap;
+  height: var(--components-input-height, 44px);
+}
+
+.results-count {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--components-input-height, 44px);
+  padding: 0 var(--spacing-md, 16px);
+  font-size: var(--font-size-small, 0.875rem);
+  font-weight: 500;
+  color: var(--color-text-medium, #6b7280);
+  white-space: nowrap;
+  background: var(--color-surface, #f9fafb);
+  border-radius: var(--border-radius-md, 8px);
+  border: 1px solid var(--color-border, #e5e7eb);
+}
+
+.page-size-select {
+  min-width: 100px;
+  max-width: 120px;
+  flex-shrink: 0;
+  height: var(--components-input-height, 44px);
+  display: flex;
+  align-items: center;
+  margin: 0 !important;
+  padding: 0 !important;
+  border-radius: var(--border-radius-md, 8px);
+}
+
+/* Ensure mat-select trigger takes full height */
+.page-size-select ::ng-deep .mat-mdc-select-trigger {
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 8px !important;
+  font-size: 14px !important;
+  line-height: 44px !important;
+}
+
+/* Suppress subscript (error/hint) text */
+.page-size-select ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+  display: none !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  line-height: 0 !important;
+}
+
+/* Style mat-select div */
+.page-size-select ::ng-deep .mat-mdc-select {
+  height: 100% !important;
+  min-height: var(--components-input-height, 44px) !important;
+}
+
+/* Style mat-select-value */
+.page-size-select ::ng-deep .mat-mdc-select-value {
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 8px !important;
+}
+
+.page-size-select ::ng-deep .mat-mdc-form-field-subscripts-container {
+  display: none !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  line-height: 0 !important;
+}
+
+/* Ensure form field itself has uniform height */
+.page-size-select ::ng-deep .mat-mdc-form-field {
+  height: var(--components-input-height, 44px) !important;
+  display: inline-flex !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  vertical-align: middle !important;
+}
+
+/* Material form field container - Same for ALL fields */
+.page-size-select ::ng-deep .mdc-text-field {
+  width: 100% !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  height: var(--components-input-height, 44px) !important;
+  padding: 0 !important;
+}
+
+/* Notched outline for proper styling */
+.page-size-select ::ng-deep .mdc-notched-outline {
+  height: 100% !important;
+}
+
+.page-size-select ::ng-deep .mdc-notched-outline__leading,
+.page-size-select ::ng-deep .mdc-notched-outline__notch,
+.page-size-select ::ng-deep .mdc-notched-outline__trailing {
+  border-color: var(--color-border, #e5e7eb) !important;
+  height: 100% !important;
+}
+
+/* Material input/content padding - LEFT PADDING for consistency with other fields */
+.page-size-select ::ng-deep .mdc-text-field__input,
+.page-size-select ::ng-deep .mat-mdc-input-element {
+  padding: 0 0 0 var(--spacing-sm, 8px) !important;
+  height: 100% !important;
+  min-height: var(--form-input-min-height, 24px) !important;
+  line-height: var(--form-input-line-height, 1.4) !important;
+  font-size: var(--form-input-font-size, 0.875rem) !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+}
+
+/* Material infix (content area) */
+.page-size-select ::ng-deep .mat-mdc-form-field-infix {
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  display: flex !important;
+  align-items: center !important;
+  height: 100% !important;
+}
+
+/* Material form field flex and wrapper */
+.page-size-select ::ng-deep .mat-form-field-flex,
+.page-size-select ::ng-deep .mat-form-field-wrapper {
+  height: 100% !important;
+  width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Material text field wrapper (for autocomplete) */
+.page-size-select ::ng-deep .mat-mdc-text-field-wrapper {
+  padding: 0 !important;
+  margin: 0 !important;
+  height: 100% !important;
+}
+
+/* Focus overlay */
+.page-size-select ::ng-deep .mat-mdc-form-field-focus-overlay {
+  height: var(--components-input-height, 44px) !important;
+  top: 0 !important;
+}
+
+/* Prevent state classes from affecting height - KEEP LEFT PADDING */
+.page-size-select ::ng-deep input.ng-valid,
+.page-size-select ::ng-deep input.ng-invalid,
+.page-size-select ::ng-deep input.ng-touched,
+.page-size-select ::ng-deep input.ng-untouched,
+.page-size-select ::ng-deep input.ng-dirty,
+.page-size-select ::ng-deep input.ng-pristine {
+  padding: 0 0 0 var(--spacing-sm, 8px) !important;
+  height: 100% !important;
+  margin: 0 !important;
+  line-height: 24px !important;
+}
+
+/* Affix area normalization */
+.page-size-select ::ng-deep .mdc-text-field__affix-space {
+  padding: 0 !important;
+  margin: 0 !important;
+  height: 100% !important;
+}
+
+/* Prefix and suffix areas */
+.page-size-select ::ng-deep .mdc-text-field__prefix,
+.page-size-select ::ng-deep .mdc-text-field__start,
+.page-size-select ::ng-deep .mdc-text-field__end,
+.page-size-select ::ng-deep .mdc-text-field__suffix {
+  padding: 0 var(--spacing-sm, 8px) !important;
+  margin: 0 !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Input wrapper alignment */
+.page-size-select ::ng-deep .mdc-text-field__input-wrapper {
+  padding: 0 !important;
+  height: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+/* Floating label positioning - HIDE since no label on select */
+.page-size-select ::ng-deep .mat-mdc-floating-label {
+  display: none !important;
+  height: 0 !important;
+}
+
+/* Floating label when text is present */
+.page-size-select ::ng-deep .mdc-floating-label--float-above {
+  transform: scale(0.75) translateY(-40px) !important;
+}
+
+/* MDC Ripple elements */
+.page-size-select ::ng-deep .mdc-text-field__ripple {
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Character counter - hide if present */
+.page-size-select ::ng-deep .mat-mdc-form-field-character-counter {
+  display: none !important;
+  height: 0 !important;
+}
+
+/* Material select trigger alignment - ADD LEFT PADDING for consistency */
+.page-size-select ::ng-deep .mat-mdc-select-trigger {
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 0 0 var(--spacing-sm, 8px) !important;
+  height: 100% !important;
+  width: 100% !important;
+}
+
+/* Icon sizing for dropdowns */
+.page-size-select ::ng-deep .mat-mdc-form-field-icon-suffix {
+  width: var(--icon-md, 24px) !important;
+  height: var(--icon-md, 24px) !important;
+  min-width: var(--icon-md, 24px) !important;
+  font-size: var(--icon-sm, 20px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+
+.btn-secondary {
+  background: var(--color-text-medium, #6b7280);
+  color: white;
+  padding: var(--spacing-sm, 8px) var(--spacing-lg, 24px);
+  min-height: var(--icon-button-touch-target, 48px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm, 8px);
+  border: none;
+  border-radius: var(--border-radius-md, 8px);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  background: var(--color-gray-600, #4b5563);
+  transform: translateY(-1px);
+}
+
+.btn-primary {
+  background: var(--color-primary, #3b82f6);
+  color: white;
+  padding: var(--spacing-sm, 8px) var(--spacing-lg, 24px);
+  min-height: var(--icon-button-touch-target, 48px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm, 8px);
+  border: none;
+  border-radius: var(--border-radius-md, 8px);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary:hover {
+  background: var(--color-primary-dark, #1e40af);
+  transform: translateY(-1px);
+}
+
+
+/* Content Container - Stable Layout */
+.content-container {
+  min-height: 400px;
+  margin-top: var(--spacing-md, 16px);
+  position: relative; /* Enable absolute positioning for loading overlay */
+}
+
+/* News List Container */
+.news-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md, 16px);
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--overlay-white, rgba(255, 255, 255, 0.9));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  border-radius: var(--border-radius-md, 8px);
+}
+
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl, 32px) var(--spacing-lg, 24px);
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  margin-bottom: var(--spacing-md, 16px);
+  opacity: 0.5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary, #3b82f6);
+}
+
+.empty-icon mat-icon {
+  font-size: 4rem !important;
+  width: 4rem !important;
+  height: 4rem !important;
+  line-height: 4rem !important;
+}
+
+.empty-state h3 {
+  color: var(--color-text-dark, #111827);
+  margin: 0 0 var(--spacing-md, 16px) 0;
+}
+
+.empty-state p {
+  color: var(--color-text-medium, #6b7280);
+  margin: 0 0 var(--spacing-lg, 24px) 0;
+}
+
+.pagination-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg, 24px);
+  margin-top: var(--spacing-xl, 32px);
+  padding-top: var(--spacing-lg, 24px);
+  border-top: 2px solid var(--color-border, #e5e7eb);
+}
+
+.pagination-controls {
+  display: flex;
+  gap: var(--spacing-xs, 4px);
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pagination-btn {
+  min-width: var(--icon-button-touch-target, 48px);
+  min-height: var(--icon-button-touch-target, 48px);
+  width: auto;
+  height: var(--icon-button-touch-target, 48px);
+  padding: var(--icon-button-md-padding, 12px) var(--spacing-sm, 8px);
+  border: 2px solid var(--color-border, #e5e7eb);
+  background: white;
+  color: var(--color-gray-500, #6b7280);
+  border-radius: var(--border-radius-md, 8px);
+  font-size: var(--font-size-small, 0.875rem);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  border-color: var(--color-primary, #3b82f6);
+  background-color: var(--color-primary-light, #dde6ff);
+  color: var(--color-primary, #3b82f6);
+  transform: translateY(-1px);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.pagination-btn.page-number {
+  min-width: var(--icon-button-sm-padding, 40px);
+}
+
+.pagination-btn.page-number.active {
+  background: var(--color-primary, #3b82f6);
+  color: white;
+  border-color: var(--color-primary, #3b82f6);
+  font-weight: 600;
+  transform: scale(1.05);
+}
+
+.pagination-btn.page-number.active:hover {
+  transform: scale(1.05);
+}
+
+/* Pagination button icons */
+.pagination-btn mat-icon {
+  width: var(--icon-md, 24px) !important;
+  height: var(--icon-md, 24px) !important;
+  font-size: var(--icon-md, 24px) !important;
+  line-height: var(--icon-md, 24px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.pagination-summary {
+  color: #64748b;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .page-container {
+    padding: 1rem;
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .header-actions {
+    width: 100%;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .floating-language-toggle {
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .search-section {
+    flex-direction: column;
+    align-items: stretch;
+    margin: 0.375rem 0;
+  }
+
+  .toolbar-right {
+    justify-content: flex-end;
+  }
+
+  .pagination-section {
+    margin-top: 2rem;
+  }
+
+  .pagination-controls {
+    gap: 0.25rem;
+    width: 100%;
+  }
+
+  .pagination-btn {
+    min-width: 36px;
+    height: 36px;
+    font-size: 0.8rem;
+  }
+}
+
+/* Loading and Error States */
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  padding: 2rem;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: var(--border-radius-md, 8px);
+  margin: 2rem 0;
+}
+
+@media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .page-header h1 {
+    font-size: 1.5rem;
+  }
+}
+
+/* ============================================================================
+   Error Alert Styles - Now Centralized in shared styles
+   See: src/styles/components/_error-alerts.scss
+   Using: ErrorAlertComponent (app-error-alert)
+   ============================================================================ */
+
+/* No component-specific error styles - all centralized in ErrorAlertComponent
+   and _error-alerts.scss for maintainability and reusability */

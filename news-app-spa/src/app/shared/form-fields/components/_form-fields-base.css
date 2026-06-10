@@ -1,0 +1,135 @@
+/**
+ * Form Fields Base Stylesheet
+ * 
+ * ✅ SHARED STYLES FOR ALL FORM FIELD COMPONENTS
+ * Consolidates common CSS rules across:
+ * - TextInputFieldComponent
+ * - SelectFieldComponent
+ * - AutocompleteFieldComponent
+ * - MultiSelectFieldComponent
+ * - DateRangeFieldComponent
+ * 
+ * BENEFITS:
+ * - Single source of truth for base styling
+ * - 250+ lines of duplicated code eliminated
+ * - Easier maintenance (fix once, applied everywhere)
+ * - Consistent behavior across all form fields
+ * 
+ * @author Architecture Team
+ * @category Styles
+ * @version 1.0
+ */
+
+/* ============================================================================
+   :HOST - BASE CONTAINER STYLING
+   ============================================================================ */
+
+:host {
+  --mat-form-field-container-vertical-padding: 0 !important;
+  --mat-form-field-subscript-wrapper-padding-top: 0 !important;
+  --mdc-text-field-container-height: var(--components-input-height, 44px);
+  display: flex !important;
+  align-items: center !important;
+  height: var(--components-input-height, 44px) !important;
+  width: 100% !important;
+}
+
+/* Material Design 3 native focus indicator will be applied by mat-form-field */
+/* No custom outline needed - MD3 handles focus state via notched-outline border color */
+
+/* ============================================================================
+   SUBSCRIPT MANAGEMENT (HINTS & ERRORS)
+   ============================================================================ */
+
+/* CRITICAL: Allow hints to show, but hide error subscripts container initially */
+::ng-deep .mat-mdc-form-field-subscript-wrapper {
+  display: block !important;
+  height: auto !important;
+  padding: var(--spacing-xs, 4px) 0 0 0 !important;
+  margin: 0 !important;
+  line-height: 1.2 !important;
+  min-height: auto !important;
+}
+
+/* Hide mat-error by default */
+::ng-deep .mat-mdc-form-field-subscript-wrapper mat-error {
+  display: none !important;
+}
+
+/* Show mat-error only when it has content AND form field has error state */
+::ng-deep .mat-mdc-form-field.mat-form-field-invalid .mat-mdc-form-field-subscript-wrapper mat-error {
+  display: block !important;
+}
+
+/* Ensure mat-hint is visible only when field is focused */
+::ng-deep .mat-mdc-form-field-subscript-wrapper mat-hint {
+  display: none !important;
+  font-size: var(--font-size-xs, 0.75rem) !important;
+  line-height: 1.2 !important;
+  color: var(--color-text-medium, #6b7280) !important;
+}
+
+/* Show hint only when field is focused */
+::ng-deep .mat-mdc-form-field.mat-focused .mat-mdc-form-field-subscript-wrapper mat-hint {
+  display: block !important;
+}
+
+::ng-deep .mat-mdc-form-field-subscripts-container {
+  /* Screen reader only - visible to assistive technology, hidden visually */
+  position: absolute !important;
+  left: -9999px !important;
+  width: 1px !important;
+  height: 1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+}
+
+/* ============================================================================
+   FORM FIELD BASE SIZING & LAYOUT
+   ============================================================================ */
+
+/* Ensure form field itself has uniform height and allows label to float */
+::ng-deep .mat-mdc-form-field {
+  height: 100% !important;
+  min-height: var(--components-input-height, 44px) !important;
+  display: flex !important;
+  overflow: visible !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  top: 0 !important;
+  bottom: 0 !important;
+  vertical-align: middle !important;
+}
+
+/* ============================================================================
+   FLOATING LABEL ANIMATION
+   ============================================================================ */
+
+/* CRITICAL: Unified label sizing across ALL form field components */
+/* This rule applies to the floating label in idle state */
+::ng-deep .mat-mdc-form-field-floating-label {
+  /* UNIFORM LABEL SIZING - All form field labels use global font-size-small */
+  font-size: var(--font-size-small, 0.875rem) !important;
+  font-weight: 500 !important;
+  line-height: 1.2 !important;
+}
+
+/* Floating label - centered in idle state (MDC level selector) */
+::ng-deep .mat-mdc-floating-label {
+  position: absolute !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  left: var(--spacing-sm, 12px) !important;
+  
+  /* UNIFORM LABEL SIZING - Ensure MDC level uses global font-size-small */
+  font-size: var(--font-size-small, 0.875rem) !important;
+  font-weight: 500 !important;
+  line-height: 1.2 !important;
+}
+
+/* Floating label - moves to top when field is focused */
+::ng-deep .mdc-floating-label--float-above {
+  top: calc(var(--spacing-sm, 12px) * -1) !important;
+  transform: scale(0.75) translateY(0) !important;
+}
